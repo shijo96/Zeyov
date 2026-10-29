@@ -1,0 +1,67 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "t1": {
+          "type": "tier",
+          "settings": {
+            "qty": 1,
+            "label": "Buy 1",
+            "note": "Standard price",
+            "discount_percent": 0
+          }
+        },
+        "t2": {
+          "type": "tier",
+          "settings": {
+            "qty": 2,
+            "label": "Buy 2",
+            "note": "10% Extra OFF",
+            "badge": "Popular (Save 10%)",
+            "discount_percent": 10
+          }
+        },
+        "t3": {
+          "type": "tier",
+          "settings": {
+            "qty": 3,
+            "label": "Buy 3",
+            "note": "13% Extra OFF",
+            "badge": "Best Value (Save 13%)",
+            "discount_percent": 13
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {
+        "show_tiers": true
+      }
+    },
+    "reviews": {
+      "type": "product-reviews",
+      "settings": {
+        "heading": "Verified Customer Reviews",
+        "subheading": "Real experiences from customers across India.",
+        "rating_score": "4.9",
+        "review_count": "8"
+      }
+    },
+    "related": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You May Also Like",
+        "limit": 4
+      }
+    }
+  },
+  "order": [
+    "main",
+    "reviews",
+    "related"
+  ]
+}

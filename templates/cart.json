@@ -1,0 +1,7 @@
+{
+  "sections": {
+    "main": { "type": "main-cart" },
+    "related": { "type": "product-recommendations", "settings": { "heading": "Curated Pairings & Additions", "limit": 4 } }
+  },
+  "order": ["main", "related"]
+}

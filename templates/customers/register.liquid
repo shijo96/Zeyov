@@ -1,0 +1,21 @@
+<section class="section">
+  <div class="container container--tiny">
+    <h1 class="center">Create account</h1>
+    {%- form 'create_customer', class: 'form' -%}
+      {{ form.errors | default_errors }}
+      {%- comment -%} Bot trap honeypot {%- endcomment -%}
+      <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
+        <label for="RegisterBotTrap">Leave blank</label>
+        <input type="text" id="RegisterBotTrap" name="customer[bot_trap]" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="form__row">
+        <label>First name<input type="text" name="customer[first_name]" autocomplete="given-name" maxlength="60" required></label>
+        <label>Last name<input type="text" name="customer[last_name]" autocomplete="family-name" maxlength="60"></label>
+      </div>
+      <label>Email<input type="email" name="customer[email]" autocomplete="email" maxlength="100" required></label>
+      <label>Password (min. 8 characters)<input type="password" name="customer[password]" autocomplete="new-password" minlength="8" maxlength="100" required></label>
+      <button class="btn btn--block" type="submit">Create account</button>
+      <p class="center small">Already have an account? <a href="{{ routes.account_login_url }}">Login</a></p>
+    {%- endform -%}
+  </div>
+</section>

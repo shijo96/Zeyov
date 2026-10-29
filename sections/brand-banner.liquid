@@ -1,0 +1,18 @@
+<section class="brand-banner">
+  <div class="container">
+    <div class="brand-banner__box">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 2000 | image_tag: loading: 'lazy', alt: 'ZEYOV' }}
+      {%- else -%}
+        <img src="{{ 'brand-banner.jpg' | asset_url }}" alt="ZEYOV – Style for a brighter you" loading="lazy" width="1920" height="768">
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Brand banner",
+  "settings": [{ "type": "image_picker", "id": "image", "label": "Image (blank = Zeyov brand banner)" }],
+  "presets": [{ "name": "Brand banner" }]
+}
+{% endschema %}

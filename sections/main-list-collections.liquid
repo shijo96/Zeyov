@@ -1,0 +1,15 @@
+<section class="section">
+  <div class="container">
+    <header class="section__head"><h1>Collections</h1></header>
+    <div class="grid grid--cols-3">
+      {%- for c in collections -%}
+        <a class="cat-card" href="{{ c.url }}">
+          {%- assign img = c.image | default: c.products.first.featured_image -%}
+          {%- if img -%}{{ img | image_url: width: 700 | image_tag: loading: 'lazy', alt: c.title }}{%- endif -%}
+          <span>{{ c.title }}</span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}{ "name": "Collections list" }{% endschema %}

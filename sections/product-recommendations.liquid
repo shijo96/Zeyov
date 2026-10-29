@@ -1,0 +1,31 @@
+{%- assign cur = product | default: blank -%}
+<section class="section section--tint recommendations-section">
+  <div class="container">
+    <header class="section__head center">
+      <p class="eyebrow">{{ section.settings.eyebrow | default: 'ATELIER CURATION' }}</p>
+      <h2>{{ section.settings.heading | default: 'Curated Pairings & Additions' }}</h2>
+      <p class="muted small">{{ section.settings.subheading | default: 'Bespoke accessories and complementary silhouettes to complete your look.' }}</p>
+    </header>
+    <div class="grid grid--products">
+      {%- assign shown = 0 -%}
+      {%- for p in collections.all.products -%}
+        {%- if p.id != cur.id and shown < section.settings.limit -%}
+          {% render 'product-card', product: p %}
+          {%- assign shown = shown | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Recommendations",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "ATELIER CURATION" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Curated Pairings & Additions" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Bespoke accessories and complementary silhouettes to complete your look." },
+    { "type": "range", "id": "limit", "min": 2, "max": 8, "step": 1, "label": "Products", "default": 4 }
+  ],
+  "presets": [{ "name": "Recommendations" }]
+}
+{% endschema %}

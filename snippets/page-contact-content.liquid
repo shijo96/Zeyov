@@ -1,0 +1,98 @@
+<section class="section contact-page">
+  <div class="container container--narrow">
+    <header class="section__head center">
+      <p class="eyebrow">Customer Support</p>
+      <h1>Contact Us</h1>
+      <p class="muted">Have questions about an order, delivery, or a product? We're here to help you every step of the way.</p>
+    </header>
+
+    <div class="contact-cards">
+      <div class="contact-card">
+        <span class="contact-card__icon">{% render 'icon', name: 'whatsapp' %}</span>
+        <h3>WhatsApp Support</h3>
+        <p class="small muted">Quickest assistance for order status &amp; returns</p>
+        {%- if settings.whatsapp_number != blank -%}
+          <a class="btn btn--small btn--gold mt-sm" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text=Hi%20Zeyov%20Support%2C%20I%20need%20help%20with%20my%20order" target="_blank" rel="noopener">Chat on WhatsApp</a>
+        {%- else -%}
+          <a class="btn btn--small btn--gold mt-sm" href="https://wa.me/919999999999?text=Hi%20Zeyov" target="_blank" rel="noopener">Chat on WhatsApp</a>
+        {%- endif -%}
+      </div>
+
+      <div class="contact-card">
+        <span class="contact-card__icon">{% render 'icon', name: 'headset' %}</span>
+        <h3>Email Support</h3>
+        <p class="small muted">For detailed inquiries, partnerships &amp; invoices</p>
+        <a class="btn btn--small btn--outline mt-sm" href="mailto:{{ settings.support_email | default: 'support@zeyov.com' }}">{{ settings.support_email | default: 'support@zeyov.com' }}</a>
+      </div>
+
+      <div class="contact-card">
+        <span class="contact-card__icon">{% render 'icon', name: 'check' %}</span>
+        <h3>Operating Hours</h3>
+        <p class="small muted">Monday to Saturday</p>
+        <span class="badge badge--gold mt-sm">9:30 AM – 6:30 PM IST</span>
+      </div>
+    </div>
+
+    <div class="contact-form-box card-box mt">
+      <h2 class="center">Send Us a Message</h2>
+      <p class="small muted center">Fill out the form below and our customer care team will respond within 24 hours.</p>
+
+      {%- form 'contact', class: 'form mt', id: 'ZeyovContactForm' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="alert alert--ok">Thank you for reaching out to ZEYOV. Our team has received your message and will respond shortly.</p>
+        {%- endif -%}
+        {{ form.errors | default_errors }}
+
+        {%- comment -%} Bot trap honeypot field (hidden from legitimate users, populated by scraping bots) {%- endcomment -%}
+        <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+          <label for="ContactBotTrap">Do not fill this field</label>
+          <input type="text" id="ContactBotTrap" name="contact[bot_trap]" tabindex="-1" autocomplete="off">
+        </div>
+        
+        <div class="form__row">
+          <label>Full Name <span class="req-star">*</span>
+            <input type="text" name="contact[name]" placeholder="Your name" value="{% if form.name %}{{ form.name | escape }}{% elsif customer %}{{ customer.name | escape }}{% endif %}" maxlength="100" required>
+          </label>
+          <label>Email Address <span class="req-star">*</span>
+            <input type="email" name="contact[email]" placeholder="yourname@gmail.com" value="{% if form.email %}{{ form.email | escape }}{% elsif customer %}{{ customer.email | escape }}{% endif %}" maxlength="100" required>
+          </label>
+        </div>
+
+        <div class="form__row">
+          <label>Mobile Number (optional)
+            <input type="tel" name="contact[phone]" placeholder="10-digit mobile number" value="{{ form.phone | escape }}" maxlength="20">
+          </label>
+          <label>Order Number (if applicable)
+            <input type="text" name="contact[order]" placeholder="e.g. #1024" value="{{ form.order | escape }}" maxlength="50">
+          </label>
+        </div>
+
+        <label>Your Message <span class="req-star">*</span>
+          <textarea name="contact[body]" rows="5" placeholder="How can we help you today?" maxlength="2000" required>{{ form.body | escape }}</textarea>
+        </label>
+
+        <button class="btn btn--gold btn--block mt-sm" type="submit" id="ContactSubmitBtn">Send Message</button>
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var cForm = document.getElementById('ZeyovContactForm');
+    if (cForm) {
+      cForm.addEventListener('submit', function (e) {
+        var trap = document.getElementById('ContactBotTrap');
+        if (trap && trap.value) {
+          e.preventDefault();
+          return false;
+        }
+        var btn = document.getElementById('ContactSubmitBtn');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Sending Message…';
+        }
+      });
+    }
+  })();
+</script>

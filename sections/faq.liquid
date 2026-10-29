@@ -1,0 +1,37 @@
+<section class="section">
+  <div class="container container--narrow">
+    <header class="section__head">
+      <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2>{{ section.settings.heading }}</h2>
+    </header>
+    <div class="faq">
+      {%- for block in section.blocks -%}
+        <details class="faq__item" {{ block.shopify_attributes }}>
+          <summary>{{ block.settings.q }}{% render 'icon', name: 'chevron' %}</summary>
+          <div class="faq__a">{{ block.settings.a }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Good to know" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently asked questions" }
+  ],
+  "blocks": [
+    { "type": "q", "name": "Question", "settings": [
+      { "type": "text", "id": "q", "label": "Question", "default": "How long does delivery take?" },
+      { "type": "richtext", "id": "a", "label": "Answer", "default": "<p>We process confirmed orders within 1–2 working days. After dispatch, estimated delivery takes 4–7 working days across India (excluding Sundays & public holidays). You will receive live tracking updates via WhatsApp and Email.</p>" }
+    ] }
+  ],
+  "presets": [{ "name": "FAQ", "blocks": [
+    { "type": "q", "settings": { "q": "How long does delivery take across India?", "a": "<p>Confirmed orders are prepared and dispatched within 1–2 working days. After dispatch, estimated delivery is 4–7 working days across India with real-time WhatsApp tracking.</p>" } },
+    { "type": "q", "settings": { "q": "How do I choose the right size for dresses & outerwear?", "a": "<p>All ZEYOV garments follow standard Indian sizing (XS to XL) with comfortable drape and ease allowance. You can refer to the size guide on each runway piece or contact our WhatsApp styling concierge for personalized assistance.</p>" } },
+    { "type": "q", "settings": { "q": "What payment methods are supported and is COD available?", "a": "<p>We support secure prepaid checkout via UPI (Google Pay, PhonePe, Paytm), RuPay, Visa, Mastercard, and Net Banking with Free Pan-India Delivery. Cash on Delivery (COD) is coming soon.</p>" } },
+    { "type": "q", "settings": { "q": "Can I exchange or return a garment?", "a": "<p>Yes! We offer a hassle-free 7-day exchange and return window for unworn garments with original tags attached. Simply contact our support team on WhatsApp or email.</p>" } }
+  ] }]
+}
+{% endschema %}

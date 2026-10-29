@@ -1,0 +1,32 @@
+<section class="trust-bar">
+  <div class="container trust-row">
+    {%- for block in section.blocks -%}
+      <div {{ block.shopify_attributes }}>
+        {% render 'icon', name: block.settings.icon %}
+        <span><b>{{ block.settings.title }}</b>{{ block.settings.text }}</span>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Trust bar",
+  "max_blocks": 5,
+  "blocks": [
+    { "type": "item", "name": "Item", "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "shield", "options": [
+        { "value": "truck", "label": "Truck" }, { "value": "shield", "label": "Shield" }, { "value": "return", "label": "Return" },
+        { "value": "lock", "label": "Lock" }, { "value": "headset", "label": "Support" }, { "value": "gift", "label": "Gift" }, { "value": "leaf", "label": "Leaf" }
+      ] },
+      { "type": "text", "id": "title", "label": "Title", "default": "Secure checkout" },
+      { "type": "text", "id": "text", "label": "Text", "default": "Encrypted payments" }
+    ] }
+  ],
+  "presets": [{ "name": "Trust bar", "blocks": [
+    { "type": "item", "settings": { "icon": "truck", "title": "Delivery across India", "text": "Tracked shipping" } },
+    { "type": "item", "settings": { "icon": "lock", "title": "Secure checkout", "text": "Encrypted payments" } },
+    { "type": "item", "settings": { "icon": "return", "title": "Easy returns", "text": "As per return policy" } },
+    { "type": "item", "settings": { "icon": "headset", "title": "Real support", "text": "Chat, email or call" } }
+  ] }]
+}
+{% endschema %}

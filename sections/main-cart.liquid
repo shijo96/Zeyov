@@ -1,0 +1,257 @@
+<section class="section cart-page" data-cart-page>
+  <div class="container">
+    <header class="cart-page__header center">
+      <p class="eyebrow">YOUR ATELIER SELECTIONS</p>
+      <h1 class="cart-page__title">Shopping Bag ({% if cart.item_count > 0 %}{{ cart.item_count }}{% else %}0{% endif %})</h1>
+      <p class="muted small">Review your curated pieces before bespoke express dispatch across India.</p>
+    </header>
+
+    {%- if cart.item_count == 0 -%}
+      <div class="cart__empty center">
+        <div class="cart__empty-icon">{% render 'icon', name: 'cart' %}</div>
+        <h2>Your Bag is Currently Empty</h2>
+        <p class="muted">Discover our latest Runway Atelier silhouettes, couture accessories, and essential pieces.</p>
+        <a class="btn btn--luxury mt" href="{{ routes.all_products_collection_url }}">Explore Runway Collection &rarr;</a>
+      </div>
+    {%- else -%}
+      <!-- Luxury Delivery Banner -->
+      <div class="ship-bar ship-bar--luxury">
+        <div class="ship-bar__icon-circle">
+          {% render 'icon', name: 'check' %}
+        </div>
+        <div class="ship-bar__content">
+          <b>Complimentary Express Pan-India Delivery on all Prepaid Orders</b>
+          <span>Fast, insured transit (4–7 working days) with SMS &amp; WhatsApp tracking. Cash on Delivery (COD) coming soon.</span>
+        </div>
+      </div>
+
+      <form action="{{ routes.cart_url }}" method="post" id="CartForm" class="cart-form">
+        <div class="cart__grid">
+          <!-- Left Column: Cart Items -->
+          <div class="cart__items-col">
+            <div class="cart__items-list">
+              {%- assign cart_orig_subtotal = 0 -%}
+              {%- assign cart_bundle_savings = 0 -%}
+              {%- assign active_discount_code = '' -%}
+
+              {%- for item in cart.items -%}
+                {%- assign line_orig = item.original_price | times: item.quantity -%}
+                {%- assign disc_pct = 0 -%}
+                {%- if item.quantity == 1 -%}
+                  {%- assign disc_pct = 0 -%}
+                {%- elsif item.quantity == 2 -%}
+                  {%- assign disc_pct = 10 -%}
+                  {%- if item.properties['_bundle_discount'] != blank -%}
+                    {%- assign prop_pct = item.properties['_bundle_discount'] | plus: 0 -%}
+                    {%- if prop_pct > 0 and prop_pct <= 10 -%}
+                      {%- assign disc_pct = prop_pct -%}
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- elsif item.quantity >= 3 -%}
+                  {%- assign disc_pct = 13 -%}
+                  {%- if item.properties['_bundle_discount'] != blank -%}
+                    {%- assign prop_pct = item.properties['_bundle_discount'] | plus: 0 -%}
+                    {%- if prop_pct >= 13 -%}
+                      {%- assign disc_pct = prop_pct -%}
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- assign line_savings = 0 -%}
+                {%- if disc_pct > 0 -%}
+                  {%- assign line_savings = line_orig | times: disc_pct | divided_by: 100 -%}
+                  {%- if item.quantity == 2 -%}{%- assign active_discount_code = 'BUNDLE10' -%}{%- elsif item.quantity >= 3 -%}{%- assign active_discount_code = 'BUNDLE13' -%}{%- endif -%}
+                {%- endif -%}
+                {%- assign native_savings = item.original_line_price | minus: item.final_line_price -%}
+                {%- if native_savings >= line_savings -%}
+                  {%- assign line_savings = native_savings -%}
+                {%- endif -%}
+                {%- assign line_final = line_orig | minus: line_savings -%}
+                {%- assign unit_final = line_final | divided_by: item.quantity -%}
+
+                {%- assign cart_orig_subtotal = cart_orig_subtotal | plus: line_orig -%}
+                {%- assign cart_bundle_savings = cart_bundle_savings | plus: line_savings -%}
+
+                <article class="cart-item" data-line="{{ forloop.index }}">
+                  <a class="cart-item__media" href="{{ item.url }}" aria-label="{{ item.product.title | escape }}">
+                    {%- if item.image -%}
+                      {{ item.image | image_url: width: 240, height: 280, crop: 'center' | image_tag: loading: 'lazy', alt: item.image.alt | default: item.product.title }}
+                    {%- else -%}
+                      <div class="cart-item__placeholder">{{ item.product.title | truncate: 1, '' }}</div>
+                    {%- endif -%}
+                  </a>
+
+                  <div class="cart-item__details">
+                    <div class="cart-item__top">
+                      <div class="cart-item__title-row">
+                        <a class="cart-item__title" href="{{ item.url }}">{{ item.product.title }}</a>
+                        <b class="cart-item__total-price-mobile">{{ line_final | money }}</b>
+                      </div>
+
+                      {%- unless item.product.has_only_default_variant -%}
+                        <span class="cart-item__variant-chip">{{ item.variant.title }}</span>
+                      {%- endunless -%}
+
+                      {%- if disc_pct > 0 -%}
+                        <span class="cart-item__disc-chip">
+                          {% render 'icon', name: 'check' %} Buy {{ item.quantity }} Bundle &bull; {{ disc_pct }}% Extra OFF Applied (−{{ line_savings | money }})
+                        </span>
+                      {%- endif -%}
+
+                      {%- for da in item.line_level_discount_allocations -%}
+                        <span class="cart-item__disc-chip">{% render 'icon', name: 'check' %} {{ da.discount_application.title }} (−{{ da.amount | money }})</span>
+                      {%- endfor -%}
+
+                      <div class="cart-item__unit-price">
+                        <span class="price-tag">{{ unit_final | money }}</span> each
+                        {%- if disc_pct > 0 or item.original_price > item.final_price -%}
+                          <s class="muted">{{ item.original_price | money }}</s>
+                        {%- endif -%}
+                      </div>
+                    </div>
+
+                    <div class="cart-item__bottom">
+                      <!-- Luxury Stepper Pill -->
+                      <div class="cart-qty-pill" data-qty data-line-qty="{{ forloop.index }}">
+                        <button type="button" class="cart-qty-btn" data-qty-minus aria-label="Decrease quantity">&minus;</button>
+                        <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" aria-label="Quantity for {{ item.product.title | escape }}" class="cart-qty-input">
+                        <button type="button" class="cart-qty-btn" data-qty-plus aria-label="Increase quantity">+</button>
+                      </div>
+
+                      <div class="cart-item__price-col">
+                        <b class="cart-item__total-price">{{ line_final | money }}</b>
+                        {%- if disc_pct > 0 or item.original_line_price > item.final_line_price -%}
+                          <s class="cart-item__was-price">{{ line_orig | money }}</s>
+                        {%- endif -%}
+                      </div>
+
+                      <a class="cart-item__remove-btn" href="{{ item.url_to_remove }}" data-remove aria-label="Remove {{ item.product.title | escape }}">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/></svg>
+                        <span>Remove</span>
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              {%- endfor -%}
+            </div>
+
+            <div class="cart-continue-wrap">
+              <a href="{{ routes.all_products_collection_url }}" class="cart-continue-link">
+                &larr; Continue Exploring Atelier Collection
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Column: Order Summary Card -->
+          <aside class="cart__summary-col">
+            <div class="cart__summary-card">
+              <h2 class="cart__summary-title">Order Summary</h2>
+
+              {%- assign cart_final_total = cart_orig_subtotal | minus: cart_bundle_savings -%}
+
+              {%- if cart.cart_level_discount_applications.size > 0 -%}
+                {%- for da in cart.cart_level_discount_applications -%}
+                  <div class="summary-row summary-row--discount">
+                    <span>{{ da.title }}</span>
+                    <span>−{{ da.total_allocated_amount | money }}</span>
+                  </div>
+                {%- endfor -%}
+              {%- endif -%}
+
+              <div class="summary-row">
+                <span>Original Price ({{ cart.item_count }} {% if cart.item_count == 1 %}piece{% else %}pieces{% endif %})</span>
+                <span class="summary-orig-subtotal">{% if cart_bundle_savings > 0 %}<s>{{ cart_orig_subtotal | money }}</s>{% else %}<b>{{ cart_orig_subtotal | money }}</b>{% endif %}</span>
+              </div>
+
+              {%- if cart_bundle_savings > 0 -%}
+                <div class="summary-row summary-row--savings">
+                  <span class="savings-label">
+                    <span class="badge badge--gold" style="font-size:0.65rem;padding:2px 8px;margin-right:6px">SPECIAL OFFER</span>
+                    Bundle Savings
+                  </span>
+                  <b class="savings-amount">−{{ cart_bundle_savings | money }}</b>
+                </div>
+              {%- endif -%}
+
+              <div class="summary-row summary-row--subtotal">
+                <span>Subtotal</span>
+                <b class="summary-subtotal">{{ cart_final_total | money }}</b>
+              </div>
+
+              <div class="summary-row summary-row--shipping">
+                <span>Pan-India Delivery</span>
+                <span class="badge badge--gold">FREE (PREPAID)</span>
+              </div>
+
+              <div class="summary-row summary-row--total" style="border-top:1.5px solid var(--border);padding-top:14px;margin-top:10px;">
+                <span style="font-weight:700;font-size:1.05rem;color:#181716;">Total to Pay</span>
+                <b class="summary-final-total" style="font-weight:800;font-size:1.35rem;color:#181716;">{{ cart_final_total | money }}</b>
+              </div>
+
+              <!-- Pass active discount code to checkout -->
+              <input type="hidden" name="discount" value="{{ active_discount_code }}" id="CartDiscountCode">
+
+              <p class="summary-tax-note">All taxes included. Free insured delivery across 28,000+ Indian PIN codes.</p>
+
+              <!-- Delivery Contact Phone Numbers (Phone 1 Mandatory, Phone 2 Optional) -->
+              <div class="cart-contact-card">
+                <div class="cart-contact-card__head">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  <span>Delivery Contact Details</span>
+                </div>
+                
+                <div class="cart-field-group">
+                  <label for="PrimaryPhone" class="cart-field-label">
+                    Primary Mobile Number <span class="req-star">* (Mandatory)</span>
+                  </label>
+                  <div class="phone-input-wrap">
+                    <span class="phone-prefix">+91</span>
+                    <input type="tel" name="attributes[Primary Phone]" id="PrimaryPhone" value="{{ cart.attributes['Primary Phone'] | default: customer.phone | escape }}" placeholder="10-digit mobile number" maxlength="10" pattern="[6-9][0-9]{9}" required autocomplete="tel">
+                  </div>
+                  <small class="cart-field-hint">Courier partner will call this number for dispatch &amp; delivery updates.</small>
+                </div>
+
+                <div class="cart-field-group">
+                  <label for="AltPhone" class="cart-field-label">
+                    Alternate Mobile Number <span class="opt-tag">(Optional)</span>
+                  </label>
+                  <div class="phone-input-wrap">
+                    <span class="phone-prefix">+91</span>
+                    <input type="tel" name="attributes[Alternate Phone]" id="AltPhone" value="{{ cart.attributes['Alternate Phone'] | escape }}" placeholder="Backup 10-digit number" maxlength="10" pattern="[0-9]{10}" autocomplete="tel">
+                  </div>
+                  <small class="cart-field-hint">Backup contact if your primary phone is busy or unreachable.</small>
+                </div>
+              </div>
+
+              {%- if settings.cart_note -%}
+                <div class="cart-note-box">
+                  <label class="cart-field-label" for="CartNote">Special Delivery Instructions (Optional)</label>
+                  <textarea id="CartNote" name="note" rows="2" placeholder="e.g. Leave with security / Call before delivery" class="cart-note-textarea" maxlength="500">{{ cart.note | escape }}</textarea>
+                </div>
+              {%- endif -%}
+
+              <!-- Primary Checkout CTA -->
+              <button type="submit" name="checkout" class="btn btn--luxury-checkout btn--block" id="CheckoutBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+                <span>Proceed to Secure Checkout</span>
+              </button>
+
+              <!-- Luxury Trust Checklist -->
+              <ul class="cart-assure-list" role="list">
+                <li>{% render 'icon', name: 'truck' %} <span><b>Free Pan-India Delivery</b> &bull; Tracked express courier</span></li>
+                <li>{% render 'icon', name: 'shield' %} <span><b>100% Secure Checkout</b> &bull; 256-Bit SSL protection</span></li>
+                <li>{% render 'icon', name: 'return' %} <span><b>7-Day Easy Return</b> &bull; Hassle-free exchanges</span></li>
+                <li>{% render 'icon', name: 'headset' %} <span><b>Prepaid UPI &amp; Cards</b> &bull; COD coming soon</span></li>
+              </ul>
+
+              <div class="cart-payment-icons center">
+                {% render 'payment-icons' %}
+              </div>
+            </div>
+          </aside>
+        </div>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
+{% schema %}{ "name": "Cart" }{% endschema %}

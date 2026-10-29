@@ -1,0 +1,13 @@
+# Ignore files not needed or prohibited on Shopify theme servers
+.git/
+.gitignore
+.shopifyignore
+.DS_Store
+Thumbs.db
+tests/
+scratch/
+*.md
+*.zip
+*.tar.gz
+*.py
+*.pyc

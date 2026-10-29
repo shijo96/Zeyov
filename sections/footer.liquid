@@ -1,0 +1,118 @@
+{%- assign fm = linklists[section.settings.menu] -%}
+<footer class="footer">
+  {%- if section.settings.show_trust -%}
+  <div class="footer__trust">
+    <div class="container trust-row">
+      <div>{% render 'icon', name: 'truck' %}<span><b>{{ section.settings.t1_title | default: 'Delivery across India' }}</b>{{ section.settings.t1_text | default: 'Tracked shipping' }}</span></div>
+      <div>{% render 'icon', name: 'shield' %}<span><b>{{ section.settings.t2_title | default: 'Secure payments' }}</b>{{ section.settings.t2_text | default: 'Encrypted checkout' }}</span></div>
+      <div>{% render 'icon', name: 'return' %}<span><b>{{ section.settings.t3_title | default: 'Easy 7-day returns' }}</b>{{ section.settings.t3_text | default: 'Hassle-free process' }}</span></div>
+      <div>{% render 'icon', name: 'headset' %}<span><b>{{ section.settings.t4_title | default: 'Friendly support' }}</b>{{ section.settings.t4_text | default: 'WhatsApp & email' }}</span></div>
+    </div>
+  </div>
+  {%- endif -%}
+
+  {%- if section.settings.show_shipping_strip -%}
+  <div class="footer__shipping-strip">
+    <div class="container footer__shipping-inner">
+      <div class="shipping-pill">
+        {% render 'icon', name: 'check' %}
+        <span><strong>Order Processing:</strong> 1–2 working days</span>
+      </div>
+      <div class="shipping-pill">
+        {% render 'icon', name: 'truck' %}
+        <span><strong>Estimated Delivery:</strong> 4–7 working days after dispatch</span>
+      </div>
+      <div class="shipping-pill shipping-pill--badge">
+        <span>Tracked pan-India delivery (Excl. Sundays &amp; public holidays)</span>
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <img src="{{ 'zeyov-logo.png' | asset_url }}" alt="ZEYOV" width="160" height="64" loading="lazy">
+      <p>{{ section.settings.about | default: 'ZEYOV is a modern luxury atelier & lifestyle brand. Precision-tailored garments, flowing silks, and curated everyday essentials – style for a brighter you.' }}</p>
+      <div class="social">
+        {%- if settings.social_instagram != blank -%}<a href="{{ settings.social_instagram }}" aria-label="Instagram" target="_blank" rel="noopener">{% render 'icon', name: 'instagram' %}</a>{%- endif -%}
+        {%- if settings.social_facebook != blank -%}<a href="{{ settings.social_facebook }}" aria-label="Facebook" target="_blank" rel="noopener">{% render 'icon', name: 'facebook' %}</a>{%- endif -%}
+        {%- if settings.social_youtube != blank -%}<a href="{{ settings.social_youtube }}" aria-label="YouTube" target="_blank" rel="noopener">{% render 'icon', name: 'youtube' %}</a>{%- endif -%}
+        {%- if settings.whatsapp_number != blank -%}<a href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}" aria-label="WhatsApp" target="_blank" rel="noopener">{% render 'icon', name: 'whatsapp' %}</a>{%- endif -%}
+      </div>
+    </div>
+
+    <div>
+      <h4>Fashion &amp; Collections</h4>
+      <ul role="list">
+        {%- if fm != blank and fm.links.size > 0 -%}
+          {%- for l in fm.links -%}<li><a href="{{ l.url }}">{{ l.title }}</a></li>{%- endfor -%}
+        {%- else -%}
+          <li><a href="{{ routes.root_url }}#RunwayOrbit">The Runway Edit</a></li>
+          <li><a href="{{ routes.root_url }}#FashionShowcase">Dresses &amp; Gowns</a></li>
+          <li><a href="{{ routes.root_url }}#FashionShowcase">Outerwear &amp; Jackets</a></li>
+          <li><a href="{{ routes.root_url }}#RunwayRail">Runway Lookbook Rail</a></li>
+          <li><a href="{{ routes.collections_url }}/accessories">Runway Accessories</a></li>
+          <li><a href="{{ routes.all_products_collection_url }}">All Fashion Collections</a></li>
+        {%- endif -%}
+      </ul>
+    </div>
+
+    <div>
+      <h4>Trust &amp; Policies</h4>
+      <ul role="list">
+        {%- assign shipping_link = pages['shipping-policy'].url | default: pages['shipping'].url | default: pages['shipping-and-delivery-policy'].url | default: shop.shipping_policy.url | default: '/pages/shipping-policy' -%}
+        {%- assign refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: pages['return-policy'].url | default: pages['return-and-refund-policy'].url | default: shop.refund_policy.url | default: '/pages/refund-policy' -%}
+        {%- assign privacy_link = pages['privacy-policy'].url | default: pages['privacy'].url | default: shop.privacy_policy.url | default: '/pages/privacy-policy' -%}
+        {%- assign terms_link = pages['terms-of-service'].url | default: pages['terms'].url | default: pages['terms-and-conditions'].url | default: shop.terms_of_service.url | default: '/pages/terms-of-service' -%}
+        {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
+        <li><a href="{{ shipping_link }}">Shipping &amp; Delivery Policy</a></li>
+        <li><a href="{{ refund_link }}">Return &amp; Refund Policy</a></li>
+        <li><a href="{{ privacy_link }}">Privacy Policy</a></li>
+        <li><a href="{{ terms_link }}">Terms of Service</a></li>
+        <li><a href="{{ track_link }}">Track Your Order</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Customer Help</h4>
+      <ul role="list">
+        {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: pages['about-zeyov'].url | default: '/pages/about-us' -%}
+        {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
+        {%- assign faq_link = pages['faq'].url | default: pages['faqs'].url | default: pages['frequently-asked-questions'].url | default: '/pages/faq' -%}
+        <li><a href="{{ about_link }}">About ZEYOV</a></li>
+        <li><a href="{{ contact_link }}">Contact Us</a></li>
+        <li><a href="{{ faq_link }}">Frequently Asked Questions</a></li>
+        {%- if settings.support_email != blank -%}<li><a href="mailto:{{ settings.support_email }}">Email: {{ settings.support_email }}</a></li>{%- endif -%}
+        {%- if settings.whatsapp_number != blank -%}<li><a href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}" target="_blank" rel="noopener">WhatsApp Concierge</a></li>{%- endif -%}
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <div class="container footer__bottom-inner">
+      <small>&copy; {{ 'now' | date: '%Y' }} ZEYOV. All rights reserved. Style for a Brighter You.</small>
+      {% render 'payment-icons' %}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Shop links menu", "default": "footer" },
+    { "type": "textarea", "id": "about", "label": "About text", "default": "ZEYOV is a premier modern luxury fashion atelier. Precision-tailored apparel, flowing silks, and curated accessories – style for a brighter you." },
+    { "type": "checkbox", "id": "show_trust", "label": "Show trust row above footer", "default": true },
+    { "type": "checkbox", "id": "show_shipping_strip", "label": "Show Indian shipping policy banner", "default": true },
+    { "type": "header", "content": "Trust row" },
+    { "type": "text", "id": "t1_title", "label": "1 title", "default": "Free Delivery on Prepaid" },
+    { "type": "text", "id": "t1_text", "label": "1 text", "default": "Pan-India tracked shipping" },
+    { "type": "text", "id": "t2_title", "label": "2 title", "default": "100% Secure Checkout" },
+    { "type": "text", "id": "t2_text", "label": "2 text", "default": "UPI & Cards" },
+    { "type": "text", "id": "t3_title", "label": "3 title", "default": "Easy 7-day returns" },
+    { "type": "text", "id": "t3_text", "label": "3 text", "default": "Hassle-free process" },
+    { "type": "text", "id": "t4_title", "label": "4 title", "default": "COD Coming Soon" },
+    { "type": "text", "id": "t4_text", "label": "4 text", "default": "Launching soon" }
+  ]
+}
+{% endschema %}

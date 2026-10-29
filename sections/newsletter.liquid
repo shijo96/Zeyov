@@ -1,0 +1,50 @@
+<section class="section newsletter">
+  <div class="container container--narrow center">
+    <h2>{{ section.settings.heading }}</h2>
+    <p class="muted">{{ section.settings.text }}</p>
+    {%- form 'customer', class: 'newsletter__form', id: 'ZeyovNewsletterForm' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+        <label for="NewsletterBotTrap">Do not fill this</label>
+        <input type="text" id="NewsletterBotTrap" name="contact[b_trap]" tabindex="-1" autocomplete="off">
+      </div>
+      {%- if form.posted_successfully? -%}
+        <p class="alert alert--ok">Thanks for subscribing!</p>
+      {%- else -%}
+        {{ form.errors | default_errors }}
+        <input type="email" name="contact[email]" placeholder="Your email address" required autocomplete="email" aria-label="Email">
+        <button type="submit" class="btn" id="NewsletterSubmitBtn">Subscribe</button>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var nForm = document.getElementById('ZeyovNewsletterForm');
+    if (nForm) {
+      nForm.addEventListener('submit', function (e) {
+        var trap = document.getElementById('NewsletterBotTrap');
+        if (trap && trap.value) {
+          e.preventDefault();
+          return false;
+        }
+        var btn = document.getElementById('NewsletterSubmitBtn');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Subscribing…';
+        }
+      });
+    }
+  })();
+</script>
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Join the Zeyov list" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "New arrivals and offers, straight to your inbox. No spam." }
+  ],
+  "presets": [{ "name": "Newsletter" }]
+}
+{% endschema %}

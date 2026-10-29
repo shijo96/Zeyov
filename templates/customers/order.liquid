@@ -1,0 +1,42 @@
+<section class="section">
+  <div class="container">
+    <header class="section__head">
+      <h1>Order {{ order.name | escape }}</h1>
+      <p class="muted">Placed on {{ order.created_at | date: '%d %b %Y' }}</p>
+      <p><a class="small" href="{{ routes.account_url }}">&larr; Back to account</a></p>
+    </header>
+    <div class="account">
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
+          <tbody>
+            {%- for line in order.line_items -%}
+              <tr>
+                <td>
+                  <a href="{{ line.product.url }}">{{ line.title | escape }}</a>
+                  {%- if line.fulfillment -%}
+                    <p class="small muted">Shipped {{ line.fulfillment.created_at | date: '%d %b' }}
+                    {%- if line.fulfillment.tracking_url %} &middot; <a href="{{ line.fulfillment.tracking_url }}" target="_blank" rel="noopener noreferrer">Track ({{ line.fulfillment.tracking_company | escape }} {{ line.fulfillment.tracking_number | escape }})</a>{% endif -%}</p>
+                  {%- endif -%}
+                </td>
+                <td>{{ line.final_price | money }}</td>
+                <td>{{ line.quantity }}</td>
+                <td>{{ line.final_line_price | money }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+          <tfoot>
+            <tr><td colspan="3">Subtotal</td><td>{{ order.line_items_subtotal_price | money }}</td></tr>
+            {%- for sl in order.shipping_methods -%}<tr><td colspan="3">Shipping ({{ sl.title }})</td><td>{{ sl.price | money }}</td></tr>{%- endfor -%}
+            <tr><td colspan="3"><b>Total</b></td><td><b>{{ order.total_price | money }}</b></td></tr>
+          </tfoot>
+        </table>
+      </div>
+      <aside class="card-box">
+        <h2 class="h3">Shipping address</h2>
+        <p>{{ order.shipping_address | format_address }}</p>
+        <p class="small muted">Payment: {{ order.financial_status_label }}<br>Fulfilment: {{ order.fulfillment_status_label }}</p>
+      </aside>
+    </div>
+  </div>
+</section>

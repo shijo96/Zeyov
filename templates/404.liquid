@@ -1,0 +1,88 @@
+{%- comment -%}
+  ZEYOV 404 & Dynamic Page Fallback Router
+  Intercepts missing policy/help pages and renders them seamlessly without 404.
+{%- endcomment -%}
+
+<div id="Zeyov404Wrapper">
+  <!-- Default 404 Content (hidden if auto-routed to a policy/help page) -->
+  <div id="Zeyov404Default">
+    {% render 'page-404-content' %}
+  </div>
+
+  <!-- Dynamic Fallback Page Sections (pre-rendered with luxury atelier content) -->
+  <div id="FallbackShipping" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-shipping-content' %}
+  </div>
+
+  <div id="FallbackRefund" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-refund-content' %}
+  </div>
+
+  <div id="FallbackPrivacy" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-privacy-content' %}
+  </div>
+
+  <div id="FallbackTerms" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-terms-content' %}
+  </div>
+
+  <div id="FallbackTrack" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-track-order-content' %}
+  </div>
+
+  <div id="FallbackAbout" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-about-content' %}
+  </div>
+
+  <div id="FallbackContact" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-contact-content' %}
+  </div>
+
+  <div id="FallbackFaq" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-faq-content' %}
+  </div>
+</div>
+
+<script>
+  (function () {
+    try {
+      var p = (window.location.pathname || '').toLowerCase();
+      var def = document.getElementById('Zeyov404Default');
+      var matchedId = null;
+
+      if (p.indexOf('shipping') !== -1 || p.indexOf('delivery') !== -1) {
+        matchedId = 'FallbackShipping';
+        document.title = 'Shipping & Delivery Policy – ZEYOV';
+      } else if (p.indexOf('refund') !== -1 || p.indexOf('return') !== -1) {
+        matchedId = 'FallbackRefund';
+        document.title = 'Return & Refund Policy – ZEYOV';
+      } else if (p.indexOf('privacy') !== -1) {
+        matchedId = 'FallbackPrivacy';
+        document.title = 'Privacy Policy – ZEYOV';
+      } else if (p.indexOf('term') !== -1) {
+        matchedId = 'FallbackTerms';
+        document.title = 'Terms of Service – ZEYOV';
+      } else if (p.indexOf('track') !== -1) {
+        matchedId = 'FallbackTrack';
+        document.title = 'Track Your Order – ZEYOV';
+      } else if (p.indexOf('about') !== -1) {
+        matchedId = 'FallbackAbout';
+        document.title = 'About ZEYOV – Luxury Atelier';
+      } else if (p.indexOf('contact') !== -1) {
+        matchedId = 'FallbackContact';
+        document.title = 'Contact Us – ZEYOV Concierge';
+      } else if (p.indexOf('faq') !== -1 || p.indexOf('question') !== -1) {
+        matchedId = 'FallbackFaq';
+        document.title = 'Frequently Asked Questions – ZEYOV';
+      }
+
+      if (matchedId) {
+        var target = document.getElementById(matchedId);
+        if (target) {
+          if (def) def.style.display = 'none';
+          target.style.display = 'block';
+        }
+      }
+    } catch (e) {}
+  })();
+</script>

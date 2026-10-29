@@ -1,0 +1,61 @@
+<section class="section about-page">
+  <div class="container container--narrow">
+    <header class="section__head center">
+      <p class="eyebrow">The Zeyov Atelier</p>
+      <h1 class="about__title">Style for a Brighter You.</h1>
+      <p class="muted about__lead">Precision-tailored garments, flowing silhouettes, and luxury fashion accessories crafted for lasting distinction.</p>
+    </header>
+
+    <div class="about__hero-img">
+      <img src="{{ 'fashion-model-editorial.jpg' | asset_url }}" alt="Zeyov Runway Fashion &amp; Atelier" class="about__img" width="1400" height="700" loading="eager">
+    </div>
+
+    <div class="about__story rte mt">
+      {%- if page.content != blank -%}
+        {{ page.content }}
+      {%- else -%}
+        <div class="about__grid-story">
+          <div class="about__col">
+            <h3>Our Haute Vision</h3>
+            <p>Welcome to <strong>ZEYOV</strong>. We believe clothing should be more than mere fabric—it should sculpt gracefully, evoke effortless confidence, and tell a story of refined individuality.</p>
+            <p>Born from a runway-inspired editorial vision tailored specifically for modern India, ZEYOV creates bespoke silhouettes using Grade-6A pure Mulberry silks, double-faced virgin wools, and thermal air-loft architecture. We don't chase fast fashion; we create timeless couture statements.</p>
+          </div>
+          <div class="about__col">
+            <h3>Artisanal Craftsmanship</h3>
+            <p>From sculpted evening gowns and tailored winter trenches to handcrafted leather belts, Italian silk scarves, and runway jewelry, every single garment in our atelier is drafted with bespoke Indian fit proportions and artisan seamwork.</p>
+            <p>Every piece is released in limited drops to preserve exclusivity and impeccable quality—staying faithful to our founding philosophy: <em>Style for a Brighter You</em>.</p>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="about__pillars">
+      <div class="about__pillar">
+        <span class="about__pillar-icon">{% render 'icon', name: 'leaf' %}</span>
+        <h4>Grade-6A Natural Fibers</h4>
+        <p class="small muted">We strictly reject cheap synthetic polymers. Only pure Mulberry silks and double-faced virgin wools.</p>
+      </div>
+      <div class="about__pillar">
+        <span class="about__pillar-icon">{% render 'icon', name: 'shield' %}</span>
+        <h4>Master Tailoring</h4>
+        <p class="small muted">Patterned specifically for Indian body contours with ease allowance and flattering lines.</p>
+      </div>
+      <div class="about__pillar">
+        <span class="about__pillar-icon">{% render 'icon', name: 'truck' %}</span>
+        <h4>Pan-India Express</h4>
+        <p class="small muted">Dispatched in protective luxury packaging with real-time WhatsApp tracking across India.</p>
+      </div>
+      <div class="about__pillar">
+        <span class="about__pillar-icon">{% render 'icon', name: 'headset' %}</span>
+        <h4>Styling Concierge</h4>
+        <p class="small muted">Personal styling guidance and size consultation directly on WhatsApp and email.</p>
+      </div>
+    </div>
+
+    <div class="about__cta center">
+      <h3>Ready to experience the runway?</h3>
+      <p class="muted">Explore our curated selection of couture dresses, outerwear, and accessories.</p>
+      <a class="btn btn--gold" href="{{ routes.all_products_collection_url }}">Explore The Runway Collection &rarr;</a>
+    </div>
+  </div>
+</section>

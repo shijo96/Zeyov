@@ -1,0 +1,28 @@
+<section class="section">
+  <div class="container container--tiny">
+    <h1 class="center">Login</h1>
+    {%- form 'customer_login', class: 'form' -%}
+      {{ form.errors | default_errors }}
+      {%- comment -%} Bot trap honeypot {%- endcomment -%}
+      <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
+        <label for="LoginBotTrap">Leave blank</label>
+        <input type="text" id="LoginBotTrap" name="customer[bot_trap]" tabindex="-1" autocomplete="off">
+      </div>
+      <label>Email<input type="email" name="customer[email]" autocomplete="email" maxlength="100" required></label>
+      {%- if form.password_needed -%}
+        <label>Password<input type="password" name="customer[password]" autocomplete="current-password" maxlength="100" required></label>
+        <a class="small" href="#recover" data-toggle-recover>Forgot your password?</a>
+      {%- endif -%}
+      <button class="btn btn--block" type="submit">Sign in</button>
+      <p class="center small">New to ZEYOV? <a href="{{ routes.account_register_url }}">Create account</a></p>
+    {%- endform -%}
+    <div id="recover" class="mt" hidden>
+      <h2 class="center h3">Reset password</h2>
+      {%- form 'recover_customer_password', class: 'form' -%}
+        {%- if form.posted_successfully? -%}<p class="alert alert--ok">We've sent you an email with a link to reset your password.</p>{%- endif -%}
+        <label>Email<input type="email" name="email" autocomplete="email" maxlength="100" required></label>
+        <button class="btn btn--block btn--outline" type="submit">Send reset link</button>
+      {%- endform -%}
+    </div>
+  </div>
+</section>

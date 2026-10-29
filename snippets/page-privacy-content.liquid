@@ -1,0 +1,46 @@
+<section class="section policy-page">
+  <div class="container container--narrow">
+    <header class="section__head center">
+      <p class="eyebrow">Trust &amp; Security</p>
+      <h1>Privacy Policy</h1>
+      <p class="muted">Your privacy is paramount. Learn how ZEYOV safeguards your personal information.</p>
+    </header>
+
+    <div class="policy-body rte">
+      {%- if shop.privacy_policy.body != blank -%}
+        {{ shop.privacy_policy.body }}
+      {%- elsif page.content != blank -%}
+        {{ page.content }}
+      {%- else -%}
+        <p>This Privacy Policy describes how <strong>ZEYOV</strong> ("we", "us", or "our") collects, uses, and discloses your personal information when you visit or make a purchase from <strong>Zeyov.com</strong>.</p>
+
+        <h2>1. Personal Information We Collect</h2>
+        <p>When you visit Zeyov.com or place an order, we collect information necessary to process your transaction and deliver products securely:</p>
+        <ul>
+          <li><strong>Order Information:</strong> Your name, billing address, shipping address, payment confirmation details, email address, and phone number.</li>
+          <li><strong>Device &amp; Browsing Information:</strong> IP address, browser type, device information, and pages visited to optimize website loading speeds and mobile layout.</li>
+          <li><strong>Customer Communications:</strong> Inquiries submitted via our contact form, email, or WhatsApp customer support.</li>
+        </ul>
+
+        <h2>2. How We Use Your Information</h2>
+        <p>We use your personal data strictly to:</p>
+        <ul>
+          <li>Fulfill and deliver your orders via our trusted courier partners across India.</li>
+          <li>Send order confirmations, dispatch notices, and tracking links.</li>
+          <li>Communicate with you regarding customer support requests.</li>
+          <li>Screen transactions for potential fraud and ensure checkout security.</li>
+          <li>Provide you with relevant updates or promotions if you opted in to our newsletter.</li>
+        </ul>
+
+        <h2>3. Payment Security</h2>
+        <p>All online payments on ZEYOV are processed through encrypted, PCI-DSS-compliant gateways supported by Shopify. We never store your full credit/debit card numbers or UPI PIN on our servers.</p>
+
+        <h2>4. Data Sharing &amp; Third Parties</h2>
+        <p>We do NOT sell, rent, or trade your personal data to third parties. We share data solely with trusted service providers necessary for business operations (such as logistics carriers to deliver parcels to your address, and Shopify as our e-commerce platform).</p>
+
+        <h2>5. Your Rights &amp; Contact Information</h2>
+        <p>If you have any questions about our privacy practices, or if you would like to request updates or deletion of your personal data, please contact our privacy officer at <a href="mailto:{{ settings.support_email | default: 'support@zeyov.com' }}">{{ settings.support_email | default: 'support@zeyov.com' }}</a>.</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>

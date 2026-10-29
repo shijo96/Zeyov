@@ -1,0 +1,42 @@
+<section class="section">
+  <div class="container">
+    <header class="section__head">
+      <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2>{{ section.settings.heading }}</h2>
+    </header>
+    <div class="features">
+      {%- for block in section.blocks -%}
+        <div class="feature" {{ block.shopify_attributes }}>
+          <span class="feature__icon">{% render 'icon', name: block.settings.icon %}</span>
+          <h3>{{ block.settings.title }}</h3>
+          <p class="muted">{{ block.settings.text }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Why Zeyov",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Zeyov promise" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Why you'll love shopping with us" }
+  ],
+  "blocks": [
+    { "type": "feature", "name": "Feature", "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "leaf", "options": [
+        { "value": "truck", "label": "Truck" }, { "value": "shield", "label": "Shield" }, { "value": "return", "label": "Return" },
+        { "value": "lock", "label": "Lock" }, { "value": "headset", "label": "Support" }, { "value": "gift", "label": "Gift" }, { "value": "leaf", "label": "Leaf" }
+      ] },
+      { "type": "text", "id": "title", "label": "Title", "default": "Curated with care" },
+      { "type": "textarea", "id": "text", "label": "Text", "default": "Every product is picked for everyday usefulness." }
+    ] }
+  ],
+  "presets": [{ "name": "Why Zeyov", "blocks": [
+    { "type": "feature", "settings": { "icon": "leaf", "title": "Curated with care", "text": "Every product is picked for everyday usefulness and a clean, modern look." } },
+    { "type": "feature", "settings": { "icon": "lock", "title": "Safe & secure checkout", "text": "Pay through Shopify's encrypted checkout with trusted Indian payment options." } },
+    { "type": "feature", "settings": { "icon": "truck", "title": "Tracked delivery", "text": "Get tracking details for every order so you always know where your parcel is." } },
+    { "type": "feature", "settings": { "icon": "headset", "title": "Support that replies", "text": "Questions about an order? Reach us on WhatsApp or email." } }
+  ] }]
+}
+{% endschema %}

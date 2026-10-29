@@ -1,0 +1,258 @@
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign featured = current_variant.featured_media | default: product.featured_media -%}
+<section class="pdp container" data-product data-section-id="{{ section.id }}">
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumbs pdp__breadcrumbs" aria-label="Breadcrumbs">
+    <a href="{{ routes.root_url }}">Home</a>
+    <span class="sep" aria-hidden="true">/</span>
+    <a href="{{ routes.all_products_collection_url }}">Fashion Atelier</a>
+    {%- if product.collections.size > 0 -%}
+      <span class="sep" aria-hidden="true">/</span>
+      <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+    {%- endif -%}
+    <span class="sep" aria-hidden="true">/</span>
+    <span class="cur" aria-current="page">{{ product.title }}</span>
+  </nav>
+
+  <div class="pdp__grid">
+
+    <!-- Gallery -->
+    <div class="gallery" data-gallery>
+      <div class="gallery__main">
+        {%- for media in product.media -%}
+          <div class="gallery__slide{% if media.id == featured.id %} is-active{% endif %}" data-media-id="{{ media.id }}" data-slide>
+            {%- if media.media_type == 'image' -%}
+              {%- if forloop.first -%}{%- assign load = 'eager' -%}{%- else -%}{%- assign load = 'lazy' -%}{%- endif -%}
+              {{ media | image_url: width: 1200 | image_tag: loading: load, widths: '400, 600, 800, 1000, 1200', sizes: '(min-width: 900px) 50vw, 100vw', alt: media.alt | default: product.title }}
+            {%- else -%}
+              {{ media | media_tag: image_size: '1200x', controls: true }}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          {%- assign pct = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
+          <span class="card__badge card__badge--sale gallery__badge" data-badge>{{ pct }}% OFF</span>
+        {%- endif -%}
+        {%- if product.media.size > 1 -%}
+          <button class="gallery__nav gallery__nav--prev" type="button" data-prev aria-label="Previous image">{% render 'icon', name: 'arrow' %}</button>
+          <button class="gallery__nav gallery__nav--next" type="button" data-next aria-label="Next image">{% render 'icon', name: 'arrow' %}</button>
+        {%- endif -%}
+      </div>
+      {%- if product.media.size > 1 -%}
+        <div class="gallery__thumbs">
+          {%- for media in product.media -%}
+            <button type="button" class="gallery__thumb{% if media.id == featured.id %} is-active{% endif %}" data-thumb="{{ media.id }}" aria-label="Show image {{ forloop.index }}">
+              {{ media.preview_image | image_url: width: 160, height: 160, crop: 'center' | image_tag: loading: 'lazy', alt: '' }}
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Info Column -->
+    <div class="pdp__info">
+      <span class="pdp__eyebrow">{{ product.vendor | default: 'ZEYOV RUNWAY ATELIER' | upcase }} &bull; SS25 RUNWAY</span>
+      <h1 class="pdp__title">{{ product.title }}</h1>
+
+      <!-- Verified Rating & Stock Status -->
+      <div class="pdp__rating-bar">
+        <a href="#Reviews" class="pdp__rating-badge">
+          <span class="pdp__stars">★★★★★</span>
+          <b class="pdp__score">4.9</b>
+          <span class="pdp__count">(8 Verified Reviews)</span>
+        </a>
+        <span class="pdp__stock-pill"><span class="pulse-dot"></span> In Stock &bull; Ready to Ship</span>
+      </div>
+
+      <!-- Luxury Price Card -->
+      <div class="pdp__price-card" data-price-wrap>
+        <div class="pdp__price-row">
+          <span class="pdp__price-now" data-price-now>{{ current_variant.price | money }}</span>
+          {%- if current_variant.compare_at_price > current_variant.price -%}
+            <s class="pdp__price-was" data-price-was>{{ current_variant.compare_at_price | money }}</s>
+            <span class="pdp__save-pill" data-price-off>{{ pct }}% OFF</span>
+          {%- endif -%}
+        </div>
+        <div class="pdp__reassure-badge">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <span>Free Pan-India Express Delivery &bull; Inclusive of all taxes</span>
+        </div>
+      </div>
+
+      {%- if product.description != blank and section.settings.show_short -%}
+        <div class="pdp__short rte">{{ product.description | strip_html | truncatewords: 34 }}</div>
+      {%- endif -%}
+
+      {%- form 'product', product, id: 'ProductForm', class: 'pdp__form', data-ajax-add: 'true' -%}
+        <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            <fieldset class="opt" data-option-index="{{ forloop.index0 }}">
+              <div class="opt__header">
+                <legend>{{ option.name }}: <b data-opt-label>{{ option.selected_value }}</b></legend>
+                {%- if option.name == 'Size' or option.name == 'size' -%}
+                  <span class="size-hint small muted">True to Indian standard sizing</span>
+                {%- endif -%}
+              </div>
+              <div class="opt__values">
+                {%- for value in option.values -%}
+                  <input type="radio" id="opt-{{ section.id }}-{{ option.position }}-{{ forloop.index }}" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}>
+                  <label for="opt-{{ section.id }}-{{ option.position }}-{{ forloop.index }}">{{ value }}</label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+        {%- endunless -%}
+
+        <!-- Quantity Savings Tiers -->
+        {%- if section.settings.show_tiers and section.blocks.size > 0 -%}
+          <div class="pdp-tiers" data-tiers>
+            <div class="pdp-tiers__head">
+              <span class="pdp-tiers__title">Buy more, save more</span>
+              <span class="pdp-tiers__subtitle">Discounts applied automatically</span>
+            </div>
+            <div class="pdp-tiers__list">
+              {%- for block in section.blocks -%}
+                {%- assign q = block.settings.qty -%}
+                {%- assign pct = block.settings.discount_percent -%}
+                <label class="pdp-tier{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+                  <input type="radio" name="tier" value="{{ q }}" data-tier data-tier-discount="{{ pct }}" data-tier-label="{{ block.settings.label | escape }}" {% if forloop.first %}checked{% endif %}>
+                  <span class="pdp-tier__radio-dot"></span>
+                  <div class="pdp-tier__body">
+                    <div class="pdp-tier__title-row">
+                      <b class="pdp-tier__name">{{ block.settings.label }}</b>
+                      {%- if block.settings.badge != blank -%}
+                        <span class="pdp-tier__badge">{{ block.settings.badge }}</span>
+                      {%- endif -%}
+                    </div>
+                    {%- if block.settings.note != blank -%}<small class="pdp-tier__note">{{ block.settings.note }}</small>{%- endif -%}
+                  </div>
+                  <div class="pdp-tier__price-box" data-tier-qty="{{ q }}" data-tier-pct="{{ pct }}">
+                    {%- assign mult = 100 | minus: pct -%}
+                    <span class="pdp-tier__price">{{ current_variant.price | times: q | times: mult | divided_by: 100 | money }}</span>
+                    {%- if pct > 0 -%}<s class="pdp-tier__was">{{ current_variant.price | times: q | money }}</s>{%- endif -%}
+                  </div>
+                </label>
+              {%- endfor -%}
+            </div>
+            <!-- Hidden properties for line item bundle metadata -->
+            <input type="hidden" name="properties[_bundle_tier]" id="BundleTierProp" value="Buy 1">
+            <input type="hidden" name="properties[_bundle_discount]" id="BundleDiscProp" value="0">
+          </div>
+        {%- endif -%}
+
+        <!-- Action Buttons -->
+        <div class="pdp__actions-group">
+          <div class="pdp__buy-row">
+            <div class="qty-pill" data-qty>
+              <button type="button" class="qty-btn" data-qty-minus aria-label="Decrease quantity">&minus;</button>
+              <input type="number" name="quantity" value="1" min="1" inputmode="numeric" aria-label="Quantity" class="qty-input">
+              <button type="button" class="qty-btn" data-qty-plus aria-label="Increase quantity">+</button>
+            </div>
+            <button type="submit" name="add" class="btn btn--luxury-atc" data-add-btn {% unless current_variant.available %}disabled{% endunless %}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+              <span data-add-label>{% if current_variant.available %}Add to Bag{% else %}Sold out{% endif %}</span>
+            </button>
+            <button type="button" class="btn btn--pdp-wishlist" data-wishlist-toggle="{{ product.handle }}" data-product-id="{{ product.id }}" data-title="{{ product.title | escape }}" data-price="{{ current_variant.price | money | escape }}" data-image="{{ featured | image_url: width: 300 }}" data-url="{{ product.url }}" aria-label="Save to Wishlist">
+              <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              <svg class="heart-icon heart-filled" viewBox="0 0 24 24" fill="#E23636" stroke="#E23636" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </button>
+          </div>
+          <div class="pdp__dynamic">
+            {{ form | payment_button }}
+          </div>
+        </div>
+      {%- endform -%}
+
+      {%- if settings.show_low_stock and current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= settings.low_stock_threshold -%}
+        <p class="lowstock" data-lowstock>Only {{ current_variant.inventory_quantity }} left in stock</p>
+      {%- endif -%}
+
+      <!-- Luxury Trust Assurance Grid -->
+      <div class="pdp-assure">
+        <div class="pdp-assure__item">
+          {% render 'icon', name: 'truck' %}
+          <div>
+            <b>Free Tracked Delivery</b>
+            <small>Fast dispatch across India</small>
+          </div>
+        </div>
+        <div class="pdp-assure__item">
+          {% render 'icon', name: 'lock' %}
+          <div>
+            <b>Secure Checkout</b>
+            <small>Encrypted 256-bit SSL</small>
+          </div>
+        </div>
+        <div class="pdp-assure__item">
+          {% render 'icon', name: 'return' %}
+          <div>
+            <b>7-Day Easy Return</b>
+            <small>Hassle-free exchange guarantee</small>
+          </div>
+        </div>
+        <div class="pdp-assure__item">
+          {% render 'icon', name: 'shield' %}
+          <div>
+            <b>100% Genuine Quality</b>
+            <small>Verified authentic design</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="pdp__pay">
+        <small>Guaranteed Safe &amp; Encrypted Checkout</small>
+        {% render 'payment-icons' %}
+      </div>
+
+      <div class="acc">
+        <details open>
+          <summary>Product details &amp; Craftsmanship{% render 'icon', name: 'chevron' %}</summary>
+          <div class="rte">{{ product.description }}</div>
+        </details>
+        <details>
+          <summary>Shipping &amp; Pan-India Dispatch{% render 'icon', name: 'chevron' %}</summary>
+          <div class="rte">
+            <p><strong>Order Processing:</strong> 1–2 working days with instant tracking updates via SMS &amp; email.</p>
+            <p><strong>Estimated Delivery:</strong> 4–7 working days across India with insured courier transit.</p>
+            {%- assign prod_shipping_link = pages['shipping-policy'].url | default: pages['shipping'].url | default: pages['shipping-and-delivery-policy'].url | default: shop.shipping_policy.url | default: '/pages/shipping-policy' -%}
+            {%- assign prod_refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: pages['return-policy'].url | default: pages['return-and-refund-policy'].url | default: shop.refund_policy.url | default: '/pages/refund-policy' -%}
+            <p class="small"><a href="{{ prod_shipping_link }}">View Shipping Policy</a> &bull; <a href="{{ prod_refund_link }}">View 7-Day Return Policy</a></p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky mobile bar -->
+  <div class="sticky-atc" data-sticky-atc>
+    <div class="sticky-atc__info"><b>{{ product.title | truncate: 28 }}</b><span data-sticky-price>{{ current_variant.price | money }}</span></div>
+    <button type="button" class="btn btn--luxury-atc" data-sticky-btn style="min-width: 140px; height: 46px; padding: 0 20px; font-size: 0.88rem;" {% unless current_variant.available %}disabled{% endunless %}>{% if current_variant.available %}Add to Bag{% else %}Sold out{% endif %}</button>
+  </div>
+
+  <script type="application/json" data-variants>{{ product.variants | json }}</script>
+  <script type="application/json" data-money>{ "format": {{ shop.money_format | json }} }</script>
+</section>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false },
+    { "type": "checkbox", "id": "show_short", "label": "Show short description under price", "default": true },
+    { "type": "checkbox", "id": "show_tiers", "label": "Show 'Buy more, save more' selector", "default": true },
+    { "type": "textarea", "id": "shipping_text", "label": "Shipping & returns text", "default": "Orders are dispatched after confirmation and delivered across India with tracking. Delivery times may vary by location. Please see our policies for return conditions." }
+  ],
+  "blocks": [
+    { "type": "tier", "name": "Quantity offer", "settings": [
+      { "type": "range", "id": "qty", "min": 1, "max": 10, "step": 1, "label": "Quantity", "default": 1 },
+      { "type": "text", "id": "label", "label": "Label", "default": "Buy 1" },
+      { "type": "text", "id": "note", "label": "Small note" },
+      { "type": "text", "id": "badge", "label": "Badge", "info": "e.g. Most popular" },
+      { "type": "range", "id": "discount_percent", "min": 0, "max": 50, "step": 1, "unit": "%", "label": "Discount shown", "info": "Create a matching automatic discount in Shopify Admin (Buy X get % off). The cart only reduces the price if that discount exists.", "default": 0 }
+    ] }
+  ],
+  "presets": [{ "name": "Product" }]
+}
+{% endschema %}

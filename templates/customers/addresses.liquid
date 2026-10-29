@@ -1,0 +1,80 @@
+<section class="section">
+  <div class="container">
+    <header class="section__head">
+      <h1>My addresses</h1>
+      <p><a class="small" href="{{ routes.account_url }}">&larr; Back to account</a></p>
+    </header>
+
+    <div class="addr-top"><button class="btn" type="button" data-toggle="AddAddress">Add a new address</button></div>
+
+    <div id="AddAddress" class="card-box mt" hidden>
+      <h2 class="h3">Add address</h2>
+      {%- form 'customer_address', customer.new_address, class: 'form' -%}
+        {{ form.errors | default_errors }}
+        <div class="form__row">
+          <label>First name<input type="text" name="address[first_name]" required></label>
+          <label>Last name<input type="text" name="address[last_name]"></label>
+        </div>
+        <label>Phone<input type="tel" name="address[phone]" inputmode="tel" required></label>
+        <label>Address (house no., street, area)<input type="text" name="address[address1]" required></label>
+        <label>Landmark / apartment (optional)<input type="text" name="address[address2]"></label>
+        <div class="form__row">
+          <label>City<input type="text" name="address[city]" required></label>
+          <label>PIN code<input type="text" name="address[zip]" inputmode="numeric" maxlength="6" required></label>
+        </div>
+        <div class="form__row">
+          <label>Country
+            <select name="address[country]" data-country-select data-default="India">
+              {{ all_country_option_tags }}
+            </select>
+          </label>
+          <label>State<select name="address[province]" data-province-select></select></label>
+        </div>
+        <label class="check"><input type="checkbox" name="address[default]" value="1"> Set as default address</label>
+        <button class="btn" type="submit">Add address</button>
+      {%- endform -%}
+    </div>
+
+    {%- paginate customer.addresses by 12 -%}
+    <div class="grid grid--cols-3 mt">
+      {%- for address in customer.addresses -%}
+        <article class="card-box">
+          {%- if address == customer.default_address -%}<span class="badge badge--gold">Default</span>{%- endif -%}
+          <p>{{ address | format_address }}</p>
+          <p class="addr-actions">
+            <button class="btn btn--small btn--outline" type="button" data-toggle="Edit{{ address.id }}">Edit</button>
+            <button class="btn btn--small btn--outline" type="button" data-delete-address="{{ address.url }}">Delete</button>
+          </p>
+          <div id="Edit{{ address.id }}" hidden>
+            {%- form 'customer_address', address, class: 'form' -%}
+              <div class="form__row">
+                <label>First name<input type="text" name="address[first_name]" value="{{ form.first_name | escape }}" maxlength="60" required></label>
+                <label>Last name<input type="text" name="address[last_name]" value="{{ form.last_name | escape }}" maxlength="60"></label>
+              </div>
+              <label>Phone<input type="tel" name="address[phone]" value="{{ form.phone | escape }}" maxlength="20" required></label>
+              <label>Address<input type="text" name="address[address1]" value="{{ form.address1 | escape }}" maxlength="150" required></label>
+              <label>Landmark / apartment<input type="text" name="address[address2]" value="{{ form.address2 | escape }}" maxlength="150"></label>
+              <div class="form__row">
+                <label>City<input type="text" name="address[city]" value="{{ form.city | escape }}" maxlength="60" required></label>
+                <label>PIN code<input type="text" name="address[zip]" value="{{ form.zip | escape }}" maxlength="10" required></label>
+              </div>
+              <div class="form__row">
+                <label>Country
+                  <select name="address[country]" data-country-select data-default="{{ form.country }}">{{ all_country_option_tags }}</select>
+                </label>
+                <label>State<select name="address[province]" data-province-select data-default="{{ form.province }}"></select></label>
+              </div>
+              <label class="check"><input type="checkbox" name="address[default]" value="1" {% if address == customer.default_address %}checked{% endif %}> Default address</label>
+              <button class="btn btn--small" type="submit">Save</button>
+            {%- endform -%}
+          </div>
+        </article>
+      {%- else -%}
+        <p class="muted">No saved addresses yet.</p>
+      {%- endfor -%}
+    </div>
+    {% render 'pagination', paginate: paginate %}
+    {%- endpaginate -%}
+  </div>
+</section>
+<script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>

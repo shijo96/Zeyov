@@ -1,0 +1,225 @@
+{
+  "sections": {
+    "runway_orbit": {
+      "type": "runway-orbit",
+      "settings": {
+        "color_scheme": "ivory",
+        "eyebrow": "ZEYOV RUNWAY EDIT • ISSUE 01",
+        "heading": "NOT A STORE. A RUNWAY."
+      }
+    },
+    "trust": {
+      "type": "trust-bar",
+      "blocks": {
+        "t1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Delivery across India",
+            "text": "Tracked shipping"
+          }
+        },
+        "t2": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "title": "Secure checkout",
+            "text": "Encrypted payments"
+          }
+        },
+        "t3": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "title": "Easy returns",
+            "text": "7-day return window"
+          }
+        },
+        "t4": {
+          "type": "item",
+          "settings": {
+            "icon": "headset",
+            "title": "Real support",
+            "text": "WhatsApp & email"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ]
+    },
+    "fashion_showcase": {
+      "type": "fashion-showcase",
+      "settings": {
+        "eyebrow": "ZEYOV ATELIER • SS25 RUNWAY",
+        "heading": "PRODUCTS SHOWCASE"
+      }
+    },
+    "fashion_rail": {
+      "type": "fashion-rail",
+      "settings": {
+        "heading": "CURATED SILHOUETTES"
+      }
+    },
+    "fashion_reveal": {
+      "type": "fashion-reveal",
+      "settings": {}
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "ATELIER ACCESSORIES",
+        "heading": "Luxury Accessories & Runway Accents",
+        "text": "Handcrafted Italian silk scarves, gold-buckle leather belts, and couture accessories designed to complete every silhouette.",
+        "limit": 8
+      }
+    },
+    "why": {
+      "type": "why-us",
+      "blocks": {
+        "f1": {
+          "type": "feature",
+          "settings": {
+            "icon": "leaf",
+            "title": "Curated with care",
+            "text": "Every product is selected for premium fabric longevity, tactile comfort, and timeless elegance."
+          }
+        },
+        "f2": {
+          "type": "feature",
+          "settings": {
+            "icon": "lock",
+            "title": "Safe & secure checkout",
+            "text": "Pay through Shopify's encrypted checkout with trusted Indian payment options."
+          }
+        },
+        "f3": {
+          "type": "feature",
+          "settings": {
+            "icon": "truck",
+            "title": "Tracked delivery",
+            "text": "Get real-time tracking updates for every order so you always know where your parcel is."
+          }
+        },
+        "f4": {
+          "type": "feature",
+          "settings": {
+            "icon": "headset",
+            "title": "Support that replies",
+            "text": "Questions about sizing or fit? Reach our concierge team on WhatsApp or email."
+          }
+        }
+      },
+      "block_order": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ]
+    },
+    "reviews": {
+      "type": "customer-reviews",
+      "blocks": {
+        "r1": {
+          "type": "review",
+          "settings": {
+            "name": "Priya S.",
+            "city": "Bengaluru",
+            "rating": 5,
+            "text": "The Emerald Silk Draped Gown is breathtaking! The fabric feels so luxurious, smooth and cool to the skin. Delivered to Bangalore in 4 days with beautiful branded packaging. Truly impressed!",
+            "verified": true
+          }
+        },
+        "r2": {
+          "type": "review",
+          "settings": {
+            "name": "Rajesh K.",
+            "city": "Kochi",
+            "rating": 5,
+            "text": "Ordered the Amber Puffer Vest. The fit is clean and tailored without feeling bulky. The thermal insulation works wonders during evening travel. 10/10 finish!",
+            "verified": true
+          }
+        },
+        "r3": {
+          "type": "review",
+          "settings": {
+            "name": "Ananya Verma",
+            "city": "Mumbai",
+            "rating": 5,
+            "text": "The Camel Wool Trench Coat looks straight out of Milan fashion week. Sturdy buttons, flawless stitching and true Indian sizing. ZEYOV has earned my trust!",
+            "verified": true
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "settings": {}
+    },
+    "banner": {
+      "type": "brand-banner",
+      "settings": {}
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "q",
+          "settings": {
+            "q": "How long does delivery take?",
+            "a": "<p>Confirmed orders are processed within 1–2 working days. Estimated delivery takes 4–7 working days after dispatch across India (excluding Sundays & public holidays). Real-time tracking will be shared on WhatsApp & Email.</p>"
+          }
+        },
+        "q2": {
+          "type": "q",
+          "settings": {
+            "q": "What size should I choose for fashion apparel?",
+            "a": "<p>All ZEYOV garments are drafted using standard Indian sizing charts (XS to XL) with an ease allowance. If you are between sizes, we recommend ordering one size up or contacting our WhatsApp styling concierge.</p>"
+          }
+        },
+        "q3": {
+          "type": "q",
+          "settings": {
+            "q": "Can I return or exchange an item?",
+            "a": "<p>Yes! We offer a 7-day easy exchange and return window for garments in their original unworn condition with tags intact. Please visit our Return & Refund Policy for details.</p>"
+          }
+        },
+        "q4": {
+          "type": "q",
+          "settings": {
+            "q": "How do I pay and is COD available?",
+            "a": "<p>We offer secure prepaid checkout via UPI, Cards, Net Banking, and Wallets with free shipping. Cash on Delivery (COD) is coming soon.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ]
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "runway_orbit",
+    "trust",
+    "fashion_showcase",
+    "fashion_rail",
+    "fashion_reveal",
+    "featured",
+    "why",
+    "reviews",
+    "banner",
+    "faq",
+    "newsletter"
+  ]
+}

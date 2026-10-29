@@ -1,0 +1,187 @@
+{%- assign menu = linklists[section.settings.menu] -%}
+<header class="header{% if section.settings.sticky %} is-sticky{% endif %}" data-header>
+  <div class="container header__inner">
+    <button class="icon-btn header__burger" type="button" data-open="NavDrawer" aria-label="Open menu">{% render 'icon', name: 'menu' %}</button>
+
+    <a class="header__logo" href="{{ routes.root_url }}" aria-label="ZEYOV">
+      {%- if settings.logo != blank -%}
+        {{ settings.logo | image_url: width: 500 | image_tag: alt: 'ZEYOV', loading: 'eager', class: 'logo-img' }}
+      {%- else -%}
+        <img class="logo-img" src="{{ 'zeyov-logo.png' | asset_url }}" alt="ZEYOV" width="300" height="120">
+      {%- endif -%}
+    </a>
+
+    <nav class="header__nav" aria-label="Main">
+      <ul role="list">
+        {%- if menu != blank and menu.links.size > 0 -%}
+          {%- for link in menu.links -%}
+            <li class="{% if link.links.size > 0 %}has-sub{% endif %}">
+              <a href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>
+                {{ link.title }}
+                {%- if link.title contains 'Combo' or link.title contains 'Bundle' -%}
+                  <span class="badge badge--gold nav-badge">Save 20%</span>
+                {%- endif -%}
+                {% if link.links.size > 0 %}{% render 'icon', name: 'chevron' %}{% endif %}
+              </a>
+              {%- if link.links.size > 0 -%}
+                <ul class="sub" role="list">
+                  {%- for sub in link.links -%}
+                    <li><a href="{{ sub.url }}">{{ sub.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          <li><a href="{{ routes.root_url }}">Home</a></li>
+          <li><a href="{{ routes.root_url }}#RunwayOrbit" class="nav-highlight">The Runway Edit</a></li>
+          <li class="has-sub">
+            <a href="{{ routes.all_products_collection_url }}">Fashion Atelier {% render 'icon', name: 'chevron' %}</a>
+            <ul class="sub" role="list">
+              <li><a href="{{ routes.root_url }}#FashionShowcase">Dresses &amp; Gowns</a></li>
+              <li><a href="{{ routes.root_url }}#FashionShowcase">Outerwear &amp; Jackets</a></li>
+              <li><a href="{{ routes.root_url }}#FashionShowcase">Tops &amp; Knitwear</a></li>
+              <li><a href="{{ routes.root_url }}#RunwayRail">Runway Lookbook</a></li>
+              <li><a href="{{ routes.root_url }}#GarmentCraft">Artisan Craftsmanship</a></li>
+            </ul>
+          </li>
+          <li class="has-sub">
+            <a href="{{ routes.collections_url }}/accessories">Accessories {% render 'icon', name: 'chevron' %}</a>
+            <ul class="sub" role="list">
+              <li><a href="{{ routes.collections_url }}/accessories">All Fashion Accessories</a></li>
+              <li><a href="{{ routes.collections_url }}/accessories">Italian Silk Scarves</a></li>
+              <li><a href="{{ routes.collections_url }}/accessories">Tailored Leather Belts</a></li>
+              <li><a href="{{ routes.collections_url }}/accessories">Runway Jewelry &amp; Clutches</a></li>
+            </ul>
+          </li>
+          {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
+          {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: pages['about-zeyov'].url | default: '/pages/about-us' -%}
+          {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
+          <li><a href="{{ track_link }}">Track Order</a></li>
+          <li><a href="{{ about_link }}">About Us</a></li>
+          <li><a href="{{ contact_link }}">Contact</a></li>
+        {%- endif -%}
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <button class="icon-btn" type="button" data-open="SearchPanel" aria-label="Search">{% render 'icon', name: 'search' %}</button>
+      <button class="icon-btn header__wishlist" type="button" data-open-wishlist aria-label="Wishlist">
+        {% render 'icon', name: 'heart' %}
+        <span class="wishlist-count is-empty" data-wishlist-count>0</span>
+      </button>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="icon-btn header__account" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" aria-label="Account">{% render 'icon', name: 'user' %}</a>
+      {%- endif -%}
+      <a class="icon-btn header__cart" href="{{ routes.cart_url }}" aria-label="Cart">
+        {% render 'icon', name: 'cart' %}
+        <span class="cart-count{% if cart.item_count == 0 %} is-empty{% endif %}" data-cart-count>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="search-panel" id="SearchPanel" hidden>
+    <div class="container">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+        <input type="search" name="q" placeholder="Search dresses, jackets, luxury fashion, living…" aria-label="Search" autocomplete="off" minlength="2" maxlength="100" required>
+        <input type="hidden" name="type" value="product">
+        <button class="btn btn--gold" type="submit">Search</button>
+        <button class="icon-btn" type="button" data-close="SearchPanel" aria-label="Close search">{% render 'icon', name: 'close' %}</button>
+      </form>
+    </div>
+  </div>
+</header>
+
+<div class="drawer-overlay" data-overlay hidden></div>
+<aside class="drawer" id="NavDrawer" hidden aria-label="Menu">
+  <div class="drawer__head">
+    <img src="{{ 'zeyov-logo.png' | asset_url }}" alt="ZEYOV" width="130" height="52">
+    <button class="icon-btn" type="button" data-close="NavDrawer" aria-label="Close menu">{% render 'icon', name: 'close' %}</button>
+  </div>
+  <ul class="drawer__list" role="list">
+    {%- if menu != blank and menu.links.size > 0 -%}
+      {%- for link in menu.links -%}
+        <li>
+          <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- for sub in link.links -%}
+            <a class="drawer__sub" href="{{ sub.url }}">{{ sub.title }}</a>
+          {%- endfor -%}
+        </li>
+      {%- endfor -%}
+    {%- else -%}
+      <li><a href="{{ routes.root_url }}">Home</a></li>
+      <li><a href="{{ routes.root_url }}#RunwayOrbit" class="nav-highlight">The Runway Edit (Issue 01)</a></li>
+      <li>
+        <span class="drawer__category-label">Fashion Atelier</span>
+        <a class="drawer__sub" href="{{ routes.root_url }}#FashionShowcase">Dresses &amp; Gowns</a>
+        <a class="drawer__sub" href="{{ routes.root_url }}#FashionShowcase">Outerwear &amp; Jackets</a>
+        <a class="drawer__sub" href="{{ routes.root_url }}#RunwayRail">Runway Lookbook Rail</a>
+        <a class="drawer__sub" href="{{ routes.root_url }}#GarmentCraft">Artisan Craftsmanship</a>
+      </li>
+      <li>
+        <span class="drawer__category-label">Fashion Accessories</span>
+        <a class="drawer__sub" href="{{ routes.collections_url }}/accessories">All Fashion Accessories</a>
+        <a class="drawer__sub" href="{{ routes.collections_url }}/accessories">Italian Silk Scarves</a>
+        <a class="drawer__sub" href="{{ routes.collections_url }}/accessories">Tailored Leather Belts</a>
+        <a class="drawer__sub" href="{{ routes.collections_url }}/accessories">Runway Jewelry &amp; Clutches</a>
+      </li>
+      {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
+      {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: pages['about-zeyov'].url | default: '/pages/about-us' -%}
+      {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
+      {%- assign faq_link = pages['faq'].url | default: pages['faqs'].url | default: pages['frequently-asked-questions'].url | default: '/pages/faq' -%}
+      {%- assign shipping_link = pages['shipping-policy'].url | default: pages['shipping'].url | default: pages['shipping-and-delivery-policy'].url | default: shop.shipping_policy.url | default: '/pages/shipping-policy' -%}
+      {%- assign refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: pages['return-policy'].url | default: pages['return-and-refund-policy'].url | default: shop.refund_policy.url | default: '/pages/refund-policy' -%}
+      <li><a href="{{ track_link }}">Track Your Order</a></li>
+      <li><a href="{{ about_link }}">About Zeyov</a></li>
+      <li><a href="{{ contact_link }}">Contact Us</a></li>
+      <li><a href="{{ faq_link }}">FAQs</a></li>
+      <li><a href="{{ shipping_link }}">Shipping &amp; Delivery Policy</a></li>
+      <li><a href="{{ refund_link }}">Return &amp; Refund Policy</a></li>
+    {%- endif -%}
+    <li><a href="{{ routes.cart_url }}">Cart ({% if cart.item_count > 0 %}{{ cart.item_count }}{% else %}0{% endif %})</a></li>
+    {%- if shop.customer_accounts_enabled -%}
+      <li><a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">{% if customer %}My account{% else %}Login / Sign up{% endif %}</a></li>
+      {%- if customer -%}<li><a href="{{ routes.account_addresses_url }}">My addresses</a></li>{%- endif -%}
+    {%- endif -%}
+  </ul>
+
+  {%- if settings.whatsapp_number != blank -%}
+    <div class="drawer__contact-box">
+      <a class="btn btn--small btn--gold btn--block" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}" target="_blank" rel="noopener">
+        {% render 'icon', name: 'whatsapp' %} WhatsApp Support
+      </a>
+    </div>
+  {%- endif -%}
+
+  <p class="drawer__foot">ZEYOV &bull; Style for a Brighter You</p>
+</aside>
+
+<!-- Wishlist Drawer (Right Slide-in) -->
+<aside class="drawer drawer--right" id="WishlistDrawer" hidden aria-label="Wishlist">
+  <div class="drawer__head">
+    <div class="drawer__head-title">
+      <span class="eyebrow" style="margin:0">SAVED PIECES</span>
+      <h3 style="margin:0;font-size:1.25rem">Your Wishlist (<span data-wishlist-count-text>0</span>)</h3>
+    </div>
+    <button class="icon-btn" type="button" data-close-wishlist aria-label="Close wishlist">{% render 'icon', name: 'close' %}</button>
+  </div>
+  <div class="wishlist-drawer__body" id="WishlistItems">
+    <!-- Populated dynamically via JS -->
+  </div>
+  <div class="wishlist-drawer__empty" id="WishlistEmptyState">
+    <div class="wishlist-empty-icon">{% render 'icon', name: 'heart' %}</div>
+    <h4>Your Wishlist is Empty</h4>
+    <p class="muted small">Save pieces from our Runway Atelier collection to review or purchase anytime.</p>
+    <a href="{{ routes.all_products_collection_url }}" class="btn btn--small btn--luxury">Explore Collection</a>
+  </div>
+</aside>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "sticky", "label": "Sticky header", "default": true }
+  ]
+}
+{% endschema %}

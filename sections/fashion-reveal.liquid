@@ -1,0 +1,105 @@
+{%- assign craft_img_src = section.settings.image | image_url: width: 900 -%}
+{%- if section.settings.image == blank -%}
+  {%- assign craft_img_src = 'fashion-model-editorial.jpg' | asset_url -%}
+{%- endif -%}
+
+<section class="fashion-reveal-section" id="GarmentCraft">
+  <div class="container">
+    <div class="fashion-reveal__grid">
+      <!-- Media Column with Editorial Model -->
+      <div class="fashion-reveal__media-col">
+        <div class="fashion-reveal__frame">
+          <img 
+            src="{{ craft_img_src }}" 
+            alt="{{ section.settings.heading | default: 'Zeyov Garment Craftsmanship and Fit' | escape }}" 
+            class="fashion-reveal__img"
+            width="600" 
+            height="750" 
+            loading="lazy"
+          >
+          <div class="fashion-reveal__watermark" aria-hidden="true">{{ section.settings.watermark | default: 'ATELIER' }}</div>
+          
+          <div class="fashion-reveal__floating-badge">
+            <span class="badge-icon">&#10022;</span>
+            <div class="badge-text">
+              <strong>{{ section.settings.badge_title | default: 'MASTER TAILORED' }}</strong>
+              <small>{{ section.settings.badge_text | default: 'Limited 50 Pieces Per Drop' }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Column -->
+      <div class="fashion-reveal__content-col">
+        <span class="fashion-reveal__eyebrow">{{ section.settings.eyebrow | default: 'CRAFTSMANSHIP & ARCHITECTURE' }}</span>
+        <h2 class="fashion-reveal__title">{{ section.settings.heading | default: 'TAILORED TO PERFECTION' }}</h2>
+        <p class="fashion-reveal__lead">{{ section.settings.lead | default: 'We design clothing with the philosophy that garments should sculpt gracefully, provide unmatched tactile comfort, and endure across seasons.' }}</p>
+
+        <!-- Feature Points -->
+        <div class="fashion-reveal__features">
+          <div class="craft-feature">
+            <div class="craft-feature__num">01</div>
+            <div class="craft-feature__body">
+              <h3 class="craft-feature__title">{{ section.settings.f1_title | default: 'Pure Natural Fibers • Grade-6A Silk & Virgin Wool' }}</h3>
+              <p class="craft-feature__text">{{ section.settings.f1_text | default: 'We strictly avoid cheap synthetics. Our silks glide with cool-touch fluidity, while our double-faced virgin wools insulate without weight.' }}</p>
+            </div>
+          </div>
+
+          <div class="craft-feature">
+            <div class="craft-feature__num">02</div>
+            <div class="craft-feature__body">
+              <h3 class="craft-feature__title">{{ section.settings.f2_title | default: 'Ergonomic Silhouette • Tailored for Indian Bodies' }}</h3>
+              <p class="craft-feature__text">{{ section.settings.f2_text | default: 'Every seam is drafted with custom torso lengths, generous shoulder mobility, and flattering cinch contours tested on real Indian figures.' }}</p>
+            </div>
+          </div>
+
+          <div class="craft-feature">
+            <div class="craft-feature__num">03</div>
+            <div class="craft-feature__body">
+              <h3 class="craft-feature__title">{{ section.settings.f3_title | default: 'Pre-Shrunk & Colorfast Integrity' }}</h3>
+              <p class="craft-feature__text">{{ section.settings.f3_text | default: 'Treated with eco-conscious reactive dyes and pre-washed so the rich emeralds, ambers, and blacks stay deep and vibrant wash after wash.' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="fashion-reveal__actions">
+          <a href="{{ section.settings.button_link | default: routes.all_products_collection_url }}" class="btn btn--gold">
+            {{ section.settings.button_label | default: 'Shop The Runway Collection →' }}
+          </a>
+          <span class="fashion-reveal__guarantee">
+            {% render 'icon', name: 'shield' %} {{ section.settings.guarantee | default: '7-Day Hassle-Free Exchange Guaranteed' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Craftsmanship Reveal",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Atelier Craftsmanship Editorial Image" },
+    { "type": "text", "id": "watermark", "label": "Watermark Text", "default": "ATELIER" },
+    { "type": "text", "id": "badge_title", "label": "Floating Badge Title", "default": "MASTER TAILORED" },
+    { "type": "text", "id": "badge_text", "label": "Floating Badge Text", "default": "Limited 50 Pieces Per Drop" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow tag", "default": "CRAFTSMANSHIP & ARCHITECTURE" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "TAILORED TO PERFECTION" },
+    { "type": "textarea", "id": "lead", "label": "Lead Description", "default": "We design clothing with the philosophy that garments should sculpt gracefully, provide unmatched tactile comfort, and endure across seasons." },
+    { "type": "header", "content": "Craftsmanship Feature 1" },
+    { "type": "text", "id": "f1_title", "label": "Feature 1 Title", "default": "Pure Natural Fibers • Grade-6A Silk & Virgin Wool" },
+    { "type": "textarea", "id": "f1_text", "label": "Feature 1 Description", "default": "We strictly avoid cheap synthetics. Our silks glide with cool-touch fluidity, while our double-faced virgin wools insulate without weight." },
+    { "type": "header", "content": "Craftsmanship Feature 2" },
+    { "type": "text", "id": "f2_title", "label": "Feature 2 Title", "default": "Ergonomic Silhouette • Tailored for Indian Bodies" },
+    { "type": "textarea", "id": "f2_text", "label": "Feature 2 Description", "default": "Every seam is drafted with custom torso lengths, generous shoulder mobility, and flattering cinch contours tested on real Indian figures." },
+    { "type": "header", "content": "Craftsmanship Feature 3" },
+    { "type": "text", "id": "f3_title", "label": "Feature 3 Title", "default": "Pre-Shrunk & Colorfast Integrity" },
+    { "type": "textarea", "id": "f3_text", "label": "Feature 3 Description", "default": "Treated with eco-conscious reactive dyes and pre-washed so the rich emeralds, ambers, and blacks stay deep and vibrant wash after wash." },
+    { "type": "header", "content": "Call to Action" },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "Shop The Runway Collection →" },
+    { "type": "url", "id": "button_link", "label": "Button Link" },
+    { "type": "text", "id": "guarantee", "label": "Guarantee Text", "default": "7-Day Hassle-Free Exchange Guaranteed" }
+  ],
+  "presets": [{ "name": "Craftsmanship Reveal" }]
+}
+{% endschema %}

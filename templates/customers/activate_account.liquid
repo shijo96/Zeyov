@@ -1,0 +1,12 @@
+<section class="section">
+  <div class="container container--tiny">
+    <h1 class="center">Activate account</h1>
+    {%- form 'activate_customer_password', class: 'form' -%}
+      {{ form.errors | default_errors }}
+      <label>Password (min. 8 characters)<input type="password" name="customer[password]" autocomplete="new-password" minlength="8" maxlength="100" required></label>
+      <label>Confirm password<input type="password" name="customer[password_confirmation]" autocomplete="new-password" minlength="8" maxlength="100" required></label>
+      <button class="btn btn--block" type="submit" name="action" value="submit">Activate account</button>
+      <button class="btn btn--block btn--outline" type="submit" name="action" value="decline">Decline invitation</button>
+    {%- endform -%}
+  </div>
+</section>

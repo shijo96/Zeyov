@@ -1,0 +1,43 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Environment and Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+
+# OS and Editor artifacts
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Shopify CLI configuration and credentials
+.shopify/
+.shopifyignore.bak
+
+# Build and archive artifacts
+*.zip
+*.tar.gz
+*.tgz
+*.bak
+
+# Temporary test and scratch files
+scratch/
+tests/__pycache__/
+*.pyc

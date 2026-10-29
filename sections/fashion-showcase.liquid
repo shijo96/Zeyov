@@ -1,0 +1,343 @@
+{%- assign col = section.settings.collection | default: collections.all -%}
+{%- assign first_p = col.products.first -%}
+{%- assign model_women_src = section.settings.model_image_women | image_url: width: 900 -%}
+{%- if section.settings.model_image_women == blank -%}
+  {%- assign model_women_src = 'fashion-model-dress.jpg' | asset_url -%}
+{%- endif -%}
+{%- assign model_men_src = section.settings.model_image_men | image_url: width: 900 -%}
+{%- if section.settings.model_image_men == blank -%}
+  {%- assign model_men_src = 'fashion-model-editorial.jpg' | asset_url -%}
+{%- endif -%}
+
+<section class="fashion-showcase-section" id="FashionShowcase" data-fashion-showcase data-model-women="{{ model_women_src }}" data-model-men="{{ model_men_src }}">
+  <div class="container">
+    <!-- Showcase Header & Filter Bar (Video 2) -->
+    <div class="showcase__topbar">
+      <div class="showcase__title-col">
+        <span class="showcase__eyebrow">{{ section.settings.eyebrow | default: 'ZEYOV ATELIER • SS25 RUNWAY' }}</span>
+        <h2 class="showcase__heading">{{ section.settings.heading | default: 'PRODUCTS SHOWCASE' }}</h2>
+      </div>
+
+      <!-- Gender & Line Switcher -->
+      <div class="showcase__filter-group">
+        <div class="showcase__segmented" role="tablist" aria-label="Gender Selection">
+          <button type="button" class="segment-btn is-active" data-gender-filter="women">Women's Edit</button>
+          <button type="button" class="segment-btn" data-gender-filter="men">Men's Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Tabs Navigation (Video 2) -->
+    <div class="showcase__category-bar" role="tablist" aria-label="Showcase Categories">
+      <button type="button" class="cat-pill is-active" data-cat="all">
+        <span>All Pieces</span>
+        <small class="cat-count">{% if col.products.size > 0 %}{{ col.products.size | prepend: '0' | slice: -2, 2 }}{% else %}06{% endif %}</small>
+      </button>
+
+      {%- comment -%} Dynamically render unique product types present in this collection {%- endcomment -%}
+      {%- assign custom_types = '' -%}
+      {%- for product in col.products limit: 12 -%}
+        {%- if product.type != blank -%}
+          {%- assign ptype = product.type | strip -%}
+          {%- unless custom_types contains ptype -%}
+            {%- assign custom_types = custom_types | append: ptype | append: ':::' -%}
+          {%- endunless -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if custom_types != blank -%}
+        {%- assign type_array = custom_types | split: ':::' -%}
+        {%- for t in type_array -%}
+          {%- if t != blank -%}
+            <button type="button" class="cat-pill" data-cat="{{ t | handleize }}">
+              <span>{{ t }}</span>
+            </button>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <!-- Fallback category pills -->
+        <button type="button" class="cat-pill" data-cat="dresses">
+          <span>Dresses</span>
+          <small class="cat-count">02</small>
+        </button>
+        <button type="button" class="cat-pill" data-cat="outerwear">
+          <span>Outerwear</span>
+          <small class="cat-count">03</small>
+        </button>
+        <button type="button" class="cat-pill" data-cat="tops">
+          <span>Tops Wear</span>
+          <small class="cat-count">01</small>
+        </button>
+        <button type="button" class="cat-pill" data-cat="accessories">
+          <span>Accessories</span>
+          <small class="cat-count">01</small>
+        </button>
+      {%- endif -%}
+    </div>
+
+    <!-- Main Editorial Showcase Grid -->
+    <div class="showcase__main-grid">
+      <!-- Left: High Fashion Model Hero Feature -->
+      <div class="showcase__model-col">
+        <div class="showcase__model-card">
+          <div class="showcase__model-media">
+            <img 
+              src="{{ model_women_src }}" 
+              alt="Zeyov Runway Model Editorial" 
+              class="showcase__model-img" 
+              id="ShowcaseModelImg"
+              width="600" 
+              height="800" 
+              loading="lazy"
+            >
+            <div class="showcase__model-overlay"></div>
+          </div>
+
+          <!-- Editorial Floating Pin / Look Tag -->
+          <div class="showcase__look-tag">
+            <span class="look-tag__dot"></span>
+            <div class="look-tag__content">
+              <span class="look-tag__num">FEATURED PIECE</span>
+              <strong class="look-tag__name" id="ShowcaseActiveLook">{% if first_p %}{{ first_p.title }}{% else %}Emerald Silk Draped Gown{% endif %}</strong>
+              <span class="look-tag__price" id="ShowcaseActivePrice">{% if first_p %}{{ first_p.price | money }}{% else %}Rs. 3,899.00{% endif %}</span>
+              <a href="{% if first_p %}{{ first_p.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}" id="ShowcaseActiveLink" class="look-tag__link">
+                Shop Piece &rarr;
+              </a>
+            </div>
+          </div>
+
+          <!-- Bottom Quote / Craftsmanship Badge -->
+          <div class="showcase__model-footer">
+            <p class="showcase__quote">&ldquo;{{ section.settings.quote | default: 'Draped to sculpt, engineered to move effortlessly.' }}&rdquo;</p>
+            <span class="showcase__signature">{{ section.settings.signature | default: 'ZEYOV RUNWAY ATELIER' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Products Showcase Rail ("Drag or scroll to explore") -->
+      <div class="showcase__rail-col">
+        <div class="showcase__rail-header">
+          <p class="rail-hint">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <span>Drag or scroll to explore pieces</span>
+          </p>
+
+          <div class="rail-arrows">
+            <button type="button" class="rail-arrow prev" data-rail-prev aria-label="Previous items">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button type="button" class="rail-arrow next" data-rail-next aria-label="Next items">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Horizontal Scrollable Track -->
+        <div class="showcase__rail-track" data-rail-track id="ShowcaseRailTrack">
+          <!-- Empty State when filter yields 0 items -->
+          <div class="showcase__empty-rail" id="ShowcaseEmptyRail" style="display: none;">
+            <div class="empty-rail__card">
+              <span class="empty-rail__tag">CURATION NOTE</span>
+              <h4 class="empty-rail__heading">No pieces in this edit</h4>
+              <p class="empty-rail__desc">Selected runway pieces for this category are being prepared. Explore other silhouettes or return to all pieces.</p>
+              <button type="button" class="btn btn--outline btn--small" data-reset-category>View All Available Pieces</button>
+            </div>
+          </div>
+
+          {%- if col.products.size > 0 -%}
+            {%- for product in col.products limit: section.settings.limit -%}
+              {%- assign v = product.selected_or_first_available_variant -%}
+              {%- assign p_cat = product.type | handleize | default: 'all' -%}
+              {%- assign p_gender = 'women men' -%}
+              {%- if product.tags contains 'men' and product.tags contains 'women' == false -%}
+                {%- assign p_gender = 'men' -%}
+              {%- elsif product.tags contains 'women' and product.tags contains 'men' == false -%}
+                {%- assign p_gender = 'women' -%}
+              {%- endif -%}
+              {%- assign p_img = product.featured_image | image_url: width: 800 -%}
+
+              <article class="rail-card{% if forloop.first %} is-active{% endif %}" 
+                data-cat="{{ p_cat }}" 
+                data-gender="{{ p_gender }}" 
+                data-title="{{ product.title | escape }}" 
+                data-price="{{ product.price | money | escape }}" 
+                data-look="LOOK {{ forloop.index | prepend: '0' | slice: -2, 2 }}" 
+                data-img="{{ p_img }}"
+                data-variant-id="{{ v.id }}"
+                data-product-url="{{ product.url }}">
+                <div class="rail-card__media">
+                  <span class="rail-card__badge badge--gold">{{ product.type | default: 'RUNWAY' | upcase }}</span>
+                  <a href="{{ product.url }}" class="rail-card__media-link" aria-label="{{ product.title | escape }}">
+                    {%- if product.featured_image -%}
+                      <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" width="400" height="400" loading="lazy" class="rail-card__img">
+                    {%- else -%}
+                      <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="{{ product.title | escape }}" width="400" height="400" loading="lazy" class="rail-card__img">
+                    {%- endif -%}
+                  </a>
+                  <button type="button" class="rail-card__quick-add" data-quick-add-id="{{ v.id }}" data-quick-add-title="{{ product.title | escape }}" data-quick-add-price="{{ product.price | money | escape }}" aria-label="Quick add {{ product.title | escape }} to bag">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    <span>Add to Bag</span>
+                  </button>
+                </div>
+                <div class="rail-card__info">
+                  <div class="rail-card__swatches">
+                    <span class="swatch-dot is-active" style="background:#B89B65" title="Runway Gold"></span>
+                    <span class="swatch-dot" style="background:#111111" title="Obsidian Noir"></span>
+                    <span class="swatch-dot" style="background:#FAF8F4" title="Ivory Cream"></span>
+                  </div>
+                  <h3 class="rail-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+                  <div class="rail-card__price-row">
+                    <span class="rail-card__price">{{ product.price | money }}</span>
+                    {%- if v.compare_at_price > v.price -%}
+                      <span class="rail-card__mrp">{{ v.compare_at_price | money }}</span>
+                      {%- assign off_pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round -%}
+                      <span class="rail-card__off">{{ off_pct }}% OFF</span>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </article>
+            {%- endfor -%}
+
+          {%- else -%}
+            <!-- Luxury starter fallback cards if store has zero products -->
+            <article class="rail-card is-active" data-cat="dresses" data-gender="women" data-title="Emerald Silk Draped Gown" data-price="Rs. 3,899.00" data-look="LOOK 02" data-img="{{ 'fashion-model-dress.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}">
+              <div class="rail-card__media">
+                <span class="rail-card__badge badge--gold">RUNWAY COUTURE</span>
+                <a href="{{ routes.all_products_collection_url }}" class="rail-card__media-link"><img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Emerald Silk Draped Gown" width="400" height="400" loading="lazy" class="rail-card__img"></a>
+                <button type="button" class="rail-card__quick-add" data-quick-add-title="Emerald Silk Draped Gown" data-quick-add-price="Rs. 3,899.00" aria-label="Quick add to bag">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                  <span>Add to Bag</span>
+                </button>
+              </div>
+              <div class="rail-card__info">
+                <h3 class="rail-card__title"><a href="{{ routes.all_products_collection_url }}">Emerald Silk Draped Gown</a></h3>
+                <div class="rail-card__price-row">
+                  <span class="rail-card__price">Rs. 3,899.00</span>
+                  <span class="rail-card__mrp">Rs. 6,499.00</span>
+                  <span class="rail-card__off">40% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="rail-card" data-cat="outerwear" data-gender="women men" data-title="Amber Puffer Vest" data-price="Rs. 2,499.00" data-look="LOOK 01" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}">
+              <div class="rail-card__media">
+                <span class="rail-card__badge badge--dark">A/W 24 SIGNATURE</span>
+                <a href="{{ routes.all_products_collection_url }}" class="rail-card__media-link"><img src="{{ 'fashion-puffer-jacket.jpg' | asset_url }}" alt="Amber Puffer Vest" width="400" height="400" loading="lazy" class="rail-card__img"></a>
+                <button type="button" class="rail-card__quick-add" data-quick-add-title="Amber Puffer Vest" data-quick-add-price="Rs. 2,499.00" aria-label="Quick add to bag">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                  <span>Add to Bag</span>
+                </button>
+              </div>
+              <div class="rail-card__info">
+                <h3 class="rail-card__title"><a href="{{ routes.all_products_collection_url }}">Amber Puffer Vest</a></h3>
+                <div class="rail-card__price-row">
+                  <span class="rail-card__price">Rs. 2,499.00</span>
+                  <span class="rail-card__mrp">Rs. 3,999.00</span>
+                  <span class="rail-card__off">37% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="rail-card" data-cat="outerwear" data-gender="women men" data-title="Camel Tailored Wool Trench" data-price="Rs. 4,299.00" data-look="LOOK 03" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}">
+              <div class="rail-card__media">
+                <span class="rail-card__badge badge--gold">100% VIRGIN WOOL</span>
+                <a href="{{ routes.all_products_collection_url }}" class="rail-card__media-link"><img src="{{ 'fashion-wool-coat.jpg' | asset_url }}" alt="Camel Tailored Wool Trench" width="400" height="400" loading="lazy" class="rail-card__img"></a>
+                <button type="button" class="rail-card__quick-add" data-quick-add-title="Camel Tailored Wool Trench" data-quick-add-price="Rs. 4,299.00" aria-label="Quick add to bag">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                  <span>Add to Bag</span>
+                </button>
+              </div>
+              <div class="rail-card__info">
+                <h3 class="rail-card__title"><a href="{{ routes.all_products_collection_url }}">Camel Tailored Wool Trench</a></h3>
+                <div class="rail-card__price-row">
+                  <span class="rail-card__price">Rs. 4,299.00</span>
+                  <span class="rail-card__mrp">Rs. 7,499.00</span>
+                  <span class="rail-card__off">42% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="rail-card" data-cat="tops" data-gender="women men" data-title="Cream Sherpa Half-Zip" data-price="Rs. 2,899.00" data-look="LOOK 04" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}">
+              <div class="rail-card__media">
+                <span class="rail-card__badge badge--dark">THERMAL FLEECE</span>
+                <a href="{{ routes.all_products_collection_url }}" class="rail-card__media-link"><img src="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}" alt="Cream Sherpa Half-Zip" width="400" height="400" loading="lazy" class="rail-card__img"></a>
+                <button type="button" class="rail-card__quick-add" data-quick-add-title="Cream Sherpa Half-Zip" data-quick-add-price="Rs. 2,899.00" aria-label="Quick add to bag">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                  <span>Add to Bag</span>
+                </button>
+              </div>
+              <div class="rail-card__info">
+                <h3 class="rail-card__title"><a href="{{ routes.all_products_collection_url }}">Cream Sherpa Half-Zip</a></h3>
+                <div class="rail-card__price-row">
+                  <span class="rail-card__price">Rs. 2,899.00</span>
+                  <span class="rail-card__mrp">Rs. 4,499.00</span>
+                  <span class="rail-card__off">35% OFF</span>
+                </div>
+              </div>
+            </article>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <!-- Docked Selected Piece Bar (Video 2 signature interactive tray) -->
+    <aside class="showcase__docked-bar" id="ShowcaseFloatingBar" aria-label="Selected Runway Item Quick Add">
+      <div class="docked-bar__inner">
+        <div class="docked-bar__item-meta">
+          <span class="docked-bar__eyebrow">SELECTED RUNWAY PIECE</span>
+          <strong class="docked-bar__title" id="FloatingBarTitle">{% if first_p %}{{ first_p.title }}{% else %}Emerald Silk Draped Gown{% endif %}</strong>
+          <span class="docked-bar__price" id="FloatingBarPrice">{% if first_p %}{{ first_p.price | money }}{% else %}Rs. 3,899.00{% endif %}</span>
+        </div>
+
+        <div class="docked-bar__sizes">
+          <span class="size-label">Select Size:</span>
+          <button type="button" class="bar-size-btn">XS</button>
+          <button type="button" class="bar-size-btn is-active">S</button>
+          <button type="button" class="bar-size-btn">M</button>
+          <button type="button" class="bar-size-btn">L</button>
+          <button type="button" class="bar-size-btn">XL</button>
+        </div>
+
+        <div class="docked-bar__action">
+          <button type="button" class="btn btn--gold docked-bar__btn" id="FloatingBarAddBtn" data-variant-id="{% if first_p %}{{ first_p.selected_or_first_available_variant.id }}{% endif %}">
+            <span>Add to Bag &bull; Free Pan-India Delivery</span>
+          </button>
+          <a href="{% if first_p %}{{ first_p.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}" class="btn btn--outline docked-bar__pdp-btn" id="FloatingBarPdpLink">
+            View Details &rarr;
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Products Showcase",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow tag", "default": "ZEYOV ATELIER • SS25 RUNWAY" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "PRODUCTS SHOWCASE" },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Showcase Collection",
+      "info": "Leave blank to display all products"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "label": "Products to show",
+      "default": 8
+    },
+    { "type": "header", "content": "Editorial Model Imagery" },
+    { "type": "image_picker", "id": "model_image_women", "label": "Women's Edit Model Image" },
+    { "type": "image_picker", "id": "model_image_men", "label": "Men's Edit Model Image" },
+    { "type": "text", "id": "quote", "label": "Editorial Quote", "default": "Draped to sculpt, engineered to move effortlessly." },
+    { "type": "text", "id": "signature", "label": "Signature Text", "default": "ZEYOV RUNWAY ATELIER" }
+  ],
+  "presets": [{ "name": "Products Showcase" }]
+}
+{% endschema %}

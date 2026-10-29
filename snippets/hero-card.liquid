@@ -1,0 +1,6 @@
+{%- if p != blank -%}
+  <a class="hero-card hero-card--{{ index }}" href="{{ p.url }}">
+    {{ p.featured_image | image_url: width: 640 | image_tag: loading: 'eager', alt: p.title, sizes: '(min-width: 900px) 280px, 42vw' }}
+    <span class="hero-card__meta"><b>{{ p.title | truncate: 28 }}</b>{{ p.price | money }}</span>
+  </a>
+{%- endif -%}

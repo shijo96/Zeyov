@@ -1,0 +1,34 @@
+{%- assign p_title = policy.title | downcase -%}
+
+{%- if p_title contains 'shipping' -%}
+  {% render 'page-shipping-content' %}
+
+{%- elsif p_title contains 'refund' or p_title contains 'return' -%}
+  {% render 'page-refund-content' %}
+
+{%- elsif p_title contains 'privacy' -%}
+  {% render 'page-privacy-content' %}
+
+{%- elsif p_title contains 'terms' -%}
+  {% render 'page-terms-content' %}
+
+{%- else -%}
+  <section class="section policy-page">
+    <div class="container container--narrow">
+      <header class="section__head center">
+        <p class="eyebrow">ZEYOV Policy</p>
+        <h1>{{ policy.title }}</h1>
+      </header>
+      <div class="policy-body rte">
+        {{ policy.body }}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Policy",
+  "settings": []
+}
+{% endschema %}

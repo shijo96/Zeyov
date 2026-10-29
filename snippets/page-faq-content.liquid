@@ -1,0 +1,78 @@
+<section class="section faq-page">
+  <div class="container container--narrow">
+    <header class="section__head center">
+      <p class="eyebrow">Help &amp; Support</p>
+      <h1>Frequently Asked Questions</h1>
+      <p class="muted">Find quick answers to common questions about ordering, payments, delivery, and returns.</p>
+    </header>
+
+    <div class="faq card-box">
+      <details class="faq__item" open>
+        <summary>How long does delivery take across India? {% render 'icon', name: 'chevron' %}</summary>
+        <div class="faq__a">
+          <p>Delivery consists of two stages:</p>
+          <ul>
+            <li><strong>Order Processing (1–2 working days):</strong> Every item is quality-inspected, packed, and handed over to our express courier partner.</li>
+            <li><strong>Transit Time (4–7 working days):</strong> Metro cities typically receive orders within 3–5 working days, while other locations take 4–7 working days after dispatch.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="faq__item">
+        <summary>Are there any delivery charges? {% render 'icon', name: 'chevron' %}</summary>
+        <div class="faq__a">
+          <p><strong>100% Free Delivery on all Prepaid Orders!</strong> There are zero hidden fees or shipping charges across 19,000+ pin codes in India when you pay online via UPI, Cards, or Net Banking.</p>
+        </div>
+      </details>
+
+      <details class="faq__item">
+        <summary>What payment methods do you accept? {% render 'icon', name: 'chevron' %}</summary>
+        <div class="faq__a">
+          <p>We support all leading Indian payment options through encrypted Shopify checkout:</p>
+          <ul>
+            <li><strong>UPI:</strong> Google Pay, PhonePe, Paytm, BHIM UPI</li>
+            <li><strong>Cards:</strong> RuPay, Visa, Mastercard, American Express</li>
+            <li><strong>Net Banking:</strong> All major Indian banks</li>
+            <li><strong>Cash on Delivery (COD):</strong> COD is currently coming soon as we finalize verified COD routes.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="faq__item">
+        <summary>What is your Return and Replacement policy? {% render 'icon', name: 'chevron' %}</summary>
+        <div class="faq__a">
+          <p>We offer a hassle-free <strong>7-Day Return and Replacement</strong> policy for any items that arrive defective, damaged in transit, or incorrect. Simply message our WhatsApp support team with a quick photo of the item, and we will promptly dispatch a replacement.</p>
+        </div>
+      </details>
+
+      <details class="faq__item">
+        <summary>How do I track my shipment? {% render 'icon', name: 'chevron' %}</summary>
+        <div class="faq__a">
+          {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: '/pages/track-order' -%}
+          <p>As soon as your parcel is dispatched, a real-time tracking link is automatically sent to your registered WhatsApp number and Email. You can also visit our <a href="{{ track_link }}">Track Your Order</a> page anytime to check status updates.</p>
+        </div>
+      </details>
+
+      <details class="faq__item">
+        <summary>How can I speak with a customer care representative? {% render 'icon', name: 'chevron' %}</summary>
+        <div class="faq__a">
+          <p>You can chat directly with our team on WhatsApp or email us at <a href="mailto:{{ settings.support_email | default: 'support@zeyov.com' }}">{{ settings.support_email | default: 'support@zeyov.com' }}</a>. Our support hours are Monday to Saturday, 9:30 AM – 6:30 PM IST.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="policy-help-box mt">
+      <div class="policy-help-box__content">
+        <h4>Still have questions?</h4>
+        <p class="small muted">We're here to help you anytime on WhatsApp or email.</p>
+      </div>
+      <div class="policy-help-box__actions">
+        {%- if settings.whatsapp_number != blank -%}
+          <a class="btn btn--small btn--gold" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text=Hi%20Zeyov%20Support%2C%20I%20have%20a%20question" target="_blank" rel="noopener">{% render 'icon', name: 'whatsapp' %} WhatsApp Help</a>
+        {%- endif -%}
+        {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
+        <a class="btn btn--small btn--outline" href="{{ contact_link }}">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>

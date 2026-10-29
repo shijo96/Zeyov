@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="{{ settings.color_text }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
+    <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+  {%- else -%}
+    <link rel="icon" type="image/png" href="{{ 'favicon.png' | asset_url }}">
+    <link rel="apple-touch-icon" href="{{ 'favicon.png' | asset_url }}">
+  {%- endif -%}
+
+  <title>{{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}{% unless page_title contains 'ZEYOV' %} &ndash; ZEYOV{% endunless %}</title>
+  {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
+
+  <meta property="og:site_name" content="ZEYOV">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:title" content="{{ page_title | escape }}">
+  <meta property="og:type" content="{% if template.name == 'product' %}product{% else %}website{% endif %}">
+  <meta property="og:description" content="{{ page_description | default: 'ZEYOV Runway Atelier • Premium Indian Fashion & Lifestyle' | escape }}">
+  {%- if template.name == 'product' and product.featured_image -%}
+    <meta property="og:image" content="https:{{ product.featured_image | image_url: width: 1200 }}">
+  {%- else -%}
+    <meta property="og:image" content="https:{{ 'og-image.jpg' | asset_url }}">
+  {%- endif -%}
+  <meta name="twitter:card" content="summary_large_image">
+
+  {%- assign hf = settings.heading_font | default: 'Playfair Display' -%}
+  {%- assign bf = settings.body_font | default: 'Inter' -%}
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: {{ settings.color_bg | default: '#FAF8F4' }};
+      --surface: {{ settings.color_surface | default: '#FFFFFF' }};
+      --text: {{ settings.color_text | default: '#20201F' }};
+      --primary: {{ settings.color_primary | default: '#33251F' }};
+      --sand: {{ settings.color_secondary_bg | default: '#EDE5DB' }};
+      --muted: {{ settings.color_muted | default: '#77716B' }};
+      --gold: {{ settings.color_gold | default: '#B89B65' }};
+      --gold-dark: {{ settings.color_gold_dark | default: '#8F7241' }};
+      --gold-light: #F4EBD9;
+      --border: {{ settings.color_border | default: '#E5DED5' }};
+      --line: {{ settings.color_border | default: '#E5DED5' }};
+      --btn: {{ settings.color_button | default: '#33251F' }};
+      --btn-text: {{ settings.color_button_text | default: '#FFFFFF' }};
+      --sale: {{ settings.color_sale | default: '#9D3535' }};
+      --success: {{ settings.color_success | default: '#386B50' }};
+      --font-heading: '{{ hf }}', 'Playfair Display', Georgia, serif;
+      --font-body: '{{ bf }}', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --font-price: 'Inter', system-ui, -apple-system, sans-serif;
+      --logo-w: {{ settings.logo_width | default: 150 }}px;
+    }
+  </style>
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+  <script>
+    // Suppress console noise when browser ad-blockers block background telemetry (Shopify monorail, otlp, bugsnag)
+    window.addEventListener('unhandledrejection', function (e) {
+      var r = (e && e.reason && (e.reason.message || e.reason.stack || String(e.reason))) || '';
+      if (r.indexOf('Failed to fetch') !== -1 || r.indexOf('shopifysvc') !== -1 || r.indexOf('monorail') !== -1) {
+        e.preventDefault();
+      }
+    });
+  </script>
+  {{ content_for_header }}
+  <script>
+    window.ZEYOV = {
+      moneyFormat: {{ shop.money_format | json }},
+      routes: { cart: {{ routes.cart_url | json }}, cartAdd: {{ routes.cart_add_url | append: '.js' | json }}, cartChange: {{ routes.cart_change_url | append: '.js' | json }}, cartJson: {{ routes.cart_url | append: '.js' | json }} },
+      delivery: { min: {{ settings.delivery_min_days | default: 4 }}, max: {{ settings.delivery_max_days | default: 8 }} }
+    };
+  </script>
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+</head>
+<body class="template-{{ template.name | handleize }}">
+  <a class="skip-link" href="#MainContent">{{ 'general.skip' | t }}</a>
+
+  {% sections 'header-group' %}
+
+  <main id="MainContent" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% sections 'footer-group' %}
+
+  {%- if settings.whatsapp_number != blank -%}
+    <a class="wa-float" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text={{ settings.whatsapp_message | url_encode }}" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+      {% render 'icon', name: 'whatsapp' %}
+    </a>
+  {%- endif -%}
+
+  <div class="toast" id="Toast" role="status" aria-live="polite"></div>
+</body>
+</html>

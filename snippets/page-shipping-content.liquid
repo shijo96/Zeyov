@@ -1,0 +1,73 @@
+<section class="section policy-page">
+  <div class="container container--narrow">
+    <header class="section__head center">
+      <p class="eyebrow">Shipping &amp; Delivery</p>
+      <h1>Shipping Policy</h1>
+      <p class="muted">Clear timelines, transparent tracking, and reliable pan-India delivery.</p>
+    </header>
+
+    <div class="policy-highlight">
+      <div class="policy-highlight__card">
+        <span class="policy-highlight__icon">{% render 'icon', name: 'check' %}</span>
+        <div>
+          <h3>Order Processing Time</h3>
+          <p><strong>1–2 working days</strong></p>
+          <small class="muted">Orders are carefully inspected, packed, and prepared for dispatch. Excludes Sundays &amp; public holidays.</small>
+        </div>
+      </div>
+      <div class="policy-highlight__card">
+        <span class="policy-highlight__icon">{% render 'icon', name: 'truck' %}</span>
+        <div>
+          <h3>Estimated Delivery Time</h3>
+          <p><strong>4–7 working days after dispatch</strong></p>
+          <small class="muted">Delivery timelines are estimates and may vary based on your city, courier logistics, and weather conditions.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="policy-body rte">
+      {%- if shop.shipping_policy.body != blank -%}
+        {{ shop.shipping_policy.body }}
+      {%- elsif page.content != blank -%}
+        {{ page.content }}
+      {%- else -%}
+        <h2>1. Order Processing vs. Delivery Timelines</h2>
+        <p>At <strong>ZEYOV</strong>, we value honesty and transparent communication with our customers. Please note that total delivery time consists of two distinct stages:</p>
+        <ul>
+          <li><strong>Stage 1: Order Processing (1–2 working days)</strong> — Every confirmed order is verified, quality-checked, carefully packed in protective packaging, and handed over to our trusted courier partners. Processing takes place Monday through Saturday. Orders placed on Sundays or national holidays are initiated on the next working day.</li>
+          <li><strong>Stage 2: Shipping Transit (4–7 working days after dispatch)</strong> — Once handed over to the courier, transit time generally takes an estimated 4–7 working days depending on your destination (Metro cities like Bengaluru, Mumbai, Delhi typically receive deliveries faster, within 3–5 working days).</li>
+        </ul>
+
+        {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: '/pages/track-order' -%}
+        <p>As soon as your shipment is dispatched, we send you an automated shipping confirmation via SMS/Email and WhatsApp containing your tracking number and live courier link. You can also visit our <a href="{{ track_link }}">Track Your Order</a> page at any time to monitor status updates in real-time.</p>
+
+        <h2>3. Shipping Charges &amp; Payment Options</h2>
+        <p><strong>100% Free Shipping on all Prepaid Orders:</strong> We offer completely free delivery across India for all prepaid orders (UPI, Google Pay, PhonePe, Paytm, RuPay, Visa, Mastercard, and Net Banking).</p>
+        <p><strong>Cash on Delivery (COD):</strong> Cash on Delivery is currently coming soon. We are actively finalizing verified COD fulfillment routes with our logistics network and will launch it shortly across India.</p>
+
+        <h2>4. Delivery Partners &amp; Pan-India Coverage</h2>
+        <p>We partner with India's leading logistics providers (including Blue Dart, Delhivery, Shadowfax, Xpressbees, and DTDC) to ensure reliable reach across 19,000+ pin codes nationwide.</p>
+
+        <h2>5. Undelivered or Delayed Shipments</h2>
+        <p>While over 95% of orders arrive well within the estimated timeframe, courier delays can occasionally occur due to regional restrictions, adverse weather, or peak festive volumes. If your shipment has not arrived within 8 working days of dispatch, please reach out directly to our support team on WhatsApp or email <a href="mailto:{{ settings.support_email | default: 'support@zeyov.com' }}">{{ settings.support_email | default: 'support@zeyov.com' }}</a>. We will coordinate with the courier immediately to expedite delivery.</p>
+
+        <h2>6. Damaged in Transit</h2>
+        <p>In the rare event that your package arrives visibly damaged or tampered with, please take a quick photo/video of the outer box before unboxing and contact us within 48 hours. We will promptly arrange a hassle-free replacement.</p>
+      {%- endif -%}
+    </div>
+
+    <div class="policy-help-box mt">
+      <div class="policy-help-box__content">
+        <h4>Need help with a shipment?</h4>
+        <p class="small muted">Our customer care team is available Monday to Saturday (9:30 AM – 6:30 PM IST).</p>
+      </div>
+      <div class="policy-help-box__actions">
+        {%- if settings.whatsapp_number != blank -%}
+          <a class="btn btn--small btn--gold" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text=Hi%20Zeyov%20team%2C%20I%20have%20a%20shipping%20query" target="_blank" rel="noopener">{% render 'icon', name: 'whatsapp' %} WhatsApp Support</a>
+        {%- endif -%}
+        {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
+        <a class="btn btn--small btn--outline" href="{{ contact_link }}">Contact Form</a>
+      </div>
+    </div>
+  </div>
+</section>

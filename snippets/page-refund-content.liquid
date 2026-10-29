@@ -1,0 +1,79 @@
+<section class="section policy-page">
+  <div class="container container--narrow">
+    <header class="section__head center">
+      <p class="eyebrow">Customer Protection</p>
+      <h1>Return &amp; Refund Policy</h1>
+      <p class="muted">Hassle-free resolutions, fair terms, and prompt customer assistance.</p>
+    </header>
+
+    <div class="policy-highlight">
+      <div class="policy-highlight__card">
+        <span class="policy-highlight__icon">{% render 'icon', name: 'return' %}</span>
+        <div>
+          <h3>7-Day Return / Replacement</h3>
+          <p><strong>Simple &amp; transparent process</strong></p>
+          <small class="muted">Report any defect, damage, or discrepancy within 7 days of delivery.</small>
+        </div>
+      </div>
+      <div class="policy-highlight__card">
+        <span class="policy-highlight__icon">{% render 'icon', name: 'shield' %}</span>
+        <div>
+          <h3>100% Genuine Quality Guarantee</h3>
+          <p><strong>Peace of mind on every order</strong></p>
+          <small class="muted">Pre-inspected products packed with protective transit wrapping.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="policy-body rte">
+      {%- if shop.refund_policy.body != blank -%}
+        {{ shop.refund_policy.body }}
+      {%- elsif page.content != blank -%}
+        {{ page.content }}
+      {%- else -%}
+        <h2>1. Overview</h2>
+        <p>At <strong>ZEYOV</strong>, we take genuine pride in curating thoughtful, high-quality products. We want you to be completely satisfied with every order. If an item arrives defective, damaged in transit, or different from what was ordered, our customer care team is here to make it right.</p>
+
+        <h2>2. Eligibility for Returns &amp; Replacements</h2>
+        <p>To be eligible for a return or replacement:</p>
+        <ul>
+          <li>You must contact us within <strong>7 days of delivery</strong>.</li>
+          <li>The item must be in its original condition, unused, with original packaging, tags, and all included accessories intact.</li>
+          <li>Proof of purchase (Order number or confirmation email/SMS) is required.</li>
+        </ul>
+
+        <h2>3. How to Request a Return or Replacement</h2>
+        <p>Initiating a request takes under 2 minutes:</p>
+        <ol>
+          <li>Message our support team on <strong>WhatsApp</strong> or email us at <strong><a href="mailto:{{ settings.support_email | default: 'support@zeyov.com' }}">{{ settings.support_email | default: 'support@zeyov.com' }}</a></strong> with your Order ID.</li>
+          <li>Share a brief photo or short unboxing video clearly displaying the issue or defect.</li>
+          <li>Our team will review your request within 24 hours and arrange a replacement shipment or pickup accordingly.</li>
+        </ol>
+
+        <h2>4. Refunds &amp; Processing Timelines</h2>
+        <p>Once your returned item is received and inspected at our fulfilment center:</p>
+        <ul>
+          <li><strong>Prepaid Orders (Cards, Net Banking, UPI):</strong> Refunds are credited directly back to the original source within <strong>3–5 business days</strong>.</li>
+          <li><strong>Cash on Delivery (COD) Orders:</strong> Refunds are disbursed securely via direct UPI transfer or NEFT bank transfer upon receiving your account details.</li>
+        </ul>
+
+        <h2>5. Cancellations</h2>
+        <p>Orders can be cancelled free of charge before dispatch. Once an order has been handed over to the courier (processing complete), it cannot be cancelled in transit, but you can request an easy exchange or return upon arrival.</p>
+      {%- endif -%}
+    </div>
+
+    <div class="policy-help-box mt">
+      <div class="policy-help-box__content">
+        <h4>Have a question about an order?</h4>
+        <p class="small muted">Chat directly with our care team on WhatsApp or send us an email.</p>
+      </div>
+      <div class="policy-help-box__actions">
+        {%- if settings.whatsapp_number != blank -%}
+          <a class="btn btn--small btn--gold" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text=Hi%20Zeyov%2C%20I%20have%20a%20question%20about%20returns" target="_blank" rel="noopener">{% render 'icon', name: 'whatsapp' %} WhatsApp Care</a>
+        {%- endif -%}
+        {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
+        <a class="btn btn--small btn--outline" href="{{ contact_link }}">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>

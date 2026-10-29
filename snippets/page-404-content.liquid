@@ -1,0 +1,44 @@
+<section class="section page-404">
+  <div class="container container--narrow center">
+    <span class="badge badge--gold mb-sm">Error 404</span>
+    <h1 class="page-404__title">This page took a different route</h1>
+    <p class="muted page-404__text">The page you're looking for might have been moved, renamed, or is temporarily unavailable. Let's get you back to something beautiful.</p>
+
+    <div class="page-404__search">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+        <input type="search" name="q" placeholder="Search dresses, outerwear, atelier collections…" aria-label="Search" autocomplete="off">
+        <input type="hidden" name="type" value="product">
+        <button class="btn btn--gold" type="submit">Search</button>
+      </form>
+    </div>
+
+    <div class="page-404__quicklinks">
+      <p class="eyebrow">Couture Curations &amp; Quick Links</p>
+      <div class="quicklink-pills">
+        <a class="pill" href="{{ routes.all_products_collection_url }}">All Creations</a>
+        <a class="pill" href="{{ routes.root_url }}#RunwayOrbit">The Runway Edit</a>
+        {%- assign shipping_link = pages['shipping-policy'].url | default: pages['shipping'].url | default: '/pages/shipping-policy' -%}
+        {%- assign refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: '/pages/refund-policy' -%}
+        {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: '/pages/track-order' -%}
+        {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: '/pages/about-us' -%}
+        {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
+        {%- assign faq_link = pages['faq'].url | default: pages['faqs'].url | default: '/pages/faq' -%}
+        <a class="pill" href="{{ shipping_link }}">Shipping Policy</a>
+        <a class="pill" href="{{ refund_link }}">Return &amp; Refund</a>
+        <a class="pill" href="{{ track_link }}">Track Order</a>
+        <a class="pill" href="{{ about_link }}">About ZEYOV</a>
+        <a class="pill" href="{{ contact_link }}">Contact Us</a>
+        <a class="pill" href="{{ faq_link }}">FAQs</a>
+      </div>
+    </div>
+
+    <div class="page-404__actions mt">
+      <a class="btn btn--lg" href="{{ routes.all_products_collection_url }}">Explore Runway Collection</a>
+      {%- if settings.whatsapp_number != blank -%}
+        <a class="btn btn--lg btn--outline" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text=Hi%20Zeyov%2C%20I%20need%20help%20finding%20a%20page" target="_blank" rel="noopener">
+          {% render 'icon', name: 'whatsapp' %} Ask on WhatsApp
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>

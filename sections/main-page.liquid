@@ -1,0 +1,41 @@
+{%- if page.content != blank -%}
+  <section class="section">
+    <div class="container container--narrow">
+      <h1 class="center">{{ page.title }}</h1>
+      <div class="rte mt">{{ page.content }}</div>
+    </div>
+  </section>
+{%- else -%}
+  {%- assign h = page.handle | default: request.path | downcase -%}
+  {%- if h contains 'shipping' -%}
+    {% render 'page-shipping-content' %}
+  {%- elsif h contains 'refund' or h contains 'return' -%}
+    {% render 'page-refund-content' %}
+  {%- elsif h contains 'privacy' -%}
+    {% render 'page-privacy-content' %}
+  {%- elsif h contains 'terms' -%}
+    {% render 'page-terms-content' %}
+  {%- elsif h contains 'track' -%}
+    {% render 'page-track-order-content' %}
+  {%- elsif h contains 'about' -%}
+    {% render 'page-about-content' %}
+  {%- elsif h contains 'contact' -%}
+    {% render 'page-contact-content' %}
+  {%- elsif h contains 'faq' -%}
+    {% render 'page-faq-content' %}
+  {%- else -%}
+    <section class="section">
+      <div class="container container--narrow">
+        <h1 class="center">{{ page.title }}</h1>
+        <div class="rte mt">{{ page.content }}</div>
+      </div>
+    </section>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": []
+}
+{% endschema %}

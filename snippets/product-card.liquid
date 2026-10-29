@@ -1,0 +1,54 @@
+{%- comment -%} Usage: {% render 'product-card', product: product %} {%- endcomment -%}
+{%- assign v = product.selected_or_first_available_variant -%}
+<article class="card" data-product-handle="{{ product.handle }}" data-product-id="{{ product.id }}">
+  <div class="card__media-wrap">
+    <a class="card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+      {%- if product.featured_image -%}
+        {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '300, 450, 600, 700', sizes: '(min-width: 900px) 25vw, 50vw', alt: product.featured_image.alt | default: product.title }}
+      {%- else -%}
+        <div class="card__placeholder">{{ product.title | truncate: 1, '' }}</div>
+      {%- endif -%}
+      {%- if product.images.size > 1 -%}
+        {{ product.images[1] | image_url: width: 700 | image_tag: loading: 'lazy', class: 'card__hover', alt: '' }}
+      {%- endif -%}
+    </a>
+
+    <!-- Top Left Sale Badge -->
+    {%- if v.compare_at_price > v.price -%}
+      {%- assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round -%}
+      <span class="card__badge card__badge--sale">{{ pct }}% OFF</span>
+    {%- elsif product.available == false -%}
+      <span class="card__badge card__badge--soldout">Sold out</span>
+    {%- endif -%}
+
+    <!-- Top Right Wishlist (Heart) Button -->
+    <button type="button" class="card__wishlist-btn" data-wishlist-toggle="{{ product.handle }}" data-product-id="{{ product.id }}" data-title="{{ product.title | escape }}" data-price="{{ v.price | money | escape }}" data-image="{{ product.featured_image | image_url: width: 300 }}" data-url="{{ product.url }}" aria-label="Save to Wishlist">
+      <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+      <svg class="heart-icon heart-filled" viewBox="0 0 24 24" fill="#E23636" stroke="#E23636" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+    </button>
+  </div>
+
+  <div class="card__body">
+    <div class="card__meta-top">
+      <span class="card__type">{{ product.type | default: 'ZEYOV ATELIER' | upcase }}</span>
+      <div class="card__rating-mini"><span class="stars-gold">★★★★★</span> <small>4.9</small></div>
+    </div>
+    <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    {% render 'price', product: product, variant: v %}
+    <div class="card__action">
+      {%- if product.available and product.variants.size == 1 -%}
+        <form method="post" action="{{ routes.cart_add_url }}" class="card__form" data-ajax-add>
+          <input type="hidden" name="id" value="{{ v.id }}">
+          <button type="submit" class="btn btn--small btn--luxury btn--block" data-add-bag-btn>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+            <span>Add to Bag</span>
+          </button>
+        </form>
+      {%- elsif product.available -%}
+        <a href="{{ product.url }}" class="btn btn--small btn--luxury btn--block">Select Options</a>
+      {%- else -%}
+        <span class="btn btn--small btn--disabled btn--block">Sold out</span>
+      {%- endif -%}
+    </div>
+  </div>
+</article>

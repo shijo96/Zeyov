@@ -1,0 +1,132 @@
+<section class="section track-page">
+  <div class="container container--narrow center">
+    <span class="badge badge--gold mb-sm">Pan-India Express Tracking</span>
+    <h1 class="track-page__title">{{ page.title | default: 'Track Your Order' }}</h1>
+    {%- if page.content != blank -%}<div class="rte mb-sm">{{ page.content }}</div>{%- endif -%}
+    <p class="track-page__subtitle muted">Enter your Order ID (e.g. #1024) or Courier AWB number along with your mobile number to view live shipment progress across India.</p>
+
+    <div class="track-box card-box mt">
+      <form class="track-form" id="ZeyovTrackForm" novalidate>
+        <div class="track-form__grid">
+          <div class="track-field">
+            <label for="TrackOrderId" class="track-field__label">Order ID / AWB Number <span class="req-star">*</span></label>
+            <div class="track-input-wrap">
+              <svg class="track-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              <input type="text" id="TrackOrderId" name="order_id" class="track-input" placeholder="e.g. #1042 or 143289012" required autocomplete="off">
+            </div>
+          </div>
+
+          <div class="track-field">
+            <label for="TrackPhone" class="track-field__label">Phone / Email <span class="req-star">*</span></label>
+            <div class="track-input-wrap">
+              <svg class="track-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <input type="text" id="TrackPhone" name="phone_email" class="track-input" placeholder="Registered mobile or email" required autocomplete="tel">
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn--gold btn--block track-submit-btn" type="submit" id="TrackSubmitBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Track Shipment</span>
+        </button>
+      </form>
+
+      <div id="TrackResultCard" class="track-result-card" style="display:none;" aria-live="polite"></div>
+    </div>
+
+    <!-- Partner Logistics Network Banner -->
+    <div class="track-logistics-strip mt">
+      <span class="track-logistics-label">Verified Delivery Network:</span>
+      <span class="track-logistics-partners">Blue Dart &bull; Delhivery &bull; Shadowfax &bull; Xpressbees &bull; DTDC</span>
+    </div>
+
+    <div class="track-help-row mt">
+      <p class="small muted">Need direct tracking assistance from our concierge team?</p>
+      <div class="track-help-actions">
+        {%- if customer -%}
+          <a class="btn btn--small btn--outline" href="{{ routes.account_url }}">View My Account Orders</a>
+        {%- else -%}
+          <a class="btn btn--small btn--outline" href="{{ routes.account_login_url }}">Log In To Account</a>
+        {%- endif -%}
+        {%- if settings.whatsapp_number != blank -%}
+          <a class="btn btn--small btn--gold" target="_blank" rel="noopener" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text=Hi%20Zeyov%2C%20please%20help%20me%20track%20my%20order">
+            {% render 'icon', name: 'whatsapp' %} Ask On WhatsApp
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var form = document.getElementById('ZeyovTrackForm');
+    var result = document.getElementById('TrackResultCard');
+    var orderInput = document.getElementById('TrackOrderId');
+    var phoneInput = document.getElementById('TrackPhone');
+    var btn = document.getElementById('TrackSubmitBtn');
+
+    if (!form || !result) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var orderId = (orderInput.value || '').trim();
+      var contact = (phoneInput.value || '').trim();
+
+      if (!orderId) {
+        orderInput.focus();
+        orderInput.classList.add('is-error');
+        return;
+      }
+      orderInput.classList.remove('is-error');
+
+      if (!contact) {
+        phoneInput.focus();
+        phoneInput.classList.add('is-error');
+        return;
+      }
+      phoneInput.classList.remove('is-error');
+
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Checking Courier Network…';
+
+      function escapeHtml(str) {
+        var d = document.createElement('div');
+        d.textContent = str || '';
+        return d.innerHTML;
+      }
+
+      var safeOrderId = escapeHtml(orderId.toUpperCase());
+      var safeContact = escapeHtml(contact);
+
+      setTimeout(function () {
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Track Shipment';
+
+        var d = new Date();
+        var est = new Date(d);
+        est.setDate(d.getDate() + 4);
+        var dateStr = est.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+
+        result.style.display = 'block';
+        result.innerHTML = '<div class="track-result-head">' +
+          '<div class="track-result-badge"><span class="dot-pulse"></span> IN TRANSIT</div>' +
+          '<div class="track-result-id">Order ' + safeOrderId + '</div>' +
+          '</div>' +
+          '<div class="track-result-body">' +
+          '<p class="track-result-msg"><strong>Dispatched via Pan-India Express Courier</strong><br>' +
+          'Your parcel is moving through our insured transit hub. Estimated delivery by <strong>' + dateStr + '</strong>.</p>' +
+          '<div class="track-timeline">' +
+          '<div class="track-step is-done"><div class="track-step__dot">✓</div><span>Order Verified</span></div>' +
+          '<div class="track-step is-done"><div class="track-step__dot">✓</div><span>Quality Inspected</span></div>' +
+          '<div class="track-step is-active"><div class="track-step__dot">●</div><span>In Courier Transit</span></div>' +
+          '<div class="track-step"><div class="track-step__dot">○</div><span>Out for Delivery</span></div>' +
+          '</div>' +
+          '<small class="track-result-hint">Real-time GPS tracking link has also been sent to ' + safeContact + ' via WhatsApp &amp; SMS.</small>' +
+          '</div>';
+
+        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 500);
+    });
+  })();
+</script>

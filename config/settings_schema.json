@@ -1,0 +1,84 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Zeyov",
+    "theme_version": "1.0.0",
+    "theme_author": "Zeyov",
+    "theme_documentation_url": "https://zeyov.com",
+    "theme_support_url": "https://zeyov.com"
+  },
+  {
+    "name": "Brand & colours",
+    "settings": [
+      { "type": "header", "content": "Logo" },
+      { "type": "image_picker", "id": "logo", "label": "Logo image (optional – default Zeyov logo is used if empty)" },
+      { "type": "range", "id": "logo_width", "min": 80, "max": 260, "step": 10, "unit": "px", "label": "Logo width (desktop)", "default": 150 },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon" },
+      { "type": "header", "content": "Colours" },
+      { "type": "color", "id": "color_bg", "label": "Page background (Warm Ivory)", "default": "#FAF8F4" },
+      { "type": "color", "id": "color_surface", "label": "Cards / surface background (Pure White)", "default": "#FFFFFF" },
+      { "type": "color", "id": "color_text", "label": "Text (Rich Charcoal)", "default": "#20201F" },
+      { "type": "color", "id": "color_primary", "label": "Primary brand color (Deep Espresso)", "default": "#33251F" },
+      { "type": "color", "id": "color_secondary_bg", "label": "Secondary background (Soft Sand)", "default": "#EDE5DB" },
+      { "type": "color", "id": "color_muted", "label": "Secondary text (Warm Gray)", "default": "#77716B" },
+      { "type": "color", "id": "color_gold", "label": "Accent color (Muted Champagne Gold)", "default": "#B89B65" },
+      { "type": "color", "id": "color_gold_dark", "label": "Deep gold accent", "default": "#8F7241" },
+      { "type": "color", "id": "color_border", "label": "Borders and dividers", "default": "#E5DED5" },
+      { "type": "color", "id": "color_button", "label": "Primary button (Deep Espresso)", "default": "#33251F" },
+      { "type": "color", "id": "color_button_text", "label": "Primary button text", "default": "#FFFFFF" },
+      { "type": "color", "id": "color_sale", "label": "Sale / savings (Refined Deep Burgundy)", "default": "#9D3535" },
+      { "type": "color", "id": "color_success", "label": "Success state (Muted Forest Green)", "default": "#386B50" }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      { "type": "select", "id": "heading_font", "label": "Heading font", "default": "Cormorant Garamond", "options": [
+        { "value": "Cormorant Garamond", "label": "Cormorant Garamond (luxury serif)" },
+        { "value": "Playfair Display", "label": "Playfair Display" },
+        { "value": "DM Serif Display", "label": "DM Serif Display" }
+      ] },
+      { "type": "select", "id": "body_font", "label": "Body font", "default": "Jost", "options": [
+        { "value": "Jost", "label": "Jost" },
+        { "value": "Poppins", "label": "Poppins" },
+        { "value": "Inter", "label": "Inter" }
+      ] }
+    ]
+  },
+  {
+    "name": "Store policies & delivery",
+    "settings": [
+      { "type": "header", "content": "Delivery estimate (product page)" },
+      { "type": "checkbox", "id": "show_delivery_estimator", "label": "Show pincode delivery estimate box", "default": true },
+      { "type": "range", "id": "delivery_min_days", "min": 1, "max": 14, "step": 1, "label": "Minimum delivery days", "default": 4 },
+      { "type": "range", "id": "delivery_max_days", "min": 2, "max": 21, "step": 1, "label": "Maximum delivery days", "default": 8 },
+      { "type": "header", "content": "Product page assurances (edit so they are TRUE for your store)" },
+      { "type": "text", "id": "assure_1", "label": "Assurance 1", "default": "Secure online payment" },
+      { "type": "text", "id": "assure_2", "label": "Assurance 2", "default": "Easy returns – see Returns Policy" },
+      { "type": "text", "id": "assure_3", "label": "Assurance 3", "default": "Order tracking on every shipment" },
+      { "type": "text", "id": "assure_4", "label": "Assurance 4", "default": "WhatsApp / email support" },
+      { "type": "header", "content": "Low-stock message" },
+      { "type": "checkbox", "id": "show_low_stock", "label": "Show 'Only X left' when real inventory is low", "default": true },
+      { "type": "range", "id": "low_stock_threshold", "min": 1, "max": 30, "step": 1, "label": "Show when stock is at or below", "default": 10 }
+    ]
+  },
+  {
+    "name": "Contact & social",
+    "settings": [
+      { "type": "text", "id": "whatsapp_number", "label": "WhatsApp number with country code (e.g. 919876543210)", "info": "Shows a floating WhatsApp button. Leave empty to hide." },
+      { "type": "text", "id": "whatsapp_message", "label": "WhatsApp pre-filled message", "default": "Hi Zeyov, I need help with my order." },
+      { "type": "text", "id": "support_email", "label": "Support email", "default": "support@zeyov.com" },
+      { "type": "text", "id": "support_phone", "label": "Support phone (optional)" },
+      { "type": "url", "id": "social_instagram", "label": "Instagram" },
+      { "type": "url", "id": "social_facebook", "label": "Facebook" },
+      { "type": "url", "id": "social_youtube", "label": "YouTube" }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      { "type": "checkbox", "id": "cart_note", "label": "Enable order note on cart page", "default": true },
+      { "type": "range", "id": "free_shipping_threshold", "min": 0, "max": 5000, "step": 50, "unit": "₹", "label": "Free-shipping progress bar threshold (0 = hide)", "info": "Only set this if you have a matching free-shipping rate in Shopify > Settings > Shipping.", "default": 0 }
+    ]
+  }
+]

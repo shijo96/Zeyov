@@ -1,0 +1,393 @@
+{%- comment -%}
+  ZEYOV Runway Orbit Showcase - 100% Dynamic Production Section
+  Supports:
+  1. Blocks (Custom Runway Item blocks with product and image pickers)
+  2. Individual Product Pickers (settings.product_1..4 with custom image overrides)
+  3. Collection Picker (settings.collection or collections.all)
+  4. Graceful luxury demo fallback if catalog is brand new
+{%- endcomment -%}
+
+{%- assign runway_mode = 'demo' -%}
+{%- if section.blocks.size > 0 -%}
+  {%- assign runway_mode = 'blocks' -%}
+{%- elsif section.settings.product_1 != blank or section.settings.product_2 != blank or section.settings.product_3 != blank or section.settings.product_4 != blank -%}
+  {%- assign runway_mode = 'products' -%}
+{%- else -%}
+  {%- assign orbit_col = section.settings.collection | default: collections.all -%}
+  {%- if orbit_col.products.size > 0 -%}
+    {%- assign runway_mode = 'collection' -%}
+  {%- endif -%}
+{%- endif -%}
+
+<section class="runway-orbit-section runway-orbit-section--{{ section.settings.color_scheme | default: 'ivory' }}" id="RunwayOrbit" data-runway-orbit>
+  <!-- Background Rolling Serif Watermark (Video 1 signature) -->
+  <div class="orbit__watermark-wrap" aria-hidden="true">
+    <div class="orbit__watermark-text" data-orbit-watermark>ZEYOV RUNWAY</div>
+  </div>
+
+  <div class="container orbit__inner">
+    <!-- Header -->
+    <header class="orbit__head center">
+      <p class="orbit__eyebrow">{{ section.settings.eyebrow | default: 'ZEYOV RUNWAY EDIT • ISSUE 01' }}</p>
+      <h2 class="orbit__tagline">{{ section.settings.heading | default: 'NOT A STORE. A RUNWAY.' }}</h2>
+    </header>
+
+    <div class="orbit__stage-grid">
+      <!-- Left Editorial Garment Index Tracklist -->
+      <aside class="orbit__index" aria-label="Runway Collection Index">
+        <p class="orbit__index-title">COLLECTION INDEX</p>
+        <ul class="orbit__tracklist" role="list">
+          {%- if runway_mode == 'blocks' -%}
+            {%- for block in section.blocks limit: 6 -%}
+              {%- assign p = block.settings.product -%}
+              {%- assign t = block.settings.title | default: p.title | default: 'Runway Outfit' -%}
+              {%- assign pr = p.price | money | default: 'Rs. 2,999.00' -%}
+              <li class="orbit__track-item{% if forloop.first %} is-active{% endif %}" data-orbit-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+                <span class="track-num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+                <span class="track-name">{{ t | upcase }}</span>
+                <span class="track-price">{{ pr }}</span>
+              </li>
+            {%- endfor -%}
+
+          {%- elsif runway_mode == 'products' -%}
+            {%- assign shown_idx = 0 -%}
+            {%- for i in (1..4) -%}
+              {%- assign p_key = 'product_' | append: i -%}
+              {%- assign p = section.settings[p_key] -%}
+              {%- if p != blank -%}
+                <li class="orbit__track-item{% if shown_idx == 0 %} is-active{% endif %}" data-orbit-index="{{ shown_idx }}">
+                  <span class="track-num">{{ shown_idx | plus: 1 | prepend: '0' | slice: -2, 2 }}</span>
+                  <span class="track-name">{{ p.title | upcase }}</span>
+                  <span class="track-price">{{ p.price | money }}</span>
+                </li>
+                {%- assign shown_idx = shown_idx | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+          {%- elsif runway_mode == 'collection' -%}
+            {%- for p in orbit_col.products limit: 4 -%}
+              <li class="orbit__track-item{% if forloop.first %} is-active{% endif %}" data-orbit-index="{{ forloop.index0 }}">
+                <span class="track-num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+                <span class="track-name">{{ p.title | upcase }}</span>
+                <span class="track-price">{{ p.price | money }}</span>
+              </li>
+            {%- endfor -%}
+
+          {%- else -%}
+            <li class="orbit__track-item is-active" data-orbit-index="0">
+              <span class="track-num">01</span>
+              <span class="track-name">AMBER PUFFER VEST</span>
+              <span class="track-price">Rs. 2,499.00</span>
+            </li>
+            <li class="orbit__track-item" data-orbit-index="1">
+              <span class="track-num">02</span>
+              <span class="track-name">EMERALD SILK DRAPED GOWN</span>
+              <span class="track-price">Rs. 3,899.00</span>
+            </li>
+            <li class="orbit__track-item" data-orbit-index="2">
+              <span class="track-num">03</span>
+              <span class="track-name">CAMEL TAILORED WOOL TRENCH</span>
+              <span class="track-price">Rs. 4,299.00</span>
+            </li>
+            <li class="orbit__track-item" data-orbit-index="3">
+              <span class="track-num">04</span>
+              <span class="track-name">CREAM SHERPA HALF-ZIP</span>
+              <span class="track-price">Rs. 2,899.00</span>
+            </li>
+          {%- endif -%}
+        </ul>
+      </aside>
+
+      <!-- Center 3D Orbit Carousel Area -->
+      <div class="orbit__carousel-wrap">
+        <div class="orbit__carousel" data-orbit-carousel>
+          {%- if runway_mode == 'blocks' -%}
+            {%- for block in section.blocks limit: 6 -%}
+              {%- assign p = block.settings.product -%}
+              {%- assign t = block.settings.title | default: p.title | default: 'Runway Piece' -%}
+              {%- assign pr = p.price | money | default: 'Rs. 2,999.00' -%}
+              {%- assign tg = block.settings.tag | default: p.type | default: 'RUNWAY EDIT' | upcase -%}
+              {%- assign ds = block.settings.desc | default: p.description | strip_html | truncate: 160 -%}
+              {%- assign url = p.url | default: routes.all_products_collection_url -%}
+              {%- assign vid = p.selected_or_first_available_variant.id | default: '' -%}
+              {%- if block.settings.image != blank -%}
+                {%- assign img_src = block.settings.image | image_url: width: 800 -%}
+              {%- elsif p.featured_image != blank -%}
+                {%- assign img_src = p.featured_image | image_url: width: 800 -%}
+              {%- else -%}
+                {%- assign img_src = 'fashion-puffer-jacket.jpg' | asset_url -%}
+              {%- endif -%}
+              <article class="orbit__item{% if forloop.first %} is-active{% endif %}" 
+                data-item-idx="{{ forloop.index0 }}" 
+                data-title="{{ t | escape }}" 
+                data-price="{{ pr | escape }}" 
+                data-tag="{{ tg | escape }}" 
+                data-desc="{{ ds | escape }}" 
+                data-variant-id="{{ vid }}" 
+                data-product-url="{{ url }}"
+                data-img="{{ img_src }}"
+                {{ block.shopify_attributes }}>
+                <div class="orbit__item-card">
+                  <img src="{{ img_src }}" alt="{{ t | escape }}" width="600" height="600" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" class="orbit__garment-img">
+                  <div class="orbit__shadow" aria-hidden="true"></div>
+                </div>
+              </article>
+            {%- endfor -%}
+
+          {%- elsif runway_mode == 'products' -%}
+            {%- assign shown_idx = 0 -%}
+            {%- for i in (1..4) -%}
+              {%- assign p_key = 'product_' | append: i -%}
+              {%- assign img_key = 'image_' | append: i -%}
+              {%- assign tag_key = 'tag_' | append: i -%}
+              {%- assign p = section.settings[p_key] -%}
+              {%- if p != blank -%}
+                {%- assign t = p.title -%}
+                {%- assign pr = p.price | money -%}
+                {%- assign tg = section.settings[tag_key] | default: p.type | default: 'RUNWAY EDIT' | upcase -%}
+                {%- assign ds = p.description | strip_html | truncate: 160 -%}
+                {%- assign url = p.url -%}
+                {%- assign vid = p.selected_or_first_available_variant.id -%}
+                {%- if section.settings[img_key] != blank -%}
+                  {%- assign img_src = section.settings[img_key] | image_url: width: 800 -%}
+                {%- elsif p.featured_image != blank -%}
+                  {%- assign img_src = p.featured_image | image_url: width: 800 -%}
+                {%- else -%}
+                  {%- assign img_src = 'fashion-puffer-jacket.jpg' | asset_url -%}
+                {%- endif -%}
+                <article class="orbit__item{% if shown_idx == 0 %} is-active{% endif %}" 
+                  data-item-idx="{{ shown_idx }}" 
+                  data-title="{{ t | escape }}" 
+                  data-price="{{ pr | escape }}" 
+                  data-tag="{{ tg | escape }}" 
+                  data-desc="{{ ds | escape }}" 
+                  data-variant-id="{{ vid }}" 
+                  data-product-url="{{ url }}"
+                  data-img="{{ img_src }}">
+                  <div class="orbit__item-card">
+                    <img src="{{ img_src }}" alt="{{ t | escape }}" width="600" height="600" loading="{% if shown_idx == 0 %}eager{% else %}lazy{% endif %}" class="orbit__garment-img">
+                    <div class="orbit__shadow" aria-hidden="true"></div>
+                  </div>
+                </article>
+                {%- assign shown_idx = shown_idx | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+          {%- elsif runway_mode == 'collection' -%}
+            {%- for p in orbit_col.products limit: 4 -%}
+              {%- assign t = p.title -%}
+              {%- assign pr = p.price | money -%}
+              {%- assign tg = p.type | default: 'RUNWAY EDIT' | upcase -%}
+              {%- assign ds = p.description | strip_html | truncate: 160 -%}
+              {%- assign url = p.url -%}
+              {%- assign vid = p.selected_or_first_available_variant.id -%}
+              {%- if p.featured_image != blank -%}
+                {%- assign img_src = p.featured_image | image_url: width: 800 -%}
+              {%- else -%}
+                {%- assign img_src = 'fashion-puffer-jacket.jpg' | asset_url -%}
+              {%- endif -%}
+              <article class="orbit__item{% if forloop.first %} is-active{% endif %}" 
+                data-item-idx="{{ forloop.index0 }}" 
+                data-title="{{ t | escape }}" 
+                data-price="{{ pr | escape }}" 
+                data-tag="{{ tg | escape }}" 
+                data-desc="{{ ds | escape }}" 
+                data-variant-id="{{ vid }}" 
+                data-product-url="{{ url }}"
+                data-img="{{ img_src }}">
+                <div class="orbit__item-card">
+                  <img src="{{ img_src }}" alt="{{ t | escape }}" width="600" height="600" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" class="orbit__garment-img">
+                  <div class="orbit__shadow" aria-hidden="true"></div>
+                </div>
+              </article>
+            {%- endfor -%}
+
+          {%- else -%}
+            <!-- Starter Luxury Defaults -->
+            <article class="orbit__item is-active" data-item-idx="0" data-title="Amber Puffer Vest" data-price="Rs. 2,499.00" data-tag="AUTUMN / WINTER 24" data-desc="Engineered with thermal air-loft insulation and water-resistant nylon shell. Minimalist obsidian contrast detailing." data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-img="{{ 'fashion-puffer-jacket.jpg' | asset_url }}">
+              <div class="orbit__item-card">
+                <img src="{{ 'fashion-puffer-jacket.jpg' | asset_url }}" alt="Amber Puffer Vest" width="600" height="600" loading="eager" class="orbit__garment-img">
+                <div class="orbit__shadow" aria-hidden="true"></div>
+              </div>
+            </article>
+
+            <article class="orbit__item" data-item-idx="1" data-title="Emerald Silk Draped Gown" data-price="Rs. 3,899.00" data-tag="RUNWAY COUTURE" data-desc="Handcrafted from pure Mulberry silk with an asymmetrical Grecian drape and flowing champagne sash. Designed for effortless grace." data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-img="{{ 'fashion-silk-dress.jpg' | asset_url }}">
+              <div class="orbit__item-card">
+                <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Emerald Silk Draped Gown" width="600" height="600" loading="eager" class="orbit__garment-img">
+                <div class="orbit__shadow" aria-hidden="true"></div>
+              </div>
+            </article>
+
+            <article class="orbit__item" data-item-idx="2" data-title="Camel Tailored Wool Trench" data-price="Rs. 4,299.00" data-tag="TIMELESS OUTERWEAR" data-desc="Double-breasted virgin wool trench coat with waist cinching belt and custom horn buttons. Structured shoulder silhouette." data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-img="{{ 'fashion-wool-coat.jpg' | asset_url }}">
+              <div class="orbit__item-card">
+                <img src="{{ 'fashion-wool-coat.jpg' | asset_url }}" alt="Camel Tailored Wool Trench" width="600" height="600" loading="lazy" class="orbit__garment-img">
+                <div class="orbit__shadow" aria-hidden="true"></div>
+              </div>
+            </article>
+
+            <article class="orbit__item" data-item-idx="3" data-title="Cream Sherpa Half-Zip" data-price="Rs. 2,899.00" data-tag="COMFORT LUXURY" data-desc="Ultra-soft bonded sherpa fleece with reinforced navy twill chest pocket and brass zipper. Relaxed ergonomic contemporary cut." data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-img="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}">
+              <div class="orbit__item-card">
+                <img src="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}" alt="Cream Sherpa Half-Zip" width="600" height="600" loading="lazy" class="orbit__garment-img">
+                <div class="orbit__shadow" aria-hidden="true"></div>
+              </div>
+            </article>
+          {%- endif -%}
+        </div>
+
+        <!-- Center Bottom Interactive Controller -->
+        <div class="orbit__controller">
+          <div class="orbit__meta">
+            <h3 class="orbit__active-title" data-orbit-title>Amber Puffer Vest</h3>
+            <p class="orbit__active-price" data-orbit-price>Rs. 2,499.00</p>
+          </div>
+
+          <div class="orbit__nav-bar">
+            <button class="orbit__nav-arrow prev" type="button" aria-label="Previous Outfit" data-orbit-prev>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="orbit__nav-progress">
+              <span class="orbit__nav-cur" data-orbit-cur-num>01</span>
+              <div class="orbit__progress-line">
+                <div class="orbit__progress-fill" data-orbit-progress style="width: 25%;"></div>
+              </div>
+              <span class="orbit__nav-tot" data-orbit-total-num>04</span>
+            </div>
+            <button class="orbit__nav-arrow next" type="button" aria-label="Next Outfit" data-orbit-next>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+
+          <div class="orbit__actions-row">
+            <button class="btn btn--gold orbit__quick-btn" type="button" data-open-orbit-modal>
+              Quick View &amp; Select Size &rarr;
+            </button>
+            <a href="{{ routes.all_products_collection_url }}" class="orbit__pdp-link" data-orbit-pdp-link>
+              View Product &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Quick-Buy / Runway Reveal Modal -->
+  <div class="orbit-modal" id="OrbitModal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="orbit-modal__backdrop" data-close-orbit-modal></div>
+    <div class="orbit-modal__panel">
+      <button class="orbit-modal__close" type="button" data-close-orbit-modal aria-label="Close modal">&times;</button>
+
+      <div class="orbit-modal__grid">
+        <div class="orbit-modal__visual">
+          <img src="{{ 'fashion-puffer-jacket.jpg' | asset_url }}" alt="Zeyov Fashion Runway" class="orbit-modal__img" data-modal-img width="600" height="600">
+        </div>
+
+        <div class="orbit-modal__details">
+          <span class="badge badge--gold orbit-modal__tag" data-modal-tag>AUTUMN / WINTER 24</span>
+          <h2 class="orbit-modal__title" data-modal-title>Amber Puffer Vest</h2>
+          <div class="orbit-modal__price-row">
+            <span class="orbit-modal__price" data-modal-price>Rs. 2,499.00</span>
+            <span class="badge badge--sale">Free Prepaid Delivery</span>
+          </div>
+
+          <p class="orbit-modal__desc" data-modal-desc>Engineered with thermal air-loft insulation and water-resistant nylon shell. Minimalist obsidian black contrast detailing.</p>
+
+          <!-- Color Swatches -->
+          <div class="orbit-modal__option">
+            <label class="orbit-modal__label">Runway Palette:</label>
+            <div class="orbit-modal__swatches">
+              <button type="button" class="swatch is-active" style="background:#E29631" title="Amber Gold"></button>
+              <button type="button" class="swatch" style="background:#111111" title="Obsidian Noir"></button>
+              <button type="button" class="swatch" style="background:#13593B" title="Emerald Green"></button>
+              <button type="button" class="swatch" style="background:#C49B66" title="Camel Beige"></button>
+            </div>
+          </div>
+
+          <!-- Size Selector (XS, S, M, L, XL) -->
+          <div class="orbit-modal__option">
+            <div class="size-header">
+              <label class="orbit-modal__label">Select Size:</label>
+              <span class="small muted">True to Indian sizing</span>
+            </div>
+            <div class="orbit-modal__sizes">
+              <button type="button" class="size-btn">XS</button>
+              <button type="button" class="size-btn is-active">S</button>
+              <button type="button" class="size-btn">M</button>
+              <button type="button" class="size-btn">L</button>
+              <button type="button" class="size-btn">XL</button>
+            </div>
+          </div>
+
+          <!-- Add to Bag Button -->
+          <div class="orbit-modal__actions">
+            <button type="button" class="btn btn--gold btn--block orbit-modal__btn" data-modal-add-to-cart>
+              Add to Bag &bull; Free Pan-India Shipping
+            </button>
+            <a href="{{ routes.all_products_collection_url }}" class="orbit-modal__link" data-modal-pdp-link>
+              View Full Product Details &rarr;
+            </a>
+          </div>
+
+          <div class="orbit-modal__perks">
+            <span>{% render 'icon', name: 'truck' %} Dispatched in 24h</span>
+            <span>{% render 'icon', name: 'return' %} 7-Day Easy Returns</span>
+            <span>{% render 'icon', name: 'shield' %} 100% Genuine</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Runway Orbit Showcase",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Hero Color Scheme",
+      "options": [
+        { "value": "ivory", "label": "Warm Ivory Editorial (Recommended)" },
+        { "value": "espresso", "label": "Deep Espresso Couture" },
+        { "value": "dark", "label": "Charcoal Black" }
+      ],
+      "default": "ivory"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow tag", "default": "ZEYOV RUNWAY EDIT • ISSUE 01" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "NOT A STORE. A RUNWAY." },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Runway Collection",
+      "info": "Select a collection to automatically populate the runway products"
+    },
+    { "type": "header", "content": "Or Choose Specific Products (Overrides Collection)" },
+    { "type": "product", "id": "product_1", "label": "Product 01" },
+    { "type": "image_picker", "id": "image_1", "label": "Product 01 Custom Runway Photo (optional)" },
+    { "type": "text", "id": "tag_1", "label": "Product 01 Badge Tag", "default": "AUTUMN / WINTER 24" },
+    { "type": "product", "id": "product_2", "label": "Product 02" },
+    { "type": "image_picker", "id": "image_2", "label": "Product 02 Custom Runway Photo (optional)" },
+    { "type": "text", "id": "tag_2", "label": "Product 02 Badge Tag", "default": "RUNWAY COUTURE" },
+    { "type": "product", "id": "product_3", "label": "Product 03" },
+    { "type": "image_picker", "id": "image_3", "label": "Product 03 Custom Runway Photo (optional)" },
+    { "type": "text", "id": "tag_3", "label": "Product 03 Badge Tag", "default": "TIMELESS OUTERWEAR" },
+    { "type": "product", "id": "product_4", "label": "Product 04" },
+    { "type": "image_picker", "id": "image_4", "label": "Product 04 Custom Runway Photo (optional)" },
+    { "type": "text", "id": "tag_4", "label": "Product 04 Badge Tag", "default": "COMFORT LUXURY" }
+  ],
+  "blocks": [
+    {
+      "type": "orbit_item",
+      "name": "Custom Runway Item",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "image_picker", "id": "image", "label": "Custom Runway Photo (optional)" },
+        { "type": "text", "id": "title", "label": "Custom Title Override (optional)" },
+        { "type": "text", "id": "tag", "label": "Tag", "default": "RUNWAY EDIT" },
+        { "type": "textarea", "id": "desc", "label": "Custom Description (optional)" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Runway Orbit Showcase" }]
+}
+{% endschema %}

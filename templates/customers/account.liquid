@@ -1,0 +1,46 @@
+<section class="section">
+  <div class="container">
+    <header class="section__head">
+      <h1>My account</h1>
+      <p class="muted">Hello, {{ customer.first_name | escape | default: customer.email | escape }}</p>
+      <p><a class="small" href="{{ routes.account_logout_url }}">Log out</a></p>
+    </header>
+    <div class="account">
+      <div>
+        <h2 class="h3">Order history</h2>
+        {%- paginate customer.orders by 10 -%}
+          {%- if customer.orders.size > 0 -%}
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Order</th><th>Date</th><th>Payment</th><th>Fulfilment</th><th>Total</th></tr></thead>
+                <tbody>
+                  {%- for order in customer.orders -%}
+                    <tr>
+                      <td><a href="{{ order.customer_url }}">{{ order.name | escape }}</a></td>
+                      <td>{{ order.created_at | date: '%d %b %Y' }}</td>
+                      <td>{{ order.financial_status_label | escape }}</td>
+                      <td>{{ order.fulfillment_status_label | escape }}</td>
+                      <td>{{ order.total_price | money }}</td>
+                    </tr>
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+            {% render 'pagination', paginate: paginate %}
+          {%- else -%}
+            <p class="muted">You haven't placed any orders yet.</p>
+            <a class="btn" href="{{ routes.all_products_collection_url }}">Start shopping</a>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+      <aside class="card-box">
+        <h2 class="h3">Account details</h2>
+        <p>{{ customer.name | escape }}<br>{{ customer.email | escape }}</p>
+        {%- if customer.default_address != nil -%}
+          <p class="muted">{{ customer.default_address | format_address }}</p>
+        {%- endif -%}
+        <a class="btn btn--outline btn--small" href="{{ routes.account_addresses_url }}">Manage addresses ({{ customer.addresses_count }})</a>
+      </aside>
+    </div>
+  </div>
+</section>

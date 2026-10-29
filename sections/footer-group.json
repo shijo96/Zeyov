@@ -1,0 +1,8 @@
+{
+  "name": "Footer group",
+  "type": "footer",
+  "sections": {
+    "footer": { "type": "footer", "settings": { "menu": "footer", "show_trust": true } }
+  },
+  "order": ["footer"]
+}

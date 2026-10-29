@@ -1,0 +1,31 @@
+{
+  "current": {
+    "logo_width": 150,
+    "color_bg": "#FAF8F4",
+    "color_surface": "#FFFFFF",
+    "color_text": "#20201F",
+    "color_primary": "#33251F",
+    "color_secondary_bg": "#EDE5DB",
+    "color_muted": "#77716B",
+    "color_gold": "#B89B65",
+    "color_gold_dark": "#8F7241",
+    "color_border": "#E5DED5",
+    "color_button": "#33251F",
+    "color_button_text": "#FFFFFF",
+    "color_sale": "#9D3535",
+    "color_success": "#386B50",
+    "heading_font": "Playfair Display",
+    "body_font": "Inter",
+    "show_delivery_estimator": false,
+    "delivery_min_days": 4,
+    "delivery_max_days": 7,
+    "assure_1": "Free Delivery on Prepaid Orders",
+    "assure_2": "Cash on Delivery (COD) Coming Soon",
+    "assure_3": "7-Day Easy Exchange & Return Policy",
+    "assure_4": "Tracked Pan-India Delivery (4–7 Days)",
+    "whatsapp_message": "Hi Zeyov Atelier, I need assistance with my order.",
+    "support_email": "support@zeyov.com",
+    "cart_note": true,
+    "free_shipping_threshold": 0
+  }
+}

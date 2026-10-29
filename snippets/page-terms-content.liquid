@@ -1,0 +1,35 @@
+<section class="section policy-page">
+  <div class="container container--narrow">
+    <header class="section__head center">
+      <p class="eyebrow">Legal &amp; Terms</p>
+      <h1>Terms of Service</h1>
+      <p class="muted">Please read these terms carefully before browsing or placing orders on Zeyov.com.</p>
+    </header>
+
+    <div class="policy-body rte">
+      {%- if shop.terms_of_service.body != blank -%}
+        {{ shop.terms_of_service.body }}
+      {%- elsif page.content != blank -%}
+        {{ page.content }}
+      {%- else -%}
+        <h2>1. Agreement to Terms</h2>
+        <p>By accessing or purchasing from <strong>Zeyov.com</strong>, operated by <strong>ZEYOV</strong>, you agree to be bound by these Terms of Service and all related policies. If you do not agree to all terms, please refrain from using our services.</p>
+
+        <h2>2. General Conditions &amp; Product Pricing</h2>
+        <p>Prices for our products are subject to change without prior notice. We reserve the right at any time to modify or discontinue any product or service without liability. All prices are listed in Indian Rupees (INR) and are inclusive of applicable taxes.</p>
+
+        <h2>3. Accuracy of Billing &amp; Account Information</h2>
+        <p>You agree to provide current, complete, and accurate purchase and account information for all purchases made at our store. You agree to promptly update your account and other information, including your email address and delivery address, so that we can complete your transactions and contact you as needed.</p>
+
+        <h2>4. Shipping, Transit &amp; Delivery</h2>
+        <p>Orders are dispatched within 1–2 working days after confirmation. Delivery times generally range from 4–7 working days thereafter. While we make every effort to deliver within stated estimates, ZEYOV is not liable for carrier delays caused by unforeseen regional disruptions, weather conditions, or public holidays.</p>
+
+        <h2>5. Intellectual Property</h2>
+        <p>The ZEYOV name, logo, website design, graphics, and written content are the exclusive intellectual property of ZEYOV. Unauthorized reproduction or commercial use is strictly prohibited.</p>
+
+        <h2>6. Contact Information</h2>
+        <p>Questions regarding our Terms of Service should be sent to us at <a href="mailto:{{ settings.support_email | default: 'support@zeyov.com' }}">{{ settings.support_email | default: 'support@zeyov.com' }}</a>.</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>

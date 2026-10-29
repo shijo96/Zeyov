@@ -1,0 +1,45 @@
+{
+  "name": "Header group",
+  "type": "header",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "m1": {
+          "type": "message",
+          "settings": {
+            "text": "✨ Welcome to Zeyov – Style for a Brighter You"
+          }
+        },
+        "m2": {
+          "type": "message",
+          "settings": {
+            "text": "⚡ 100% Free Delivery on All Prepaid Orders • Tracked Across India"
+          }
+        },
+        "m3": {
+          "type": "message",
+          "settings": {
+            "text": "🔥 Special Tier Offer: Buy 2 Get 10% Extra OFF • Buy 3 Get 13% Extra OFF!"
+          }
+        }
+      },
+      "block_order": [
+        "m1",
+        "m2",
+        "m3"
+      ]
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu",
+        "sticky": true
+      }
+    }
+  },
+  "order": [
+    "announcement",
+    "header"
+  ]
+}

@@ -1,0 +1,37 @@
+{%- assign col = section.settings.collection | default: collections.all -%}
+<section class="section section--accessories" id="{{ section.id }}">
+  <div class="container">
+    <header class="section__head center">
+      {%- if section.settings.eyebrow != blank -%}<p class="eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2>{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<p class="muted small" style="max-width: 640px; margin: 0 auto;">{{ section.settings.text }}</p>{%- endif -%}
+    </header>
+    <div class="grid grid--products grid--compact-accessories">
+      {%- for product in col.products limit: section.settings.limit -%}
+        {% render 'product-card', product: product %}
+      {%- else -%}
+        <div class="empty-state" style="grid-column:1/-1;text-align:center;padding:40px 20px">
+          <p class="muted" style="margin-bottom:18px">Selected luxury accessories &amp; runway accents are being prepared.</p>
+          <a class="btn btn--outline" href="{{ routes.all_products_collection_url }}">Explore Catalog &rarr;</a>
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if section.settings.show_all -%}
+      <div class="center mt"><a class="btn btn--outline btn--small" href="{{ col.url | default: routes.all_products_collection_url }}">View All Accessories &rarr;</a></div>
+    {%- endif -%}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Featured products",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Bestsellers" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our Picks For You" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Handpicked everyday essentials, ready to ship." },
+    { "type": "collection", "id": "collection", "label": "Collection (blank = all products)" },
+    { "type": "range", "id": "limit", "min": 2, "max": 12, "step": 1, "label": "Products to show", "default": 8 },
+    { "type": "checkbox", "id": "show_all", "label": "Show 'View all' button", "default": true }
+  ],
+  "presets": [{ "name": "Featured products" }]
+}
+{% endschema %}

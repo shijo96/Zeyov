@@ -1,0 +1,28 @@
+{%- paginate search.results by 12 -%}
+<section class="section">
+  <div class="container">
+    <header class="section__head">
+      <h1>Search</h1>
+      <form action="{{ routes.search_url }}" method="get" class="search-form search-form--page" role="search">
+        <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search products…" aria-label="Search" autocomplete="off" minlength="2" maxlength="100" required>
+        <input type="hidden" name="type" value="product">
+        <button class="btn" type="submit">Search</button>
+      </form>
+      {%- if search.performed -%}<p class="muted">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for “{{ search.terms | escape }}”</p>{%- endif -%}
+    </header>
+    <div class="grid grid--products">
+      {%- for item in search.results -%}
+        {%- if item.object_type == 'product' -%}{% render 'product-card', product: item %}{%- endif -%}
+      {%- endfor -%}
+    </div>
+    {%- if search.performed and search.results_count == 0 -%}
+      <div class="empty-state" style="text-align:center;padding:40px 20px">
+        <p class="muted" style="margin-bottom:20px">No runway designs found for “{{ search.terms | escape }}”. Explore our fashion atelier or search for another piece.</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn">Explore All Creations</a>
+      </div>
+    {%- endif -%}
+    {% render 'pagination', paginate: paginate %}
+  </div>
+</section>
+{%- endpaginate -%}
+{% schema %}{ "name": "Search" }{% endschema %}
