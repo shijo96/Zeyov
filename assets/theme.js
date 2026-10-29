@@ -470,7 +470,10 @@
 
   /* ---------- PDP Customer reviews interactivity ---------- */
   var reviewsRoot = $('[data-product-reviews]');
+  var pdpRatingBadge = $('[data-pdp-rating-badge]');
   if (reviewsRoot) {
+    var productId = reviewsRoot.getAttribute('data-product-id') || '';
+    var STORAGE_KEY = productId ? 'zeyov_reviews_' + productId : null;
     var INITIAL_VISIBLE_COUNT = 4;
     var isExpanded = false;
     var currentFilter = 'all';
@@ -478,6 +481,74 @@
     var expandWrap = $('#ReviewsExpandWrap');
     var toggleExpandBtn = $('#ToggleReviewsBtn');
     var expandBtnText = $('#ExpandBtnText');
+    var container = $('#UserSubmittedReviews');
+    var emptyEl = $('#ReviewsEmptyState', reviewsRoot);
+    var summaryEl = $('.reviews-summary', reviewsRoot);
+    var filtersEl = $('.reviews-filters', reviewsRoot);
+
+    function loadSavedReviews() {
+      if (!STORAGE_KEY) return [];
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        var list = JSON.parse(raw);
+        if (Array.isArray(list)) return list;
+      } catch (e) {}
+      return [];
+    }
+
+    function saveReview(rev) {
+      if (!STORAGE_KEY) return;
+      try {
+        var list = loadSavedReviews();
+        list.unshift(rev);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function createReviewCardElement(rev) {
+      var starsHtml = '';
+      var rating = parseInt(rev.rating || '5', 10);
+      for (var i = 1; i <= 5; i++) {
+        starsHtml += '<span class="' + (i <= rating ? 'on' : 'off') + '"><svg class="icon icon--star" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z"/></svg></span>';
+      }
+      var safeName = escapeHtml(rev.name || 'Verified Customer');
+      var safeCity = escapeHtml(rev.city || 'India');
+      var safeTitle = escapeHtml(rev.title || '');
+      var safeBody = escapeHtml(rev.body || '');
+      var initials = safeName.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'ZC';
+
+      var card = document.createElement('article');
+      card.className = 'review-card is-new';
+      card.setAttribute('data-review-stars', rating);
+      card.setAttribute('data-verified', 'true');
+      card.innerHTML =
+        '<div class="review-card__header">' +
+          '<div class="review-card__author">' +
+            '<div class="review-card__avatar">' + initials + '</div>' +
+            '<div>' +
+              '<div class="review-card__name-row">' +
+                '<b>' + safeName + '</b>' +
+                '<span class="verified"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Verified Buyer &bull; ' + safeCity + '</span>' +
+              '</div>' +
+              '<small class="muted">' + (rev.date || 'Just now') + ' &bull; Verified Purchase</small>' +
+            '</div>' +
+          '</div>' +
+          '<div class="stars">' + starsHtml + '</div>' +
+        '</div>' +
+        '<h4 class="review-card__title">' + safeTitle + '</h4>' +
+        '<p class="review-card__body">' + safeBody + '</p>' +
+        '<div class="review-card__footer"><span class="review-card__helpful is-voted"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Helpful (<span>1</span>)</span></div>';
+      return card;
+    }
+
+    // Populate saved reviews from storage
+    var saved = loadSavedReviews();
+    if (container && saved.length > 0) {
+      saved.forEach(function (rev) {
+        container.appendChild(createReviewCardElement(rev));
+      });
+    }
 
     function applyReviewVisibility() {
       var allCards = $$('.review-card', reviewsRoot);
@@ -499,7 +570,6 @@
         }
       });
 
-      // Show/hide matching cards based on isExpanded state
       matchingCards.forEach(function (card, index) {
         if (isExpanded || index < INITIAL_VISIBLE_COUNT) {
           card.style.display = 'block';
@@ -508,7 +578,6 @@
         }
       });
 
-      // Update toggle expand button
       if (expandWrap && toggleExpandBtn && expandBtnText) {
         if (matchingCards.length <= INITIAL_VISIBLE_COUNT) {
           expandWrap.style.display = 'none';
@@ -535,35 +604,36 @@
       });
     }
 
-    // Update review counts function
     function updateReviewCounts() {
       var cards = $$('.review-card', reviewsRoot);
       var total = cards.length;
-      var emptyEl = $('#ReviewsEmptyState', reviewsRoot);
-      var summaryEl = $('.reviews-summary', reviewsRoot);
-      var filtersEl = $('.reviews-filters', reviewsRoot);
-      var expandWrap = $('#ReviewsExpandWrap', reviewsRoot);
 
       if (total === 0) {
         if (emptyEl) emptyEl.style.display = 'block';
         if (summaryEl) summaryEl.style.display = 'none';
         if (filtersEl) filtersEl.style.display = 'none';
         if (expandWrap) expandWrap.style.display = 'none';
+
+        if (pdpRatingBadge) {
+          pdpRatingBadge.className = 'pdp__rating-badge pdp__rating-badge--empty';
+          pdpRatingBadge.setAttribute('data-open-review-modal', 'true');
+          pdpRatingBadge.innerHTML = '<span class="pdp__stars pdp__stars--empty">☆☆☆☆☆</span><span class="pdp__count">No reviews yet &bull; <span class="pdp__write-text">Write a review</span></span>';
+        }
       } else {
         if (emptyEl) emptyEl.style.display = 'none';
         if (summaryEl) summaryEl.style.display = '';
         if (filtersEl) filtersEl.style.display = '';
 
         var sum = 0;
-        var fiveStars = 0;
-        var fourStars = 0;
+        var starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
         var verified = 0;
 
         cards.forEach(function (c) {
           var s = parseInt(c.getAttribute('data-review-stars') || '5', 10);
-          sum += s;
-          if (s === 5) fiveStars++;
-          else if (s === 4) fourStars++;
+          if (s >= 1 && s <= 5) {
+            starCounts[s] = (starCounts[s] || 0) + 1;
+            sum += s;
+          }
           if (c.getAttribute('data-verified') === 'true') verified++;
         });
 
@@ -577,9 +647,24 @@
         var pVer = $('[data-pill-verified]', reviewsRoot);
         if (pVer) pVer.textContent = verified;
         var p5 = $('[data-pill-5star]', reviewsRoot);
-        if (p5) p5.textContent = fiveStars;
+        if (p5) p5.textContent = starCounts[5];
         var p4 = $('[data-pill-4star]', reviewsRoot);
-        if (p4) p4.textContent = fourStars;
+        if (p4) p4.textContent = starCounts[4];
+
+        for (var star = 1; star <= 5; star++) {
+          var count = starCounts[star] || 0;
+          var pct = Math.round((count / total) * 100);
+          var fillEl = $('[data-bar-fill-' + star + ']', reviewsRoot);
+          if (fillEl) fillEl.style.width = pct + '%';
+          var countEl = $('[data-bar-count-' + star + ']', reviewsRoot);
+          if (countEl) countEl.textContent = count;
+        }
+
+        if (pdpRatingBadge) {
+          pdpRatingBadge.className = 'pdp__rating-badge';
+          pdpRatingBadge.removeAttribute('data-open-review-modal');
+          pdpRatingBadge.innerHTML = '<span class="pdp__stars">★★★★★</span><b class="pdp__score">' + avg + '</b><span class="pdp__count">(' + total + (total === 1 ? ' Review' : ' Reviews') + ')</span>';
+        }
       }
     }
 
@@ -605,7 +690,6 @@
 
     // Write a Review modal
     var modal = $('#ReviewModal');
-    var openBtn = $('[data-open-review-modal]', reviewsRoot);
     var closeBtns = $$('[data-close-review-modal]');
     var reviewForm = $('#CustomerReviewForm') || $('#NewReviewForm');
 
@@ -624,7 +708,17 @@
       document.body.style.overflow = '';
     }
 
-    if (openBtn) openBtn.addEventListener('click', openReviewModal);
+    // Delegated click for open-review-modal buttons anywhere
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-open-review-modal]');
+      if (!trigger) return;
+      e.preventDefault();
+      openReviewModal();
+      if (reviewsRoot) {
+        reviewsRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
     closeBtns.forEach(function (btn) {
       btn.addEventListener('click', closeReviewModal);
     });
@@ -638,7 +732,7 @@
       2: '2.0 / 5.0 — Needs Improvement',
       3: '3.0 / 5.0 — Average Quality',
       4: '4.0 / 5.0 — Very Good Fabric & Fit',
-      5: '5.0 / 5.0 — Outstanding Couture & Fit'
+      5: '5.0 / 5.0 — Outstanding Quality & Fit'
     };
 
     ratingBtns.forEach(function (sBtn) {
@@ -683,40 +777,17 @@
           return;
         }
 
-        var starsHtml = '';
-        for (var i = 1; i <= 5; i++) {
-          starsHtml += '<span class="' + (i <= rating ? 'on' : 'off') + '"><svg class="icon icon--star" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z"/></svg></span>';
-        }
+        var newRev = {
+          name: name,
+          city: city,
+          title: title,
+          body: body,
+          rating: rating,
+          date: 'Today'
+        };
+        saveReview(newRev);
 
-        var safeName = escapeHtml(name);
-        var safeCity = escapeHtml(city);
-        var safeTitle = escapeHtml(title);
-        var safeBody = escapeHtml(body);
-
-        var initials = safeName.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'ZB';
-        var newCard = document.createElement('article');
-        newCard.className = 'review-card is-new';
-        newCard.setAttribute('data-review-stars', rating);
-        newCard.setAttribute('data-verified', 'true');
-        newCard.innerHTML =
-          '<div class="review-card__header">' +
-            '<div class="review-card__author">' +
-              '<div class="review-card__avatar">' + initials + '</div>' +
-              '<div>' +
-                '<div class="review-card__name-row">' +
-                  '<b>' + safeName + '</b>' +
-                  '<span class="verified"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Verified Buyer &bull; ' + safeCity + '</span>' +
-                '</div>' +
-                '<small class="muted">Just now &bull; Verified Purchase</small>' +
-              '</div>' +
-            '</div>' +
-            '<div class="stars">' + starsHtml + '</div>' +
-          '</div>' +
-          '<h4 class="review-card__title">' + safeTitle + '</h4>' +
-          '<p class="review-card__body">' + safeBody + '</p>' +
-          '<div class="review-card__footer"><span class="review-card__helpful is-voted"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Helpful (<span>1</span>)</span></div>';
-
-        var container = $('#UserSubmittedReviews');
+        var newCard = createReviewCardElement(newRev);
         if (container) container.prepend(newCard);
 
         updateReviewCounts();

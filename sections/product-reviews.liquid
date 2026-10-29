@@ -1,9 +1,12 @@
-<section class="section section--reviews" id="Reviews" data-product-reviews>
+{%- assign real_rating = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value -%}
+{%- assign real_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0 -%}
+
+<section class="section section--reviews" id="Reviews" data-product-reviews data-product-id="{{ product.id }}">
   <div class="container">
     <header class="section__head center">
       <p class="eyebrow">{{ section.settings.eyebrow | default: 'Customer Feedback' }}</p>
       <h2>{{ section.settings.heading | default: 'Verified Customer Reviews' }}</h2>
-      <p class="muted">{{ section.settings.subheading | default: 'Real, honest experiences from verified buyers.' }}</p>
+      <p class="muted">{{ section.settings.subheading | default: 'Real, authentic feedback from verified buyers.' }}</p>
     </header>
 
     <!-- App blocks if installed (Judge.me, Loox, etc.) -->
@@ -13,45 +16,45 @@
       {%- endcase -%}
     {%- endfor -%}
 
-    <!-- Rating Summary Dashboard -->
-    <div class="reviews-summary">
+    <!-- Rating Summary Dashboard (Only displayed when real reviews exist) -->
+    <div class="reviews-summary"{% if real_count == 0 %} style="display: none;"{% endif %}>
       <div class="reviews-summary__score">
-        <span class="reviews-summary__number" data-reviews-avg>{{ section.settings.rating_score | default: '4.9' }}</span>
-        <div class="stars" aria-label="4.9 out of 5 stars">
+        <span class="reviews-summary__number" data-reviews-avg>{{ real_rating | default: '5.0' | round: 1 }}</span>
+        <div class="stars" aria-label="Customer review rating">
           <span class="on">{% render 'icon', name: 'star' %}</span>
           <span class="on">{% render 'icon', name: 'star' %}</span>
           <span class="on">{% render 'icon', name: 'star' %}</span>
           <span class="on">{% render 'icon', name: 'star' %}</span>
           <span class="on">{% render 'icon', name: 'star' %}</span>
         </div>
-        <p class="small muted">Based on <span data-reviews-total-text>8</span> verified customer reviews</p>
+        <p class="small muted">Based on <span data-reviews-total-text>{{ real_count }}</span> verified customer {% if real_count == 1 %}review{% else %}reviews{% endif %}</p>
       </div>
 
       <div class="reviews-summary__bars">
         <div class="rating-bar-row">
           <span class="rating-bar-label">5 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 88%"></div></div>
-          <span class="rating-bar-count">7</span>
+          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-5 style="width: 100%"></div></div>
+          <span class="rating-bar-count" data-bar-count-5>{{ real_count }}</span>
         </div>
         <div class="rating-bar-row">
           <span class="rating-bar-label">4 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 12%"></div></div>
-          <span class="rating-bar-count">1</span>
+          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-4 style="width: 0%"></div></div>
+          <span class="rating-bar-count" data-bar-count-4>0</span>
         </div>
         <div class="rating-bar-row">
           <span class="rating-bar-label">3 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%"></div></div>
-          <span class="rating-bar-count">0</span>
+          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-3 style="width: 0%"></div></div>
+          <span class="rating-bar-count" data-bar-count-3>0</span>
         </div>
         <div class="rating-bar-row">
           <span class="rating-bar-label">2 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%"></div></div>
-          <span class="rating-bar-count">0</span>
+          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-2 style="width: 0%"></div></div>
+          <span class="rating-bar-count" data-bar-count-2>0</span>
         </div>
         <div class="rating-bar-row">
           <span class="rating-bar-label">1 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%"></div></div>
-          <span class="rating-bar-count">0</span>
+          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-1 style="width: 0%"></div></div>
+          <span class="rating-bar-count" data-bar-count-1>0</span>
         </div>
       </div>
 
@@ -66,8 +69,8 @@
         <div class="trust-stat">
           {% render 'icon', name: 'truck' %}
           <div>
-            <b>4.9 / 5.0</b>
-            <small class="muted">Safe &amp; damage-free transit</small>
+            <b>Safe Delivery</b>
+            <small class="muted">Damage-free transit across India</small>
           </div>
         </div>
         <button type="button" class="btn btn--small btn--outline btn--block mt-sm" data-open-review-modal>
@@ -76,21 +79,21 @@
       </div>
     </div>
 
-    <!-- Review Filter Pills (Exact Counts Matching Real Reviews Below) -->
-    <div class="reviews-filters" role="tablist">
-      <button type="button" class="filter-pill is-active" data-filter-reviews="all">All Reviews (<span data-pill-all>8</span>)</button>
-      <button type="button" class="filter-pill" data-filter-reviews="verified">Verified Buyers (<span data-pill-verified>8</span>)</button>
-      <button type="button" class="filter-pill" data-filter-reviews="5star">5 Star Ratings (<span data-pill-5star>7</span>)</button>
-      <button type="button" class="filter-pill" data-filter-reviews="4star">4 Star Ratings (<span data-pill-4star>1</span>)</button>
+    <!-- Review Filter Pills (Only displayed when real reviews exist) -->
+    <div class="reviews-filters" role="tablist"{% if real_count == 0 %} style="display: none;"{% endif %}>
+      <button type="button" class="filter-pill is-active" data-filter-reviews="all">All Reviews (<span data-pill-all>{{ real_count }}</span>)</button>
+      <button type="button" class="filter-pill" data-filter-reviews="verified">Verified Buyers (<span data-pill-verified>{{ real_count }}</span>)</button>
+      <button type="button" class="filter-pill" data-filter-reviews="5star">5 Star Ratings (<span data-pill-5star>{{ real_count }}</span>)</button>
+      <button type="button" class="filter-pill" data-filter-reviews="4star">4 Star Ratings (<span data-pill-4star>0</span>)</button>
     </div>
 
     <!-- Reviews Container for Real Customer Reviews -->
     <div id="UserSubmittedReviews" class="reviews-list user-reviews"></div>
 
     <!-- Honest Empty State when zero reviews exist yet -->
-    <div class="reviews-empty-state" id="ReviewsEmptyState" style="text-align: center; padding: 48px 20px; background: #FAF8F4; border: 1px dashed var(--border); border-radius: 20px; margin-top: 20px;">
-      <div style="font-size: 1.6rem; color: #D5CDC0; margin-bottom: 12px; letter-spacing: 2px;">★★★★★</div>
-      <h3 style="font-size: 1.25rem; margin-bottom: 8px;">No customer reviews yet</h3>
+    <div class="reviews-empty-state" id="ReviewsEmptyState"{% if real_count > 0 %} style="display: none;"{% endif %}>
+      <div class="reviews-empty-stars">☆☆☆☆☆</div>
+      <h3 class="reviews-empty-title">No customer reviews yet</h3>
       <p class="muted small" style="max-width: 480px; margin: 0 auto 20px; line-height: 1.5;">Be the first to share your experience with this piece. Your verified feedback helps fellow shoppers!</p>
       <button type="button" class="btn btn--gold btn--small" data-open-review-modal>
         Write the First Review
@@ -136,7 +139,7 @@
               <button type="button" data-star-val="5" class="star-btn is-active" aria-label="5 stars">★</button>
               <input type="hidden" name="rating" id="ReviewStarInput" value="5">
             </div>
-            <span class="star-rating-text" id="StarRatingHint">5.0 / 5.0 — Outstanding Couture &amp; Fit</span>
+            <span class="star-rating-text" id="StarRatingHint">5.0 / 5.0 — Outstanding Quality &amp; Fit</span>
           </div>
         </div>
 
@@ -176,9 +179,7 @@
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Customer Feedback" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Verified Customer Reviews" },
-    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Real, honest experiences from verified buyers." },
-    { "type": "text", "id": "rating_score", "label": "Average rating score", "default": "4.9" },
-    { "type": "text", "id": "review_count", "label": "Review count", "default": "8" }
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Real, authentic feedback from verified buyers." }
   ],
   "blocks": [
     { "type": "@app" }

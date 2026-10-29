@@ -947,8 +947,21 @@ p{margin:0 0 1em}
   color: #20201F;
 }
 .pdp__stars { color: #E29631; letter-spacing: 1.5px; font-size: 0.84rem; }
+.pdp__stars--empty { color: #C8BFB3; letter-spacing: 1.5px; font-size: 0.84rem; }
 .pdp__score { font-weight: 700; }
 .pdp__count { color: var(--muted); font-size: 0.78rem; }
+.pdp__rating-badge--empty {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.pdp__rating-badge--empty:hover {
+  opacity: 0.85;
+}
+.pdp__write-text {
+  color: var(--gold-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
 .pdp__stock-pill {
   display: inline-flex;
   align-items: center;

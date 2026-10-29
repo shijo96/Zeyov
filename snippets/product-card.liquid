@@ -31,8 +31,10 @@
   <div class="card__body">
     <div class="card__meta-top">
       <span class="card__type">{{ product.type | default: 'ZEYOV' | upcase }}</span>
-      {%- if product.metafields.reviews.rating.value != blank -%}
-        <div class="card__rating-mini"><span class="stars-gold">★★★★★</span> <small>{{ product.metafields.reviews.rating.value.rating | round: 1 }}</small></div>
+      {%- assign card_rating = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value -%}
+      {%- assign card_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0 -%}
+      {%- if card_rating != blank and card_count > 0 -%}
+        <div class="card__rating-mini"><span class="stars-gold">★★★★★</span> <small>{{ card_rating | round: 1 }}</small></div>
       {%- endif -%}
     </div>
     <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>

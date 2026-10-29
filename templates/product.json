@@ -45,10 +45,8 @@
     "reviews": {
       "type": "product-reviews",
       "settings": {
-        "heading": "Verified Customer Reviews",
-        "subheading": "Real experiences from customers across India.",
-        "rating_score": "4.9",
-        "review_count": "8"
+        "heading": "Customer Reviews",
+        "subheading": "Real experiences from verified customers across India."
       }
     },
     "related": {

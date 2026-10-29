@@ -55,20 +55,20 @@
       <h1 class="pdp__title">{{ product.title }}</h1>
 
       <!-- Stock Status & Verified Trust -->
-      <div class="pdp__rating-bar">
-        {%- if product.metafields.reviews.rating.value != blank -%}
-          <a href="#Reviews" class="pdp__rating-badge">
+      <div class="pdp__rating-bar" data-pdp-rating-bar data-product-id="{{ product.id }}">
+        {%- assign rating_val = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value -%}
+        {%- assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0 -%}
+        {%- if rating_val != blank and rating_count > 0 -%}
+          <a href="#Reviews" class="pdp__rating-badge" data-pdp-rating-badge>
             <span class="pdp__stars">★★★★★</span>
-            <b class="pdp__score">{{ product.metafields.reviews.rating.value.rating | round: 1 }}</b>
-            {%- if product.metafields.reviews.rating_count != blank -%}
-              <span class="pdp__count">({{ product.metafields.reviews.rating_count }} Reviews)</span>
-            {%- endif -%}
+            <b class="pdp__score">{{ rating_val | round: 1 }}</b>
+            <span class="pdp__count">({{ rating_count }} {% if rating_count == 1 %}Review{% else %}Reviews{% endif %})</span>
           </a>
         {%- else -%}
-          <span class="pdp__rating-badge">
-            <span class="pdp__stars">★★★★★</span>
-            <span class="pdp__count">100% Genuine Quality</span>
-          </span>
+          <a href="#Reviews" class="pdp__rating-badge pdp__rating-badge--empty" data-pdp-rating-badge data-open-review-modal aria-label="No customer reviews yet. Click to write a review.">
+            <span class="pdp__stars pdp__stars--empty">☆☆☆☆☆</span>
+            <span class="pdp__count">No reviews yet &bull; <span class="pdp__write-text">Write a review</span></span>
+          </a>
         {%- endif -%}
         <span class="pdp__stock-pill"><span class="pulse-dot"></span> In Stock &bull; Ready to Ship</span>
       </div>
