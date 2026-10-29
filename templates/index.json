@@ -122,43 +122,8 @@
     },
     "reviews": {
       "type": "customer-reviews",
-      "blocks": {
-        "r1": {
-          "type": "review",
-          "settings": {
-            "name": "Priya S.",
-            "city": "Bengaluru",
-            "rating": 5,
-            "text": "The Emerald Silk Draped Gown is breathtaking! The fabric feels so luxurious, smooth and cool to the skin. Delivered to Bangalore in 4 days with beautiful branded packaging. Truly impressed!",
-            "verified": true
-          }
-        },
-        "r2": {
-          "type": "review",
-          "settings": {
-            "name": "Rajesh K.",
-            "city": "Kochi",
-            "rating": 5,
-            "text": "Ordered the Amber Puffer Vest. The fit is clean and tailored without feeling bulky. The thermal insulation works wonders during evening travel. 10/10 finish!",
-            "verified": true
-          }
-        },
-        "r3": {
-          "type": "review",
-          "settings": {
-            "name": "Ananya Verma",
-            "city": "Mumbai",
-            "rating": 5,
-            "text": "The Camel Wool Trench Coat looks straight out of Milan fashion week. Sturdy buttons, flawless stitching and true Indian sizing. ZEYOV has earned my trust!",
-            "verified": true
-          }
-        }
-      },
-      "block_order": [
-        "r1",
-        "r2",
-        "r3"
-      ],
+      "blocks": {},
+      "block_order": [],
       "settings": {}
     },
     "banner": {

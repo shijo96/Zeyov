@@ -539,20 +539,48 @@
     function updateReviewCounts() {
       var cards = $$('.review-card', reviewsRoot);
       var total = cards.length;
-      var fiveStars = cards.filter(function (c) { return c.getAttribute('data-review-stars') === '5'; }).length;
-      var fourStars = cards.filter(function (c) { return c.getAttribute('data-review-stars') === '4'; }).length;
-      var verified = cards.filter(function (c) { return c.getAttribute('data-verified') === 'true'; }).length;
+      var emptyEl = $('#ReviewsEmptyState', reviewsRoot);
+      var summaryEl = $('.reviews-summary', reviewsRoot);
+      var filtersEl = $('.reviews-filters', reviewsRoot);
+      var expandWrap = $('#ReviewsExpandWrap', reviewsRoot);
 
-      var tEl = $('[data-reviews-total-text]', reviewsRoot);
-      if (tEl) tEl.textContent = total;
-      var pAll = $('[data-pill-all]', reviewsRoot);
-      if (pAll) pAll.textContent = total;
-      var pVer = $('[data-pill-verified]', reviewsRoot);
-      if (pVer) pVer.textContent = verified;
-      var p5 = $('[data-pill-5star]', reviewsRoot);
-      if (p5) p5.textContent = fiveStars;
-      var p4 = $('[data-pill-4star]', reviewsRoot);
-      if (p4) p4.textContent = fourStars;
+      if (total === 0) {
+        if (emptyEl) emptyEl.style.display = 'block';
+        if (summaryEl) summaryEl.style.display = 'none';
+        if (filtersEl) filtersEl.style.display = 'none';
+        if (expandWrap) expandWrap.style.display = 'none';
+      } else {
+        if (emptyEl) emptyEl.style.display = 'none';
+        if (summaryEl) summaryEl.style.display = '';
+        if (filtersEl) filtersEl.style.display = '';
+
+        var sum = 0;
+        var fiveStars = 0;
+        var fourStars = 0;
+        var verified = 0;
+
+        cards.forEach(function (c) {
+          var s = parseInt(c.getAttribute('data-review-stars') || '5', 10);
+          sum += s;
+          if (s === 5) fiveStars++;
+          else if (s === 4) fourStars++;
+          if (c.getAttribute('data-verified') === 'true') verified++;
+        });
+
+        var avg = (sum / total).toFixed(1);
+        var avgEl = $('[data-reviews-avg]', reviewsRoot);
+        if (avgEl) avgEl.textContent = avg;
+        var tEl = $('[data-reviews-total-text]', reviewsRoot);
+        if (tEl) tEl.textContent = total;
+        var pAll = $('[data-pill-all]', reviewsRoot);
+        if (pAll) pAll.textContent = total;
+        var pVer = $('[data-pill-verified]', reviewsRoot);
+        if (pVer) pVer.textContent = verified;
+        var p5 = $('[data-pill-5star]', reviewsRoot);
+        if (p5) p5.textContent = fiveStars;
+        var p4 = $('[data-pill-4star]', reviewsRoot);
+        if (p4) p4.textContent = fourStars;
+      }
     }
 
     // Filter reviews
@@ -1173,8 +1201,32 @@
     }
 
     railCards.forEach(function (card) {
+      // Swatch dot selection
+      $$('.swatch-dot', card).forEach(function (dot) {
+        dot.addEventListener('click', function (e) {
+          e.stopPropagation();
+          $$('.swatch-dot', card).forEach(function (d) { d.classList.remove('is-active'); });
+          dot.classList.add('is-active');
+
+          var vImg = dot.getAttribute('data-variant-img');
+          var vId = dot.getAttribute('data-variant-id');
+          var cardImg = $('.rail-card__img', card);
+          var quickBtn = $('.rail-card__quick-add', card);
+
+          if (vImg && cardImg) {
+            cardImg.src = vImg;
+            card.setAttribute('data-img', vImg);
+          }
+          if (vId) {
+            card.setAttribute('data-variant-id', vId);
+            if (quickBtn) quickBtn.setAttribute('data-quick-add-id', vId);
+          }
+          activateCard(card);
+        });
+      });
+
       card.addEventListener('click', function (e) {
-        if (e.target.closest('.rail-card__quick-add') || e.target.closest('a')) return;
+        if (e.target.closest('.rail-card__quick-add') || e.target.closest('.swatch-dot') || e.target.closest('a')) return;
         activateCard(card);
       });
     });

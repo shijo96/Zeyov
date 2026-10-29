@@ -27,52 +27,76 @@
       </div>
     </div>
 
-    <!-- Category Tabs Navigation (Video 2) -->
-    <div class="showcase__category-bar" role="tablist" aria-label="Showcase Categories">
-      <button type="button" class="cat-pill is-active" data-cat="all">
-        <span>All Pieces</span>
-        <small class="cat-count">{% if col.products.size > 0 %}{{ col.products.size | prepend: '0' | slice: -2, 2 }}{% else %}06{% endif %}</small>
-      </button>
+    <!-- Category Tabs Navigation & Rail Controls (Unified Bar) -->
+    <div class="showcase__controls-bar">
+      <div class="showcase__category-bar" role="tablist" aria-label="Showcase Categories">
+        <button type="button" class="cat-pill is-active" data-cat="all">
+          <span>All Pieces</span>
+          <small class="cat-count">{% if col.products.size > 0 %}{{ col.products.size | prepend: '0' | slice: -2, 2 }}{% else %}06{% endif %}</small>
+        </button>
 
-      {%- comment -%} Dynamically render unique product types present in this collection {%- endcomment -%}
-      {%- assign custom_types = '' -%}
-      {%- for product in col.products limit: 12 -%}
-        {%- if product.type != blank -%}
-          {%- assign ptype = product.type | strip -%}
-          {%- unless custom_types contains ptype -%}
-            {%- assign custom_types = custom_types | append: ptype | append: ':::' -%}
-          {%- endunless -%}
-        {%- endif -%}
-      {%- endfor -%}
-
-      {%- if custom_types != blank -%}
-        {%- assign type_array = custom_types | split: ':::' -%}
-        {%- for t in type_array -%}
-          {%- if t != blank -%}
-            <button type="button" class="cat-pill" data-cat="{{ t | handleize }}">
-              <span>{{ t }}</span>
-            </button>
+        {%- comment -%} Dynamically render unique product types present in this collection {%- endcomment -%}
+        {%- assign custom_types = '' -%}
+        {%- for product in col.products limit: 12 -%}
+          {%- if product.type != blank -%}
+            {%- assign ptype = product.type | strip -%}
+            {%- unless custom_types contains ptype -%}
+              {%- assign custom_types = custom_types | append: ptype | append: ':::' -%}
+            {%- endunless -%}
           {%- endif -%}
         {%- endfor -%}
-      {%- else -%}
-        <!-- Fallback category pills -->
-        <button type="button" class="cat-pill" data-cat="dresses">
-          <span>Dresses</span>
-          <small class="cat-count">02</small>
-        </button>
-        <button type="button" class="cat-pill" data-cat="outerwear">
-          <span>Outerwear</span>
-          <small class="cat-count">03</small>
-        </button>
-        <button type="button" class="cat-pill" data-cat="tops">
-          <span>Tops Wear</span>
-          <small class="cat-count">01</small>
-        </button>
-        <button type="button" class="cat-pill" data-cat="accessories">
-          <span>Accessories</span>
-          <small class="cat-count">01</small>
-        </button>
-      {%- endif -%}
+
+        {%- if custom_types != blank -%}
+          {%- assign type_array = custom_types | split: ':::' -%}
+          {%- for t in type_array -%}
+            {%- if t != blank -%}
+              {%- assign type_count = 0 -%}
+              {%- for p in col.products -%}
+                {%- if p.type == t -%}
+                  {%- assign type_count = type_count | plus: 1 -%}
+                {%- endif -%}
+              {%- endfor -%}
+              <button type="button" class="cat-pill" data-cat="{{ t | handleize }}">
+                <span>{{ t }}</span>
+                <small class="cat-count">{{ type_count | prepend: '0' | slice: -2, 2 }}</small>
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          <!-- Fallback category pills -->
+          <button type="button" class="cat-pill" data-cat="dresses">
+            <span>Dresses</span>
+            <small class="cat-count">02</small>
+          </button>
+          <button type="button" class="cat-pill" data-cat="outerwear">
+            <span>Outerwear</span>
+            <small class="cat-count">03</small>
+          </button>
+          <button type="button" class="cat-pill" data-cat="tops">
+            <span>Tops Wear</span>
+            <small class="cat-count">01</small>
+          </button>
+          <button type="button" class="cat-pill" data-cat="accessories">
+            <span>Accessories</span>
+            <small class="cat-count">01</small>
+          </button>
+        {%- endif -%}
+      </div>
+
+      <div class="showcase__rail-nav">
+        <p class="rail-hint">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <span>Drag or scroll to explore pieces</span>
+        </p>
+        <div class="rail-arrows">
+          <button type="button" class="rail-arrow prev" data-rail-prev aria-label="Previous items">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button type="button" class="rail-arrow next" data-rail-next aria-label="Next items">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Main Editorial Showcase Grid -->
@@ -114,24 +138,8 @@
         </div>
       </div>
 
-      <!-- Right: Products Showcase Rail ("Drag or scroll to explore") -->
+      <!-- Right: Products Showcase Rail -->
       <div class="showcase__rail-col">
-        <div class="showcase__rail-header">
-          <p class="rail-hint">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            <span>Drag or scroll to explore pieces</span>
-          </p>
-
-          <div class="rail-arrows">
-            <button type="button" class="rail-arrow prev" data-rail-prev aria-label="Previous items">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button type="button" class="rail-arrow next" data-rail-next aria-label="Next items">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
-        </div>
-
         <!-- Horizontal Scrollable Track -->
         <div class="showcase__rail-track" data-rail-track id="ShowcaseRailTrack">
           <!-- Empty State when filter yields 0 items -->
@@ -184,11 +192,67 @@
                   </button>
                 </div>
                 <div class="rail-card__info">
-                  <div class="rail-card__swatches">
-                    <span class="swatch-dot is-active" style="background:#B89B65" title="Runway Gold"></span>
-                    <span class="swatch-dot" style="background:#111111" title="Obsidian Noir"></span>
-                    <span class="swatch-dot" style="background:#FAF8F4" title="Ivory Cream"></span>
-                  </div>
+                  {%- assign color_option = nil -%}
+                  {%- unless product.has_only_default_variant -%}
+                    {%- for opt in product.options_with_values -%}
+                      {%- assign opt_down = opt.name | downcase -%}
+                      {%- if opt_down contains 'color' or opt_down contains 'colour' or opt_down contains 'shade' -%}
+                        {%- if opt.values.size > 1 -%}
+                          {%- assign color_option = opt -%}
+                          {%- break -%}
+                        {%- endif -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endunless -%}
+
+                  {%- if color_option != nil -%}
+                    <div class="rail-card__swatches" role="radiogroup" aria-label="Available colors">
+                      {%- for color_val in color_option.values -%}
+                        {%- assign c_down = color_val | downcase | strip -%}
+                        {%- assign bg_color = c_down -%}
+                        {%- case c_down -%}
+                          {%- when 'black' or 'noir' or 'jet black' -%}{%- assign bg_color = '#111111' -%}
+                          {%- when 'white' or 'snow' or 'pure white' -%}{%- assign bg_color = '#FFFFFF' -%}
+                          {%- when 'gold' or 'runway gold' or 'metallic gold' -%}{%- assign bg_color = '#B89B65' -%}
+                          {%- when 'silver' or 'metallic silver' -%}{%- assign bg_color = '#C0C0C0' -%}
+                          {%- when 'red' or 'crimson' or 'ruby' -%}{%- assign bg_color = '#D32F2F' -%}
+                          {%- when 'green' or 'emerald' or 'forest green' -%}{%- assign bg_color = '#2E7D32' -%}
+                          {%- when 'light green' or 'lime' or 'mint' -%}{%- assign bg_color = '#81C784' -%}
+                          {%- when 'olive' or 'army green' -%}{%- assign bg_color = '#556B2F' -%}
+                          {%- when 'blue' or 'royal blue' -%}{%- assign bg_color = '#1565C0' -%}
+                          {%- when 'navy' or 'navy blue' or 'dark blue' -%}{%- assign bg_color = '#0D233A' -%}
+                          {%- when 'sky blue' or 'light blue' or 'ice blue' -%}{%- assign bg_color = '#64B5F6' -%}
+                          {%- when 'teal' or 'cyan' -%}{%- assign bg_color = '#00838F' -%}
+                          {%- when 'yellow' or 'mustard' -%}{%- assign bg_color = '#FBC02D' -%}
+                          {%- when 'pink' or 'rose' or 'blush' -%}{%- assign bg_color = '#E91E63' -%}
+                          {%- when 'baby pink' or 'light pink' -%}{%- assign bg_color = '#F48FB1' -%}
+                          {%- when 'purple' or 'violet' -%}{%- assign bg_color = '#7B1FA2' -%}
+                          {%- when 'lavender' or 'lilac' -%}{%- assign bg_color = '#BA68C8' -%}
+                          {%- when 'orange' or 'amber' -%}{%- assign bg_color = '#EF6C00' -%}
+                          {%- when 'peach' or 'coral' -%}{%- assign bg_color = '#FF8A65' -%}
+                          {%- when 'brown' or 'chocolate' -%}{%- assign bg_color = '#5D4037' -%}
+                          {%- when 'tan' or 'camel' or 'khaki' -%}{%- assign bg_color = '#C19A6B' -%}
+                          {%- when 'grey' or 'gray' or 'slate' -%}{%- assign bg_color = '#757575' -%}
+                          {%- when 'charcoal' -%}{%- assign bg_color = '#37474F' -%}
+                          {%- when 'cream' or 'ivory' or 'beige' or 'off-white' -%}{%- assign bg_color = '#FAF8F4' -%}
+                          {%- when 'maroon' or 'burgundy' or 'wine' -%}{%- assign bg_color = '#800000' -%}
+                        {%- endcase -%}
+                        {%- assign var_img = '' -%}
+                        {%- assign var_id = '' -%}
+                        {%- for variant in product.variants -%}
+                          {%- if variant.options contains color_val -%}
+                            {%- if variant.image -%}
+                              {%- assign var_img = variant.image | image_url: width: 500 -%}
+                            {%- endif -%}
+                            {%- assign var_id = variant.id -%}
+                            {%- break -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                        <button type="button" class="swatch-dot{% if forloop.first %} is-active{% endif %}" style="background-color: {{ bg_color }};" title="{{ color_val | escape }}" aria-label="Color {{ color_val | escape }}" data-color-val="{{ color_val | escape }}"{% if var_img != blank %} data-variant-img="{{ var_img }}"{% endif %}{% if var_id != blank %} data-variant-id="{{ var_id }}"{% endif %}></button>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+
                   <h3 class="rail-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
                   <div class="rail-card__price-row">
                     <span class="rail-card__price">{{ product.price | money }}</span>
@@ -293,14 +357,25 @@
           <span class="docked-bar__price" id="FloatingBarPrice">{% if first_p %}{{ first_p.price | money }}{% else %}Rs. 3,899.00{% endif %}</span>
         </div>
 
-        <div class="docked-bar__sizes">
-          <span class="size-label">Select Size:</span>
-          <button type="button" class="bar-size-btn">XS</button>
-          <button type="button" class="bar-size-btn is-active">S</button>
-          <button type="button" class="bar-size-btn">M</button>
-          <button type="button" class="bar-size-btn">L</button>
-          <button type="button" class="bar-size-btn">XL</button>
-        </div>
+        {%- assign size_opt = nil -%}
+        {%- if first_p and first_p.has_only_default_variant == false -%}
+          {%- for opt in first_p.options_with_values -%}
+            {%- assign opt_lower = opt.name | downcase -%}
+            {%- if opt_lower contains 'size' -%}
+              {%- assign size_opt = opt -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- if size_opt and size_opt.values.size > 1 -%}
+          <div class="docked-bar__sizes">
+            <span class="size-label">Select {{ size_opt.name }}:</span>
+            {%- for val in size_opt.values -%}
+              <button type="button" class="bar-size-btn{% if forloop.first %} is-active{% endif %}">{{ val }}</button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
 
         <div class="docked-bar__action">
           <button type="button" class="btn btn--gold docked-bar__btn" id="FloatingBarAddBtn" data-variant-id="{% if first_p %}{{ first_p.selected_or_first_available_variant.id }}{% endif %}">

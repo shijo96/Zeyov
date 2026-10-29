@@ -291,30 +291,10 @@
 
           <p class="orbit-modal__desc" data-modal-desc>Engineered with thermal air-loft insulation and water-resistant nylon shell. Minimalist obsidian black contrast detailing.</p>
 
-          <!-- Color Swatches -->
-          <div class="orbit-modal__option">
-            <label class="orbit-modal__label">Runway Palette:</label>
-            <div class="orbit-modal__swatches">
-              <button type="button" class="swatch is-active" style="background:#E29631" title="Amber Gold"></button>
-              <button type="button" class="swatch" style="background:#111111" title="Obsidian Noir"></button>
-              <button type="button" class="swatch" style="background:#13593B" title="Emerald Green"></button>
-              <button type="button" class="swatch" style="background:#C49B66" title="Camel Beige"></button>
-            </div>
-          </div>
-
-          <!-- Size Selector (XS, S, M, L, XL) -->
-          <div class="orbit-modal__option">
-            <div class="size-header">
-              <label class="orbit-modal__label">Select Size:</label>
-              <span class="small muted">True to Indian sizing</span>
-            </div>
-            <div class="orbit-modal__sizes">
-              <button type="button" class="size-btn">XS</button>
-              <button type="button" class="size-btn is-active">S</button>
-              <button type="button" class="size-btn">M</button>
-              <button type="button" class="size-btn">L</button>
-              <button type="button" class="size-btn">XL</button>
-            </div>
+          <!-- Options (only shown if configured) -->
+          <div class="orbit-modal__option" id="OrbitModalSwatchesWrap" style="display: none;">
+            <label class="orbit-modal__label">Available Colors:</label>
+            <div class="orbit-modal__swatches" id="OrbitModalSwatches"></div>
           </div>
 
           <!-- Add to Bag Button -->

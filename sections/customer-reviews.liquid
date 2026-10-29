@@ -1,91 +1,36 @@
+{%- if section.blocks.size > 0 -%}
 <section class="section section--tint customer-reviews" id="CustomerReviews">
   <div class="container">
     <header class="section__head center">
-      <p class="eyebrow">{{ section.settings.eyebrow | default: 'Loved Across India' }}</p>
+      <p class="eyebrow">{{ section.settings.eyebrow | default: 'Customer Feedback' }}</p>
       <h2>{{ section.settings.heading | default: 'What Our Customers Say' }}</h2>
-      <p class="muted">{{ section.settings.subheading | default: 'Authentic reflections from verified buyers across India who wear and experience ZEYOV couture.' }}</p>
+      {%- if section.settings.subheading != blank -%}<p class="muted">{{ section.settings.subheading }}</p>{%- endif -%}
     </header>
 
     <div class="reviews">
-      {%- if section.blocks.size > 0 -%}
-        {%- for block in section.blocks -%}
-          <figure class="review" {{ block.shopify_attributes }}>
-            <div class="stars" aria-label="{{ block.settings.rating }} out of 5 stars">
-              {%- for i in (1..5) -%}<span class="{% if i <= block.settings.rating %}on{% endif %}">{% render 'icon', name: 'star' %}</span>{%- endfor -%}
-            </div>
-            <blockquote>"{{ block.settings.text }}"</blockquote>
-            <figcaption>
-              {%- if block.settings.photo != blank -%}
-                {{ block.settings.photo | image_url: width: 96, height: 96, crop: 'center' | image_tag: loading: 'lazy', class: 'review__avatar', alt: block.settings.name }}
-              {%- else -%}
-                <div class="review__initials">{{ block.settings.name | slice: 0, 2 | upcase }}</div>
-              {%- endif -%}
-              <span>
-                <b>{{ block.settings.name }}</b>{% if block.settings.city != blank %}, {{ block.settings.city }}{% endif %}
-                {%- if block.settings.verified -%}<em class="verified">{% render 'icon', name: 'check' %} Verified buyer</em>{% endif -%}
-              </span>
-            </figcaption>
-          </figure>
-        {%- endfor -%}
-      {%- else -%}
-        <!-- Default credible Indian reviews -->
-        <figure class="review">
-          <div class="stars" aria-label="5 out of 5 stars">
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
+      {%- for block in section.blocks -%}
+        <figure class="review" {{ block.shopify_attributes }}>
+          <div class="stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+            {%- for i in (1..5) -%}<span class="{% if i <= block.settings.rating %}on{% endif %}">{% render 'icon', name: 'star' %}</span>{%- endfor -%}
           </div>
-          <blockquote>"The Emerald Silk Draped Gown is breathtaking! The fabric feels so luxurious, smooth and cool to the skin. Delivered to Bangalore in 4 days with elegant branded garment boxing. Truly impressed!"</blockquote>
+          <blockquote>"{{ block.settings.text }}"</blockquote>
           <figcaption>
-            <div class="review__initials">PS</div>
+            {%- if block.settings.photo != blank -%}
+              {{ block.settings.photo | image_url: width: 96, height: 96, crop: 'center' | image_tag: loading: 'lazy', class: 'review__avatar', alt: block.settings.name }}
+            {%- else -%}
+              <div class="review__initials">{{ block.settings.name | slice: 0, 2 | upcase }}</div>
+            {%- endif -%}
             <span>
-              <b>Priya S.</b>, Bengaluru
-              <em class="verified">{% render 'icon', name: 'check' %} Verified buyer</em>
+              <b>{{ block.settings.name }}</b>{% if block.settings.city != blank %}, {{ block.settings.city }}{% endif %}
+              {%- if block.settings.verified -%}<em class="verified">{% render 'icon', name: 'check' %} Verified buyer</em>{% endif -%}
             </span>
           </figcaption>
         </figure>
-
-        <figure class="review">
-          <div class="stars" aria-label="5 out of 5 stars">
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-          </div>
-          <blockquote>"The Amber Puffer Vest exceeded all my expectations! The thermal air-loft filling keeps me warm without looking puffy. Real-time WhatsApp tracking and prompt delivery to Kochi. 10/10 finish!"</blockquote>
-          <figcaption>
-            <div class="review__initials">RK</div>
-            <span>
-              <b>Rajesh K.</b>, Kochi
-              <em class="verified">{% render 'icon', name: 'check' %} Verified buyer</em>
-            </span>
-          </figcaption>
-        </figure>
-
-        <figure class="review">
-          <div class="stars" aria-label="5 out of 5 stars">
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-            <span class="on">{% render 'icon', name: 'star' %}</span>
-          </div>
-          <blockquote>"The Camel Tailored Wool Trench is an absolute masterpiece. Feels like luxury European designer couture at an accessible price. Sizing is true Indian fit. Will definitely buy again!"</blockquote>
-          <figcaption>
-            <div class="review__initials">AV</div>
-            <span>
-              <b>Ananya Verma</b>, Mumbai
-              <em class="verified">{% render 'icon', name: 'check' %} Verified buyer</em>
-            </span>
-          </figcaption>
-        </figure>
-      {%- endif -%}
+      {%- endfor -%}
     </div>
   </div>
 </section>
+{%- endif -%}
 
 {% schema %}
 {
