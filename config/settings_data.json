@@ -26,6 +26,10 @@
     "whatsapp_message": "Hi Zeyov Atelier, I need assistance with my order.",
     "support_email": "support@zeyov.com",
     "cart_note": true,
-    "free_shipping_threshold": 0
+    "free_shipping_threshold": 0,
+    "social_instagram": "#",
+    "social_facebook": "#",
+    "social_youtube": "#",
+    "whatsapp_number": "9447873029"
   }
 }
