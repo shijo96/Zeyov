@@ -51,16 +51,25 @@
 
     <!-- Info Column -->
     <div class="pdp__info">
-      <span class="pdp__eyebrow">{{ product.vendor | default: 'ZEYOV RUNWAY ATELIER' | upcase }} &bull; SS25 RUNWAY</span>
+      <span class="pdp__eyebrow">{{ product.vendor | default: 'ZEYOV' | upcase }}{% if product.type != blank %} &bull; {{ product.type | upcase }}{% endif %}</span>
       <h1 class="pdp__title">{{ product.title }}</h1>
 
-      <!-- Verified Rating & Stock Status -->
+      <!-- Stock Status & Verified Trust -->
       <div class="pdp__rating-bar">
-        <a href="#Reviews" class="pdp__rating-badge">
-          <span class="pdp__stars">★★★★★</span>
-          <b class="pdp__score">4.9</b>
-          <span class="pdp__count">(8 Verified Reviews)</span>
-        </a>
+        {%- if product.metafields.reviews.rating.value != blank -%}
+          <a href="#Reviews" class="pdp__rating-badge">
+            <span class="pdp__stars">★★★★★</span>
+            <b class="pdp__score">{{ product.metafields.reviews.rating.value.rating | round: 1 }}</b>
+            {%- if product.metafields.reviews.rating_count != blank -%}
+              <span class="pdp__count">({{ product.metafields.reviews.rating_count }} Reviews)</span>
+            {%- endif -%}
+          </a>
+        {%- else -%}
+          <span class="pdp__rating-badge">
+            <span class="pdp__stars">★★★★★</span>
+            <span class="pdp__count">100% Genuine Quality</span>
+          </span>
+        {%- endif -%}
         <span class="pdp__stock-pill"><span class="pulse-dot"></span> In Stock &bull; Ready to Ship</span>
       </div>
 
