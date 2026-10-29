@@ -149,10 +149,14 @@
               {%- assign v = product.selected_or_first_available_variant -%}
               {%- assign p_cat = product.type | handleize | default: 'all' -%}
               {%- assign p_gender = 'women men' -%}
-              {%- if product.tags contains 'men' and product.tags contains 'women' == false -%}
-                {%- assign p_gender = 'men' -%}
-              {%- elsif product.tags contains 'women' and product.tags contains 'men' == false -%}
-                {%- assign p_gender = 'women' -%}
+              {%- if product.tags contains 'men' -%}
+                {%- unless product.tags contains 'women' -%}
+                  {%- assign p_gender = 'men' -%}
+                {%- endunless -%}
+              {%- elsif product.tags contains 'women' -%}
+                {%- unless product.tags contains 'men' -%}
+                  {%- assign p_gender = 'women' -%}
+                {%- endunless -%}
               {%- endif -%}
               {%- assign p_img = product.featured_image | image_url: width: 800 -%}
 
