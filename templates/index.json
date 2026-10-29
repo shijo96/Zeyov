@@ -1,11 +1,29 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "runway_orbit": {
       "type": "runway-orbit",
       "settings": {
-        "color_scheme": "ivory",
+        "color_scheme": "espresso",
         "eyebrow": "ZEYOV RUNWAY EDIT • ISSUE 01",
-        "heading": "NOT A STORE. A RUNWAY."
+        "heading": "NOT A STORE. A RUNWAY.",
+        "collection": "",
+        "product_1": "",
+        "tag_1": "AUTUMN / WINTER 24",
+        "product_2": "",
+        "tag_2": "RUNWAY COUTURE",
+        "product_3": "",
+        "tag_3": "TIMELESS OUTERWEAR",
+        "product_4": "",
+        "tag_4": "COMFORT LUXURY"
       }
     },
     "trust": {
@@ -49,24 +67,60 @@
         "t2",
         "t3",
         "t4"
-      ]
+      ],
+      "settings": {}
     },
     "fashion_showcase": {
       "type": "fashion-showcase",
       "settings": {
         "eyebrow": "ZEYOV ATELIER • SS25 RUNWAY",
-        "heading": "PRODUCTS SHOWCASE"
+        "heading": "PRODUCTS SHOWCASE",
+        "collection": "",
+        "limit": 8,
+        "quote": "Draped to sculpt, engineered to move effortlessly.",
+        "signature": "ZEYOV RUNWAY ATELIER"
       }
     },
     "fashion_rail": {
       "type": "fashion-rail",
       "settings": {
-        "heading": "CURATED SILHOUETTES"
+        "eyebrow": "THE RUNWAY LOOKBOOK",
+        "heading": "CURATED SILHOUETTES",
+        "subheading": "Every piece is precision-tailored in limited batches with luxury fabrics designed for lasting distinction.",
+        "collection": "",
+        "product_1": "",
+        "tag_1": "EVENING & OCCASION",
+        "fabric_1": "100% Grade-6A Mulberry Silk • Hand-stitched drape",
+        "product_2": "",
+        "tag_2": "OUTERWEAR ATELIER",
+        "fabric_2": "Double-Faced Virgin Wool • Custom Horn Buttons",
+        "product_3": "",
+        "tag_3": "WINTER CAPSULE",
+        "fabric_3": "Water-repellent micro-ripstop shell • 700 Fill loft",
+        "product_4": "",
+        "tag_4": "COMFORT LUXURY",
+        "fabric_4": "Bonded High-Density Sherpa • Navy contrast flap"
       }
     },
     "fashion_reveal": {
       "type": "fashion-reveal",
-      "settings": {}
+      "settings": {
+        "watermark": "ATELIER",
+        "badge_title": "MASTER TAILORED",
+        "badge_text": "Limited 50 Pieces Per Drop",
+        "eyebrow": "CRAFTSMANSHIP & ARCHITECTURE",
+        "heading": "TAILORED TO PERFECTION",
+        "lead": "We design clothing with the philosophy that garments should sculpt gracefully, provide unmatched tactile comfort, and endure across seasons.",
+        "f1_title": "Pure Natural Fibers • Grade-6A Silk & Virgin Wool",
+        "f1_text": "We strictly avoid cheap synthetics. Our silks glide with cool-touch fluidity, while our double-faced virgin wools insulate without weight.",
+        "f2_title": "Ergonomic Silhouette • Tailored for Indian Bodies",
+        "f2_text": "Every seam is drafted with custom torso lengths, generous shoulder mobility, and flattering cinch contours tested on real Indian figures.",
+        "f3_title": "Pre-Shrunk & Colorfast Integrity",
+        "f3_text": "Treated with eco-conscious reactive dyes and pre-washed so the rich emeralds, ambers, and blacks stay deep and vibrant wash after wash.",
+        "button_label": "Shop The Runway Collection →",
+        "button_link": "",
+        "guarantee": "7-Day Hassle-Free Exchange Guaranteed"
+      }
     },
     "featured": {
       "type": "featured-collection",
@@ -74,7 +128,9 @@
         "eyebrow": "ATELIER ACCESSORIES",
         "heading": "Luxury Accessories & Runway Accents",
         "text": "Handcrafted Italian silk scarves, gold-buckle leather belts, and couture accessories designed to complete every silhouette.",
-        "limit": 8
+        "collection": "",
+        "limit": 8,
+        "show_all": true
       }
     },
     "why": {
@@ -118,13 +174,19 @@
         "f2",
         "f3",
         "f4"
-      ]
+      ],
+      "settings": {
+        "eyebrow": "The Zeyov promise",
+        "heading": "Why you'll love shopping with us"
+      }
     },
     "reviews": {
       "type": "customer-reviews",
-      "blocks": {},
-      "block_order": [],
-      "settings": {}
+      "settings": {
+        "eyebrow": "Loved Across India",
+        "heading": "What Our Customers Say",
+        "subheading": "Authentic reflections from verified buyers across India who wear and experience ZEYOV couture."
+      }
     },
     "banner": {
       "type": "brand-banner",
@@ -167,11 +229,18 @@
         "q2",
         "q3",
         "q4"
-      ]
+      ],
+      "settings": {
+        "eyebrow": "Good to know",
+        "heading": "Frequently asked questions"
+      }
     },
     "newsletter": {
       "type": "newsletter",
-      "settings": {}
+      "settings": {
+        "heading": "Join the Zeyov list",
+        "text": "New arrivals and offers, straight to your inbox. No spam."
+      }
     }
   },
   "order": [
