@@ -30,6 +30,11 @@
     "social_instagram": "#",
     "social_facebook": "#",
     "social_youtube": "#",
-    "whatsapp_number": "919447873029"
+    "whatsapp_number": "919447873029",
+    "enable_cart_recovery_modal": true,
+    "cart_recovery_discount_code": "ZEYOV10",
+    "cart_recovery_idle_seconds": 60,
+    "enable_back_in_stock": true,
+    "enable_personalized_recs": true
   }
 }

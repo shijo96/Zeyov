@@ -1,0 +1,66 @@
+{%- comment -%}
+  ZEYOV — Abandoned Cart Recovery & Exit-Intent Modal
+  Captures visitor phone & email with marketing consent before checkout abandonment.
+{%- endcomment -%}
+<div class="cart-recovery-modal" id="CartRecoveryModal" aria-hidden="true" role="dialog" aria-modal="true" style="display: none;">
+  <div class="cart-recovery-modal__backdrop" data-close-recovery-modal></div>
+  <div class="cart-recovery-modal__dialog">
+    <button type="button" class="cart-recovery-modal__close" data-close-recovery-modal aria-label="Close modal">&times;</button>
+    
+    <div class="cart-recovery-modal__content">
+      <span class="badge badge--gold mb-xs">EXCLUSIVE ATELIER COURTESY</span>
+      <h3 class="cart-recovery-modal__title">Wait! Don't leave your curated pieces behind.</h3>
+      <p class="muted small mb-sm">Your selected items are in high demand. Complete your order now and enjoy an instant <strong>10% EXTRA OFF</strong> plus Free Express Pan-India Delivery.</p>
+      
+      <!-- Cart Items Preview -->
+      <div class="cart-recovery-items" id="CartRecoveryItemsList">
+        {%- for item in cart.items limit: 3 -%}
+          <div class="cart-recovery-item">
+            {%- if item.image -%}
+              <img src="{{ item.image | image_url: width: 90, height: 90, crop: 'center' }}" alt="{{ item.product.title | escape }}" loading="lazy" class="cart-recovery-thumb">
+            {%- endif -%}
+            <div class="cart-recovery-info">
+              <span class="cart-recovery-item-title">{{ item.product.title }}</span>
+              <span class="cart-recovery-item-price">{{ item.final_price | money }} &times; {{ item.quantity }}</span>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="cart-recovery-total-row">
+        <span>Cart Subtotal:</span>
+        <b id="CartRecoverySubtotal">{{ cart.total_price | money }}</b>
+      </div>
+
+      <form id="CartRecoveryForm" class="cart-recovery-form">
+        <div class="cart-recovery-field">
+          <label for="RecoveryPhone" class="cart-recovery-label">WhatsApp Mobile Number <span class="req-star">*</span></label>
+          <div class="phone-input-wrap">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" id="RecoveryPhone" name="phone" placeholder="10-digit mobile number" maxlength="10" pattern="[6-9][0-9]{9}" required autocomplete="tel" value="{{ cart.attributes['Primary Phone'] | default: customer.phone }}">
+          </div>
+        </div>
+
+        <div class="cart-recovery-field">
+          <label for="RecoveryEmail" class="cart-recovery-label">Email Address (Optional)</label>
+          <input type="email" id="RecoveryEmail" name="email" class="recovery-text-input" placeholder="e.g. name@example.com" autocomplete="email" value="{{ customer.email }}">
+        </div>
+
+        <div class="cart-recovery-consent">
+          <label class="consent-checkbox-label">
+            <input type="checkbox" id="RecoveryConsent" name="consent" checked required>
+            <span>I agree to receive order tracking updates, cart reminders &amp; exclusive VIP discounts via WhatsApp &amp; Email. You can unsubscribe anytime.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn--gold btn--block cart-recovery-submit-btn" id="RecoverySubmitBtn">
+          <span>Claim 10% OFF &amp; Complete Checkout &rarr;</span>
+        </button>
+
+        <div class="cart-recovery-alt-row">
+          <button type="button" class="btn-link small muted" data-close-recovery-modal>No thanks, I'll pay full price later</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

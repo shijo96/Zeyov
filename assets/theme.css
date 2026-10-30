@@ -5088,5 +5088,631 @@ p{margin:0 0 1em}
   flex-wrap: wrap;
 }
 
+/* ==========================================================================
+   MARKETING AUTOMATION & CART RECOVERY SYSTEM — STYLES
+   ========================================================================== */
+
+/* ---------- Abandoned Cart Recovery Modal ---------- */
+.cart-recovery-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.cart-recovery-modal.is-open {
+  display: flex !important;
+}
+
+.cart-recovery-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 16, 14, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: zeyovFadeIn 0.3s ease;
+}
+
+.cart-recovery-modal__dialog {
+  position: relative;
+  z-index: 2;
+  background: #FFFFFF;
+  border-radius: 28px;
+  padding: clamp(24px, 4vw, 36px);
+  width: min(94vw, 540px);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 70px rgba(18, 16, 14, 0.3);
+  border: 1px solid var(--border);
+  animation: zeyovSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cart-recovery-modal__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FAF8F4;
+  border: 1px solid var(--border);
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #20201F;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.cart-recovery-modal__close:hover {
+  background: #181716;
+  color: #FFFFFF;
+  transform: rotate(90deg);
+}
+
+.cart-recovery-modal__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+  color: #12100E;
+  margin: 8px 0 6px;
+  line-height: 1.25;
+}
+
+.cart-recovery-items {
+  background: #FAF8F4;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin: 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.cart-recovery-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cart-recovery-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.cart-recovery-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.cart-recovery-item-title {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #181716;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-recovery-item-price {
+  font-size: 0.78rem;
+  color: var(--gold-dark);
+  font-weight: 700;
+}
+
+.cart-recovery-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 4px 14px;
+  font-size: 0.92rem;
+  color: #33251F;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.cart-recovery-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cart-recovery-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cart-recovery-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #20201F;
+  text-transform: uppercase;
+}
+
+.recovery-text-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #FAF8F4;
+  font-size: 0.9rem;
+  color: #12100E;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recovery-text-input:focus {
+  outline: none;
+  border-color: var(--gold-dark);
+  box-shadow: 0 0 0 3px rgba(184, 155, 101, 0.2);
+  background: #FFFFFF;
+}
+
+.cart-recovery-consent {
+  padding: 8px 4px;
+}
+
+.consent-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.76rem;
+  color: #77716B;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.consent-checkbox-label input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: var(--gold-dark);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.cart-recovery-submit-btn {
+  height: 52px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 8px 24px rgba(184, 155, 101, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cart-recovery-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(184, 155, 101, 0.45);
+}
+
+.cart-recovery-alt-row {
+  text-align: center;
+  padding-top: 4px;
+}
+
+/* ---------- Back in Stock Modal ---------- */
+.stock-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.stock-modal.is-open {
+  display: flex !important;
+}
+
+.stock-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 16, 14, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: zeyovFadeIn 0.3s ease;
+}
+
+.stock-modal__dialog {
+  position: relative;
+  z-index: 2;
+  background: #FFFFFF;
+  border-radius: 28px;
+  padding: clamp(24px, 4vw, 36px);
+  width: min(94vw, 500px);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 70px rgba(18, 16, 14, 0.3);
+  border: 1px solid var(--border);
+  animation: zeyovSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stock-modal__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FAF8F4;
+  border: 1px solid var(--border);
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #20201F;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.stock-modal__close:hover {
+  background: #181716;
+  color: #FFFFFF;
+  transform: rotate(90deg);
+}
+
+.stock-modal__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.3rem, 2.5vw, 1.55rem);
+  color: #12100E;
+  margin: 8px 0 6px;
+}
+
+.stock-modal__product-preview {
+  background: #FAF8F4;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 12px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stock-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stock-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stock-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #20201F;
+  text-transform: uppercase;
+}
+
+.stock-text-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #FAF8F4;
+  font-size: 0.9rem;
+  color: #12100E;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stock-text-input:focus {
+  outline: none;
+  border-color: var(--gold-dark);
+  box-shadow: 0 0 0 3px rgba(184, 155, 101, 0.2);
+  background: #FFFFFF;
+}
+
+.stock-consent {
+  padding: 4px;
+}
+
+.stock-submit-btn {
+  height: 52px;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+/* Restock trigger button on Product Page */
+.btn--notify-stock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #FFF9EE;
+  border: 1.5px solid var(--gold-dark);
+  color: var(--gold-dark);
+  border-radius: 14px;
+  height: 54px;
+  padding: 0 24px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex: 1;
+}
+
+.btn--notify-stock:hover {
+  background: var(--gold-dark);
+  color: #FFFFFF;
+  box-shadow: 0 8px 24px rgba(143, 114, 65, 0.25);
+  transform: translateY(-2px);
+}
+
+/* ---------- Festival Campaign Banner Section ---------- */
+.festival-banner {
+  padding: clamp(32px, 5vw, 60px) 0;
+}
+
+.festival-banner__card {
+  position: relative;
+  border-radius: 28px;
+  padding: clamp(36px, 6vw, 64px) clamp(20px, 4vw, 48px);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(18, 16, 14, 0.08);
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, #FAF8F4 0%, #F4EBD9 100%);
+}
+
+.festival-banner--luxury_gold .festival-banner__card {
+  background: linear-gradient(135deg, #1C1917 0%, #33251F 50%, #1A1310 100%);
+  color: #FAF8F4;
+  border-color: rgba(184, 155, 101, 0.4);
+}
+
+.festival-banner--luxury_gold .festival-banner__title {
+  color: #FAF8F4;
+}
+
+.festival-banner--luxury_gold .festival-banner__sub {
+  color: #EDE5DB;
+}
+
+.festival-banner--onam .festival-banner__card {
+  background: linear-gradient(135deg, #FCFAF6 0%, #F5E8C7 50%, #EDE1B8 100%);
+  border-color: #B89B65;
+}
+
+.festival-banner--vishu .festival-banner__card {
+  background: linear-gradient(135deg, #F9FBF8 0%, #E8F5E9 50%, #FFF8E1 100%);
+  border-color: #386B50;
+}
+
+.festival-banner--diwali .festival-banner__card {
+  background: linear-gradient(135deg, #2A1810 0%, #4A1E14 50%, #20100C 100%);
+  color: #FAF8F4;
+  border-color: #D4AF37;
+}
+
+.festival-banner--diwali .festival-banner__title {
+  color: #FAF8F4;
+}
+
+.festival-banner--diwali .festival-banner__sub {
+  color: #F4EBD9;
+}
+
+.festival-banner--eid .festival-banner__card {
+  background: linear-gradient(135deg, #0F281E 0%, #173E2F 50%, #0B1D16 100%);
+  color: #FAF8F4;
+  border-color: #B89B65;
+}
+
+.festival-banner--eid .festival-banner__title {
+  color: #FAF8F4;
+}
+
+.festival-banner--eid .festival-banner__sub {
+  color: #E2ECE5;
+}
+
+.festival-banner--christmas .festival-banner__card {
+  background: linear-gradient(135deg, #3D1014 0%, #5C151B 50%, #2B0B0E 100%);
+  color: #FAF8F4;
+  border-color: #B89B65;
+}
+
+.festival-banner--christmas .festival-banner__title {
+  color: #FAF8F4;
+}
+
+.festival-banner--christmas .festival-banner__sub {
+  color: #F8E8E9;
+}
+
+.festival-banner--clearance .festival-banner__card {
+  background: linear-gradient(135deg, #181716 0%, #20201F 100%);
+  color: #FFFFFF;
+  border-color: var(--sale);
+}
+
+.festival-banner--clearance .festival-banner__title {
+  color: #FFFFFF;
+}
+
+.festival-banner__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 12px auto 14px;
+  max-width: 780px;
+}
+
+.festival-banner__sub {
+  font-size: clamp(0.92rem, 1.5vw, 1.1rem);
+  max-width: 640px;
+  margin: 0 auto 24px;
+  line-height: 1.55;
+  color: #5A544F;
+}
+
+.festival-banner__coupon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px dashed var(--gold);
+  border-radius: 18px;
+  padding: 10px 20px;
+  margin-bottom: 28px;
+}
+
+.coupon-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.coupon-code-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #181716;
+  color: #FFFFFF;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.coupon-code-pill:hover {
+  background: var(--gold-dark);
+  transform: scale(1.04);
+}
+
+.coupon-copy-hint {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.coupon-desc {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.festival-banner__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Personalized Recommendations & Recently Viewed ---------- */
+.personalized-recs {
+  border-top: 1px solid var(--border);
+  padding: clamp(36px, 5vw, 64px) 0;
+}
+
+.personalized-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.personalized-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(18, 16, 14, 0.08);
+}
+
+.personalized-card__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: #FAF8F4;
+  overflow: hidden;
+}
+
+.personalized-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.personalized-card:hover .personalized-card__media img {
+  transform: scale(1.05);
+}
+
+.personalized-card__info {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.personalized-card__title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #181716;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.personalized-card__price {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--gold-dark);
+}
+
+/* Animations */
+@keyframes zeyovFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zeyovSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
 
 

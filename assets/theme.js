@@ -275,8 +275,24 @@
           if (pOff) pOff.style.display = 'none';
         }
       }
-      var sp = $('[data-sticky-price]', root); if (sp) sp.textContent = formatMoney(v.price, moneyFmt);
-      addBtn.disabled = !v.available; addLabel.textContent = v.available ? 'Add to Bag' : 'Sold out';
+      var notifyBtn = $('#NotifyStockBtn', root);
+      if (v.available) {
+        addBtn.disabled = false;
+        addBtn.style.display = 'inline-flex';
+        addLabel.textContent = 'Add to Bag';
+        if (notifyBtn) notifyBtn.style.display = 'none';
+      } else {
+        addBtn.disabled = true;
+        addBtn.style.display = 'none';
+        addLabel.textContent = 'Sold out';
+        if (notifyBtn) {
+          notifyBtn.style.display = 'inline-flex';
+          var stockVId = $('#StockVariantId');
+          if (stockVId) stockVId.value = v.id;
+          var stockVTitle = $('#StockModalVariantTitle');
+          if (stockVTitle) stockVTitle.textContent = v.title && v.title !== 'Default Title' ? 'Selected: ' + v.title : '';
+        }
+      }
       var sb = $('[data-sticky-btn]', root); if (sb) { sb.disabled = !v.available; sb.textContent = v.available ? 'Add to Bag' : 'Sold out'; }
       if (v.featured_media) showById(v.featured_media.id);
       updateTiers(v);
@@ -1585,7 +1601,331 @@
     }
   });
 
+  /* ==========================================================================
+     MARKETING AUTOMATION & RETENTION ENGINE (ZEYOV)
+     - Exit-Intent & Idle Cart Recovery Modal
+     - Back in Stock WhatsApp / Email Notification Modal
+     - Dynamic Personalized Recommendations & Browsing History Engine
+     - One-Tap Coupon Code Copy
+     ========================================================================== */
+
+  // 1. One-Tap Coupon Copy Handler
+  document.addEventListener('click', function (e) {
+    var cpBtn = e.target.closest('[data-copy-coupon]');
+    if (cpBtn) {
+      e.preventDefault();
+      var code = cpBtn.getAttribute('data-copy-coupon') || 'ZEYOV10';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(function () {
+          toast('Code ' + code + ' copied to clipboard!');
+        }).catch(function () {
+          toast('Use code: ' + code);
+        });
+      } else {
+        toast('Use code: ' + code);
+      }
+    }
+  });
+
+  // 2. Abandoned Cart Recovery Modal & Exit-Intent
+  var recoveryModal = $('#CartRecoveryModal');
+  var recoveryShownSessionKey = 'zeyov_cart_recovery_prompted';
+
+  function openRecoveryModal() {
+    if (!recoveryModal) return;
+    if (sessionStorage.getItem(recoveryShownSessionKey)) return;
+
+    // Check if cart has items
+    var countEl = $('[data-cart-count]');
+    var itemCount = countEl ? parseInt(countEl.textContent, 10) : 0;
+    var hasItemsInModal = !!$('.cart-recovery-item', recoveryModal);
+
+    if (itemCount > 0 || hasItemsInModal) {
+      sessionStorage.setItem(recoveryShownSessionKey, 'true');
+      recoveryModal.style.display = 'flex';
+      recoveryModal.classList.add('is-open');
+      recoveryModal.setAttribute('aria-hidden', 'false');
+
+      // Autofill from stored contact
+      try {
+        var stored = JSON.parse(localStorage.getItem('zeyov_customer_contact') || '{}');
+        if (stored.phone && $('#RecoveryPhone')) $('#RecoveryPhone').value = stored.phone;
+        if (stored.email && $('#RecoveryEmail')) $('#RecoveryEmail').value = stored.email;
+      } catch (err) {}
+    }
+  }
+
+  function closeRecoveryModal() {
+    if (!recoveryModal) return;
+    recoveryModal.style.display = 'none';
+    recoveryModal.classList.remove('is-open');
+    recoveryModal.setAttribute('aria-hidden', 'true');
+  }
+
+  // Exit-Intent Trigger: mouse leaves top of viewport
+  document.addEventListener('mouseleave', function (e) {
+    if (e.clientY <= 5 && !sessionStorage.getItem(recoveryShownSessionKey)) {
+      openRecoveryModal();
+    }
+  });
+
+  // Idle Timer Trigger: 60s idle on page when cart has items
+  var recoveryIdleTimer;
+  function resetRecoveryIdleTimer() {
+    clearTimeout(recoveryIdleTimer);
+    if (!sessionStorage.getItem(recoveryShownSessionKey)) {
+      recoveryIdleTimer = setTimeout(function () {
+        openRecoveryModal();
+      }, 60000);
+    }
+  }
+  ['mousemove', 'keydown', 'scroll', 'touchstart'].forEach(function (evt) {
+    window.addEventListener(evt, resetRecoveryIdleTimer, { passive: true });
+  });
+  resetRecoveryIdleTimer();
+
+  // Modal Close buttons
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-close-recovery-modal]')) {
+      e.preventDefault();
+      closeRecoveryModal();
+    }
+  });
+
+  // Recovery Form Submission
+  var recoveryForm = $('#CartRecoveryForm');
+  if (recoveryForm) {
+    recoveryForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var phone = ($('#RecoveryPhone') ? $('#RecoveryPhone').value.trim() : '');
+      var email = ($('#RecoveryEmail') ? $('#RecoveryEmail').value.trim() : '');
+      var consent = ($('#RecoveryConsent') && $('#RecoveryConsent').checked);
+
+      if (!phone || !/^[6-9][0-9]{9}$/.test(phone)) {
+        toast('Please enter a valid 10-digit Indian WhatsApp number.');
+        return;
+      }
+
+      if (!consent) {
+        toast('Please accept marketing updates to claim your discount.');
+        return;
+      }
+
+      var submitBtn = $('#RecoverySubmitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Activating VIP Discount...</span>';
+      }
+
+      // Store contact locally
+      try {
+        localStorage.setItem('zeyov_customer_contact', JSON.stringify({ phone: phone, email: email }));
+      } catch (err) {}
+
+      // Update cart attributes with phone, email & marketing consent
+      fetch(ZEYOV.routes.cartJson)
+        .then(function (r) { return r.json(); })
+        .then(function (cart) {
+          var updateData = {
+            attributes: {
+              'Primary Phone': phone,
+              'Recovery Email': email,
+              'Marketing Consent': 'Opted In (WhatsApp & Email)',
+              'Recovery Offer': 'ZEYOV10',
+              'Captured At': new Date().toISOString()
+            }
+          };
+          return fetch(ZEYOV.routes.cart.replace(/\/$/, '') + '/update.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(updateData)
+          });
+        })
+        .then(function () {
+          closeRecoveryModal();
+          toast('Discount ZEYOV10 applied! Redirecting to checkout...');
+          setTimeout(function () {
+            safeNavigate('/checkout?discount=ZEYOV10');
+          }, 600);
+        })
+        .catch(function () {
+          closeRecoveryModal();
+          safeNavigate('/checkout?discount=ZEYOV10');
+        });
+    });
+  }
+
+  // 3. Back in Stock Modal
+  var stockModal = $('#BackInStockModal');
+  function openStockModal() {
+    if (!stockModal) return;
+    stockModal.style.display = 'flex';
+    stockModal.classList.add('is-open');
+    stockModal.setAttribute('aria-hidden', 'false');
+
+    try {
+      var storedContact = JSON.parse(localStorage.getItem('zeyov_customer_contact') || '{}');
+      if (storedContact.phone && $('#StockPhone')) $('#StockPhone').value = storedContact.phone;
+      if (storedContact.email && $('#StockEmail')) $('#StockEmail').value = storedContact.email;
+    } catch (e) {}
+  }
+
+  function closeStockModal() {
+    if (!stockModal) return;
+    stockModal.style.display = 'none';
+    stockModal.classList.remove('is-open');
+    stockModal.setAttribute('aria-hidden', 'true');
+  }
+
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-open-stock-modal]')) {
+      e.preventDefault();
+      openStockModal();
+      return;
+    }
+    if (e.target.closest('[data-close-stock-modal]')) {
+      e.preventDefault();
+      closeStockModal();
+      return;
+    }
+  });
+
+  var stockForm = $('#BackInStockForm');
+  if (stockForm) {
+    stockForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var phone = ($('#StockPhone') ? $('#StockPhone').value.trim() : '');
+      var email = ($('#StockEmail') ? $('#StockEmail').value.trim() : '');
+      var vId = ($('#StockVariantId') ? $('#StockVariantId').value : '');
+      var pTitle = ($('#StockModalProductTitle') ? $('#StockModalProductTitle').textContent : 'Product');
+
+      if (!phone || !/^[6-9][0-9]{9}$/.test(phone)) {
+        toast('Please enter a valid 10-digit WhatsApp number.');
+        return;
+      }
+
+      var btn = $('#StockSubmitBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Submitting alert request...';
+      }
+
+      try {
+        localStorage.setItem('zeyov_customer_contact', JSON.stringify({ phone: phone, email: email }));
+        var list = JSON.parse(localStorage.getItem('zeyov_restock_alerts') || '[]');
+        list.push({ phone: phone, email: email, variantId: vId, title: pTitle, time: new Date().toISOString() });
+        localStorage.setItem('zeyov_restock_alerts', JSON.stringify(list));
+      } catch (err) {}
+
+      setTimeout(function () {
+        closeStockModal();
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Notify Me on WhatsApp & Email →';
+        }
+        toast('Restock alert confirmed! We will message you on WhatsApp & Email when available.');
+      }, 500);
+    });
+  }
+
+  // 4. Personalized Recommendations & Browsing History Engine
+  var RECENT_KEY = 'zeyov_recent_views';
+  function trackCurrentProductView() {
+    if (window.location.pathname.indexOf('/products/') === -1) return;
+    var handle = window.location.pathname.split('/products/')[1].split('/')[0].split('?')[0];
+    if (!handle) return;
+
+    var titleEl = $('.pdp__title');
+    var priceEl = $('[data-price-now]');
+    var imgEl = $('.gallery__slide.is-active img') || $('.gallery__slide img');
+
+    if (!titleEl) return;
+
+    var productItem = {
+      handle: handle,
+      title: titleEl.textContent.trim(),
+      price: priceEl ? priceEl.textContent.trim() : '',
+      image: imgEl ? imgEl.src : '',
+      url: '/products/' + handle
+    };
+
+    try {
+      var views = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+      views = views.filter(function (p) { return p.handle !== handle; });
+      views.unshift(productItem);
+      if (views.length > 8) views = views.slice(0, 8);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(views));
+    } catch (err) {}
+  }
+
+  function renderPersonalizedRecs() {
+    var recsSec = $('#PersonalizedRecsSection');
+    var grid = $('#PersonalizedRecsGrid');
+    if (!recsSec || !grid) return;
+
+    var curHandle = (window.location.pathname.indexOf('/products/') !== -1)
+      ? window.location.pathname.split('/products/')[1].split('/')[0].split('?')[0]
+      : '';
+
+    var views = [];
+    try {
+      views = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    } catch (e) {
+      views = [];
+    }
+
+    var filtered = views.filter(function (p) { return p.handle !== curHandle; });
+
+    if (filtered.length > 0) {
+      var html = '';
+      filtered.slice(0, 4).forEach(function (p) {
+        html += '<a href="' + encodeURI(p.url) + '" class="personalized-card">' +
+          '<div class="personalized-card__media">' +
+            (p.image ? '<img src="' + encodeURI(p.image) + '" alt="' + escapeHtml(p.title) + '" loading="lazy">' : '') +
+          '</div>' +
+          '<div class="personalized-card__info">' +
+            '<span class="personalized-card__title">' + escapeHtml(p.title) + '</span>' +
+            '<span class="personalized-card__price">' + escapeHtml(p.price) + '</span>' +
+          '</div>' +
+        '</a>';
+      });
+      grid.innerHTML = html;
+      recsSec.style.display = 'block';
+    } else {
+      // If no browsing history yet, load 4 runway products via JSON
+      fetch('/collections/all/products.json?limit=4')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data && data.products && data.products.length > 0) {
+            var html = '';
+            data.products.filter(function (p) { return p.handle !== curHandle; }).slice(0, 4).forEach(function (p) {
+              var img = (p.images && p.images[0]) ? p.images[0].src : '';
+              var price = (p.variants && p.variants[0]) ? formatMoney(p.variants[0].price * 100) : '';
+              html += '<a href="/products/' + encodeURI(p.handle) + '" class="personalized-card">' +
+                '<div class="personalized-card__media">' +
+                  (img ? '<img src="' + encodeURI(img) + '" alt="' + escapeHtml(p.title) + '" loading="lazy">' : '') +
+                '</div>' +
+                '<div class="personalized-card__info">' +
+                  '<span class="personalized-card__title">' + escapeHtml(p.title) + '</span>' +
+                  '<span class="personalized-card__price">' + escapeHtml(price) + '</span>' +
+                '</div>' +
+              '</a>';
+            });
+            if (html) {
+              grid.innerHTML = html;
+              recsSec.style.display = 'block';
+            }
+          }
+        })
+        .catch(function () {});
+    }
+  }
+
+  trackCurrentProductView();
+  renderPersonalizedRecs();
+
   // Initial Wishlist UI sync on page load
   updateWishlistUI();
 })();
+
 

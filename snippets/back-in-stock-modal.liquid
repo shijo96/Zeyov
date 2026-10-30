@@ -1,0 +1,50 @@
+{%- comment -%}
+  ZEYOV — Back in Stock Notification Modal
+  Allows customers to receive WhatsApp & Email alerts when sold-out items return to stock.
+{%- endcomment -%}
+<div class="stock-modal" id="BackInStockModal" aria-hidden="true" role="dialog" aria-modal="true" style="display: none;">
+  <div class="stock-modal__backdrop" data-close-stock-modal></div>
+  <div class="stock-modal__dialog">
+    <button type="button" class="stock-modal__close" data-close-stock-modal aria-label="Close modal">&times;</button>
+    
+    <div class="stock-modal__content">
+      <span class="badge badge--gold mb-xs">BACK IN STOCK ALERT</span>
+      <h3 class="stock-modal__title">Get Notified When Restocked</h3>
+      <p class="muted small mb-sm">This piece is currently unavailable. Enter your details to receive an instant WhatsApp or Email notification the moment it is restocked.</p>
+
+      <div class="stock-modal__product-preview" id="StockProductPreview">
+        <b id="StockModalProductTitle">{{ product.title }}</b>
+        <span class="muted small" id="StockModalVariantTitle"></span>
+      </div>
+
+      <form id="BackInStockForm" class="stock-modal__form">
+        <input type="hidden" name="product_id" id="StockProductId" value="{{ product.id }}">
+        <input type="hidden" name="variant_id" id="StockVariantId" value="{{ product.selected_or_first_available_variant.id }}">
+
+        <div class="stock-field">
+          <label for="StockPhone" class="stock-label">WhatsApp Mobile Number <span class="req-star">*</span></label>
+          <div class="phone-input-wrap">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" id="StockPhone" name="phone" placeholder="10-digit mobile number" maxlength="10" pattern="[6-9][0-9]{9}" required autocomplete="tel" value="{{ customer.phone }}">
+          </div>
+        </div>
+
+        <div class="stock-field">
+          <label for="StockEmail" class="stock-label">Email Address <span class="req-star">*</span></label>
+          <input type="email" id="StockEmail" name="email" class="stock-text-input" placeholder="e.g. name@example.com" required autocomplete="email" value="{{ customer.email }}">
+        </div>
+
+        <div class="stock-consent">
+          <label class="consent-checkbox-label">
+            <input type="checkbox" id="StockConsent" name="consent" checked required>
+            <span>I agree to receive restock alerts &amp; related collection updates on WhatsApp &amp; Email.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn--gold btn--block stock-submit-btn" id="StockSubmitBtn">
+          <span>Notify Me on WhatsApp &amp; Email &rarr;</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
