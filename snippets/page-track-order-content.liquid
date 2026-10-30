@@ -88,7 +88,7 @@
       phoneInput.classList.remove('is-error');
 
       btn.disabled = true;
-      btn.querySelector('span').textContent = 'Checking Courier Network…';
+      btn.querySelector('span').textContent = 'Checking Logistics Network…';
 
       function escapeHtml(str) {
         var d = document.createElement('div');
@@ -98,6 +98,9 @@
 
       var safeOrderId = escapeHtml(orderId.toUpperCase());
       var safeContact = escapeHtml(contact);
+      var rawNum = orderId.replace(/[^0-9]/g, '');
+      var isAwb = rawNum.length >= 8 && rawNum.length <= 16;
+      var waPhone = '{{ settings.whatsapp_number | default: "9447873029" | replace: "+", "" | replace: " ", "" }}';
 
       setTimeout(function () {
         btn.disabled = false;
@@ -108,25 +111,46 @@
         est.setDate(d.getDate() + 4);
         var dateStr = est.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
 
+        var courierLinksHtml = '';
+        if (isAwb) {
+          courierLinksHtml = '<div class="track-courier-quick-links mt-sm">' +
+            '<p class="small" style="font-weight:600;margin-bottom:6px;">Direct Courier Tracking for AWB ' + rawNum + ':</p>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px;">' +
+            '<a href="https://www.delhivery.com/track/package/' + rawNum + '" target="_blank" rel="noopener noreferrer" class="btn btn--small btn--outline" style="padding:4px 10px;font-size:0.75rem;">Delhivery Tracking &rarr;</a>' +
+            '<a href="https://tracker.shadowfax.in/#/track/' + rawNum + '" target="_blank" rel="noopener noreferrer" class="btn btn--small btn--outline" style="padding:4px 10px;font-size:0.75rem;">Shadowfax Tracking &rarr;</a>' +
+            '<a href="https://www.xpressbees.com/shipment/tracking?awbNo=' + rawNum + '" target="_blank" rel="noopener noreferrer" class="btn btn--small btn--outline" style="padding:4px 10px;font-size:0.75rem;">Xpressbees Tracking &rarr;</a>' +
+            '</div>' +
+            '</div>';
+        }
+
+        var waText = encodeURIComponent('Hi Zeyov, please give me live tracking update for my order ' + safeOrderId + ' (Registered phone: ' + safeContact + ')');
+        var waUrl = 'https://wa.me/' + waPhone + '?text=' + waText;
+
         result.style.display = 'block';
         result.innerHTML = '<div class="track-result-head">' +
           '<div class="track-result-badge"><span class="dot-pulse"></span> IN TRANSIT</div>' +
-          '<div class="track-result-id">Order ' + safeOrderId + '</div>' +
+          '<div class="track-result-id">Order / AWB: ' + safeOrderId + '</div>' +
           '</div>' +
           '<div class="track-result-body">' +
           '<p class="track-result-msg"><strong>Dispatched via Pan-India Express Courier</strong><br>' +
-          'Your parcel is moving through our insured transit hub. Estimated delivery by <strong>' + dateStr + '</strong>.</p>' +
+          'Your package is moving securely through our verified logistics network. Estimated delivery by <strong>' + dateStr + '</strong>.</p>' +
           '<div class="track-timeline">' +
           '<div class="track-step is-done"><div class="track-step__dot">✓</div><span>Order Verified</span></div>' +
           '<div class="track-step is-done"><div class="track-step__dot">✓</div><span>Quality Inspected</span></div>' +
           '<div class="track-step is-active"><div class="track-step__dot">●</div><span>In Courier Transit</span></div>' +
           '<div class="track-step"><div class="track-step__dot">○</div><span>Out for Delivery</span></div>' +
           '</div>' +
-          '<small class="track-result-hint">Real-time GPS tracking link has also been sent to ' + safeContact + ' via WhatsApp &amp; SMS.</small>' +
+          courierLinksHtml +
+          '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">' +
+          '<small class="track-result-hint" style="margin:0;">Live tracking updates are also messaged via SMS/WhatsApp.</small>' +
+          '<a href="' + waUrl + '" target="_blank" rel="noopener noreferrer" class="btn btn--small btn--gold" style="display:inline-flex;align-items:center;gap:6px;">' +
+          '<span>Need Quick Update? Ask on WhatsApp</span> &rarr;' +
+          '</a>' +
+          '</div>' +
           '</div>';
 
         result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 500);
+      }, 400);
     });
   })();
 </script>

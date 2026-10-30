@@ -62,6 +62,87 @@
       {%- endif -%}
     </div>
 
+    <!-- Return / Exchange Request Assistant -->
+    <div class="card-box mt" style="background:#FAF8F4;border:1.5px solid var(--border);border-radius:18px;padding:clamp(20px, 3.5vw, 30px);margin-top:32px;">
+      <div style="text-align:center;max-width:540px;margin:0 auto 20px;">
+        <span class="badge badge--gold mb-sm">Fast &amp; Hassle-Free</span>
+        <h3 style="font-size:1.3rem;margin:6px 0 8px;">Request a Return or Exchange</h3>
+        <p class="muted small">Enter your details below to initiate a return or size exchange. Our support concierge will arrange a doorstep courier pickup.</p>
+      </div>
+
+      <form id="QuickReturnForm" style="max-width:540px;margin:0 auto;" novalidate>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div>
+            <label for="RetOrderId" style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;margin-bottom:5px;">Order ID <span class="req-star">*</span></label>
+            <input type="text" id="RetOrderId" placeholder="e.g. #1024" required style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:0.88rem;background:#fff;">
+          </div>
+          <div>
+            <label for="RetPhone" style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;margin-bottom:5px;">Phone / WhatsApp <span class="req-star">*</span></label>
+            <input type="text" id="RetPhone" placeholder="10-digit mobile" required style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:0.88rem;background:#fff;">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div>
+            <label for="RetAction" style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;margin-bottom:5px;">Action Desired</label>
+            <select id="RetAction" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 10px;font-size:0.86rem;background:#fff;">
+              <option value="Exchange (Size / Fit Issue)">Exchange (Size / Fit Issue)</option>
+              <option value="Return for Full Refund">Return for Full Refund</option>
+              <option value="Replacement (Damaged Item)">Replacement (Damaged Item)</option>
+            </select>
+          </div>
+          <div>
+            <label for="RetReason" style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;margin-bottom:5px;">Primary Reason</label>
+            <select id="RetReason" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 10px;font-size:0.86rem;background:#fff;">
+              <option value="Size does not fit properly">Size does not fit properly</option>
+              <option value="Damaged or defective on arrival">Damaged or defective on arrival</option>
+              <option value="Different item received">Different item received</option>
+              <option value="Fabric / Quality not as expected">Fabric / Quality not as expected</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label for="RetNote" style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;margin-bottom:5px;">Brief Note / Details (Optional)</label>
+          <input type="text" id="RetNote" placeholder="e.g. Need Large size instead of Medium" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:0.88rem;background:#fff;">
+        </div>
+
+        <button type="submit" class="btn btn--gold btn--block" style="height:46px;font-size:0.88rem;display:inline-flex;align-items:center;justify-content:center;gap:8px;">
+          {% render 'icon', name: 'whatsapp' %}
+          <span>Submit Return Request on WhatsApp &rarr;</span>
+        </button>
+        <p class="small muted center" style="margin-top:8px;font-size:0.74rem;">Takes &lt; 30 seconds. You can attach unboxing photos directly on WhatsApp.</p>
+      </form>
+    </div>
+
+    <script>
+      (function() {
+        var f = document.getElementById('QuickReturnForm');
+        if (!f) return;
+        f.addEventListener('submit', function(e) {
+          e.preventDefault();
+          var o = (document.getElementById('RetOrderId').value || '').trim();
+          var p = (document.getElementById('RetPhone').value || '').trim();
+          var a = document.getElementById('RetAction').value;
+          var r = document.getElementById('RetReason').value;
+          var n = (document.getElementById('RetNote').value || '').trim();
+
+          if (!o) { document.getElementById('RetOrderId').focus(); return; }
+          if (!p) { document.getElementById('RetPhone').focus(); return; }
+
+          var waPhone = '{{ settings.whatsapp_number | default: "9447873029" | replace: "+", "" | replace: " ", "" }}';
+          var msg = 'Hi Zeyov Support, I would like to request a ' + a + ' for Order ' + o.toUpperCase() + '.\n' +
+                    'Phone: ' + p + '\n' +
+                    'Reason: ' + r + '\n' +
+                    (n ? 'Note: ' + n + '\n' : '') +
+                    'I am attaching the product photos for verification.';
+
+          var url = 'https://wa.me/' + waPhone + '?text=' + encodeURIComponent(msg);
+          window.open(url, '_blank', 'noopener,noreferrer');
+        });
+      })();
+    </script>
+
     <div class="policy-help-box mt">
       <div class="policy-help-box__content">
         <h4>Have a question about an order?</h4>
