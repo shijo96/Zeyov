@@ -63,12 +63,14 @@
     ]
   },
   {
-    "name": "Contact & social",
+    "name": "Customer Support & Notifications",
     "settings": [
-      { "type": "text", "id": "whatsapp_number", "label": "WhatsApp number with country code (e.g. 919876543210)", "info": "Shows a floating WhatsApp button. Leave empty to hide." },
-      { "type": "text", "id": "whatsapp_message", "label": "WhatsApp pre-filled message", "default": "Hi Zeyov, I need help with my order." },
-      { "type": "text", "id": "support_email", "label": "Support email", "default": "support@zeyov.com" },
+      { "type": "header", "content": "Official Store Notifications" },
+      { "type": "text", "id": "support_email", "label": "Sender & Support Email (e.g. zeyovofficial@gmail.com)", "default": "zeyovofficial@gmail.com", "info": "Customer notifications, order emails, and support inquiries use this email. Admin can update this anytime." },
+      { "type": "text", "id": "whatsapp_number", "label": "WhatsApp Notification & Support Number (with country code, e.g. 919447873029)", "default": "919447873029", "info": "WhatsApp order confirmations, live tracking updates, and customer chat are linked to this number. Admin can update this anytime." },
+      { "type": "text", "id": "whatsapp_message", "label": "WhatsApp pre-filled message", "default": "Hi Zeyov Atelier, I need assistance with my order." },
       { "type": "text", "id": "support_phone", "label": "Support phone (optional)" },
+      { "type": "header", "content": "Social Media Channels" },
       { "type": "url", "id": "social_instagram", "label": "Instagram" },
       { "type": "url", "id": "social_facebook", "label": "Facebook" },
       { "type": "url", "id": "social_youtube", "label": "YouTube" }

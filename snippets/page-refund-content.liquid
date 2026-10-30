@@ -130,7 +130,7 @@
           if (!o) { document.getElementById('RetOrderId').focus(); return; }
           if (!p) { document.getElementById('RetPhone').focus(); return; }
 
-          var waPhone = '{{ settings.whatsapp_number | default: "9447873029" | replace: "+", "" | replace: " ", "" }}';
+          var waPhone = '{{ settings.whatsapp_number | default: "919447873029" | replace: "+", "" | replace: " ", "" }}';
           var msg = 'Hi Zeyov Support, I would like to request a ' + a + ' for Order ' + o.toUpperCase() + '.\n' +
                     'Phone: ' + p + '\n' +
                     'Reason: ' + r + '\n' +

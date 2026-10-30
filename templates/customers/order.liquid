@@ -36,6 +36,17 @@
         <h2 class="h3">Shipping address</h2>
         <p>{{ order.shipping_address | format_address }}</p>
         <p class="small muted">Payment: {{ order.financial_status_label }}<br>Fulfilment: {{ order.fulfillment_status_label }}</p>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;">
+          {%- if settings.whatsapp_number != blank -%}
+            <a class="btn btn--small btn--gold btn--block" target="_blank" rel="noopener noreferrer" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text=Hi%20Zeyov%2C%20I%20need%20assistance%20with%20my%20Order%20{{ order.name | url_encode }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+              {% render 'icon', name: 'whatsapp' %} <span>WhatsApp Order Support</span>
+            </a>
+          {%- endif -%}
+          {%- assign refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: '/pages/refund-policy' -%}
+          <a class="btn btn--small btn--outline btn--block" href="{{ refund_link }}" style="text-align:center;">
+            Request Return / Exchange
+          </a>
+        </div>
       </aside>
     </div>
   </div>
