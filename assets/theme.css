@@ -3950,38 +3950,54 @@ p{margin:0 0 1em}
   color: rgba(255, 255, 255, 0.45);
 }
 
-/* Color Variant Interactive Preview Hint */
-.showcase__variant-hint {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+/* Color Variant Interactive Preview Cue (Placed below rail cards to keep image view unobstructed) */
+.showcase__rail-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 4px 4px;
+  margin-top: 4px;
+}
+
+.showcase__variant-hint-bar {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(18, 16, 14, 0.62);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px dashed rgba(184, 155, 101, 0.55);
+  gap: 10px;
+  background: #FAF8F4;
+  border: 1px dashed rgba(184, 155, 101, 0.65);
   border-radius: 999px;
-  padding: 5px 13px 5px 10px;
-  color: #F4EBD9;
-  font-size: 0.72rem;
-  font-weight: 500;
+  padding: 7px 16px 7px 12px;
+  color: #2E231C;
+  font-size: 0.74rem;
+  font-weight: 600;
   letter-spacing: 0.02em;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  z-index: 3;
-  pointer-events: none;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(18, 16, 14, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.showcase__variant-hint-bar:hover {
+  border-color: var(--gold);
+  background: #FFFFFF;
+  box-shadow: 0 6px 18px rgba(184, 155, 101, 0.16);
 }
 
 .variant-hint__pulse {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: #B89B65;
   box-shadow: 0 0 0 3px rgba(184, 155, 101, 0.35);
   animation: pulse-dot 2s infinite ease-in-out;
   flex-shrink: 0;
+}
+
+.variant-hint__text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #2E231C;
+  font-size: 0.74rem;
+  line-height: 1.3;
 }
 
 .variant-hint__desktop {
@@ -4235,14 +4251,19 @@ p{margin:0 0 1em}
     font-size: 0.72rem;
     max-width: 140px;
   }
-  .showcase__variant-hint {
-    top: auto;
-    bottom: 86px;
-    left: 12px;
-    right: auto;
-    max-width: calc(100% - 24px);
-    font-size: 0.68rem;
-    padding: 4px 10px 4px 8px;
+  .showcase__rail-footer {
+    justify-content: center;
+    padding: 10px 0 0;
+  }
+  .showcase__variant-hint-bar {
+    font-size: 0.7rem;
+    padding: 6px 14px 6px 10px;
+    width: 100%;
+    max-width: 380px;
+    justify-content: center;
+  }
+  .variant-hint__text {
+    font-size: 0.7rem;
   }
   .variant-hint__desktop {
     display: none;

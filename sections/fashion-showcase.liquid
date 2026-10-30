@@ -1,8 +1,12 @@
 {%- assign col = section.settings.collection | default: collections.all -%}
 {%- assign first_p = col.products.first -%}
+{%- assign first_img_src = first_p.selected_or_first_available_variant.image | default: first_p.featured_image | image_url: width: 900 -%}
 {%- assign model_women_src = section.settings.model_image_women | image_url: width: 900 -%}
 {%- if section.settings.model_image_women == blank -%}
   {%- assign model_women_src = 'fashion-model-dress.jpg' | asset_url -%}
+{%- endif -%}
+{%- if first_img_src == blank -%}
+  {%- assign first_img_src = model_women_src -%}
 {%- endif -%}
 {%- assign model_men_src = section.settings.model_image_men | image_url: width: 900 -%}
 {%- if section.settings.model_image_men == blank -%}
@@ -106,13 +110,13 @@
         <div class="showcase__model-card">
           <div class="showcase__model-media">
             <img 
-              src="{{ model_women_src }}" 
-              alt="Zeyov Runway Model Editorial" 
+              src="{{ first_img_src }}" 
+              alt="{{ first_p.title | default: 'Zeyov Showcase Featured Piece' | escape }}" 
               class="showcase__model-img" 
               id="ShowcaseModelImg"
               width="600" 
               height="800" 
-              loading="lazy"
+              loading="eager"
             >
             <div class="showcase__model-overlay"></div>
           </div>
@@ -131,15 +135,6 @@
                 </a>
               </div>
             </div>
-          </div>
-
-          <!-- Color Variant Preview Hint (Interactive Cue) -->
-          <div class="showcase__variant-hint" id="ShowcaseVariantHint" aria-label="Select color variants on right to preview here">
-            <span class="variant-hint__pulse"></span>
-            <span class="variant-hint__text">
-              <span class="variant-hint__desktop">Select color variants on right to preview &rarr;</span>
-              <span class="variant-hint__mobile">Select color variants below to preview &darr;</span>
-            </span>
           </div>
 
           <!-- Bottom Quote / Craftsmanship Badge -->
@@ -356,6 +351,17 @@
               </div>
             </article>
           {%- endif -%}
+        </div>
+
+        <!-- Color Variant Interactive Preview Cue (Moved below rail cards to keep image view unobstructed) -->
+        <div class="showcase__rail-footer">
+          <div class="showcase__variant-hint-bar" id="ShowcaseVariantHint" role="status" aria-label="Select color variants to preview on showcase">
+            <span class="variant-hint__pulse"></span>
+            <span class="variant-hint__text">
+              <span class="variant-hint__desktop">Select color variants above to preview on showcase &larr;</span>
+              <span class="variant-hint__mobile">Select color variants above to preview &uarr;</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>

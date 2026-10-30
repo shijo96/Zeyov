@@ -1318,15 +1318,17 @@
             if (hintText && !hintEl._animating) {
               hintEl._animating = true;
               var origHTML = hintText.innerHTML;
-              hintText.innerHTML = '<span style="color:#B89B65;font-weight:700;">✦ Previewing ' + escapeHtml(colorName) + '</span>';
+              hintText.innerHTML = '<span style="color:#8C6D37;font-weight:700;">✦ Previewing ' + escapeHtml(colorName) + ' on showcase &larr;</span>';
               hintEl.style.borderColor = 'var(--gold)';
-              hintEl.style.background = 'rgba(24, 23, 22, 0.88)';
+              hintEl.style.background = '#FFFFFF';
+              hintEl.style.boxShadow = '0 6px 20px rgba(184, 155, 101, 0.22)';
               setTimeout(function () {
                 hintText.innerHTML = origHTML;
                 hintEl.style.borderColor = '';
                 hintEl.style.background = '';
+                hintEl.style.boxShadow = '';
                 hintEl._animating = false;
-              }, 2200);
+              }, 2500);
             }
           }
 
@@ -1339,6 +1341,15 @@
         activateCard(card);
       });
     });
+
+    // Auto-sync initial active card with showcase model image
+    var initialActiveCard = $('.rail-card.is-active', showcase) || railCards[0];
+    if (initialActiveCard && modelImg) {
+      var initialImg = initialActiveCard.getAttribute('data-img');
+      if (initialImg && (!modelImg.getAttribute('src') || modelImg.getAttribute('src').indexOf('fashion-model-dress') > -1)) {
+        modelImg.src = initialImg;
+      }
+    }
 
     // Quick add buttons on rail cards with real Shopify Cart API
     $$('.rail-card__quick-add', showcase).forEach(function (btn) {
