@@ -1,20 +1,77 @@
 {%- assign col = section.settings.collection | default: collections.all -%}
 <section class="section section--accessories" id="{{ section.id }}">
-  <div class="container">
+  <div class="container container--wide">
     <header class="section__head center">
       {%- if section.settings.eyebrow != blank -%}<p class="eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
       <h2>{{ section.settings.heading }}</h2>
       {%- if section.settings.text != blank -%}<p class="muted small" style="max-width: 640px; margin: 0 auto;">{{ section.settings.text }}</p>{%- endif -%}
     </header>
     <div class="grid grid--products grid--compact-accessories">
+      {%- assign count = 0 -%}
       {%- for product in col.products limit: section.settings.limit -%}
         {% render 'product-card', product: product %}
-      {%- else -%}
-        <div class="empty-state" style="grid-column:1/-1;text-align:center;padding:40px 20px">
-          <p class="muted" style="margin-bottom:18px">Selected luxury accessories &amp; runway accents are being prepared.</p>
-          <a class="btn btn--outline" href="{{ routes.all_products_collection_url }}">Explore Catalog &rarr;</a>
-        </div>
+        {%- assign count = count | plus: 1 -%}
       {%- endfor -%}
+
+      {%- if count < 5 and col.products.size < 5 -%}
+        <!-- Curated luxury showroom pieces to complete the 5-card row until more catalog items are published -->
+        {%- if count < 4 -%}
+          <article class="card">
+            <div class="card__media-wrap">
+              <a class="card__media" href="{{ routes.all_products_collection_url }}" aria-label="ZEYOV Wireless Portable Citrus Juicer Blender">
+                <img src="{{ 'product-juicer-1.jpg' | asset_url }}" alt="ZEYOV Wireless Portable Citrus Juicer Blender" width="400" height="400" loading="lazy">
+              </a>
+              <span class="card__badge card__badge--sale">30% OFF</span>
+              <button type="button" class="card__wishlist-btn" aria-label="Save to Wishlist">
+                <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              </button>
+            </div>
+            <div class="card__body">
+              <div class="card__meta-top">
+                <span class="card__type">LIFESTYLE &bull; WELLNESS</span>
+              </div>
+              <h3 class="card__title"><a href="{{ routes.all_products_collection_url }}">ZEYOV Wireless Portable USB-C Juicer Blender</a></h3>
+              <div class="price">
+                <span class="price__now">Rs. 899.00</span>
+                <s class="price__was">Rs. 1,299.00</s>
+                <span class="price__save">30% OFF</span>
+              </div>
+              <div class="card__action">
+                <a href="{{ routes.all_products_collection_url }}" class="btn btn--small btn--luxury btn--block">Explore Details</a>
+              </div>
+            </div>
+          </article>
+          {%- assign count = count | plus: 1 -%}
+        {%- endif -%}
+
+        {%- if count < 5 -%}
+          <article class="card">
+            <div class="card__media-wrap">
+              <a class="card__media" href="{{ routes.all_products_collection_url }}" aria-label="Handcrafted Italian Silk Draped Accent Scarf">
+                <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Handcrafted Italian Silk Draped Accent Scarf" width="400" height="400" loading="lazy">
+              </a>
+              <span class="card__badge card__badge--sale">35% OFF</span>
+              <button type="button" class="card__wishlist-btn" aria-label="Save to Wishlist">
+                <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              </button>
+            </div>
+            <div class="card__body">
+              <div class="card__meta-top">
+                <span class="card__type">ATELIER ACCESSORIES</span>
+              </div>
+              <h3 class="card__title"><a href="{{ routes.all_products_collection_url }}">Handcrafted Italian Silk Draped Accent Scarf</a></h3>
+              <div class="price">
+                <span class="price__now">Rs. 1,199.00</span>
+                <s class="price__was">Rs. 1,899.00</s>
+                <span class="price__save">35% OFF</span>
+              </div>
+              <div class="card__action">
+                <a href="{{ routes.all_products_collection_url }}" class="btn btn--small btn--luxury btn--block">Explore Details</a>
+              </div>
+            </div>
+          </article>
+        {%- endif -%}
+      {%- endif -%}
     </div>
     {%- if section.settings.show_all -%}
       <div class="center mt"><a class="btn btn--outline btn--small" href="{{ col.url | default: routes.all_products_collection_url }}">View All Accessories &rarr;</a></div>
@@ -29,7 +86,7 @@
     { "type": "text", "id": "heading", "label": "Heading", "default": "Our Picks For You" },
     { "type": "textarea", "id": "text", "label": "Text", "default": "Handpicked everyday essentials, ready to ship." },
     { "type": "collection", "id": "collection", "label": "Collection (blank = all products)" },
-    { "type": "range", "id": "limit", "min": 2, "max": 12, "step": 1, "label": "Products to show", "default": 8 },
+    { "type": "range", "id": "limit", "min": 5, "max": 25, "step": 5, "label": "Products to show", "default": 10 },
     { "type": "checkbox", "id": "show_all", "label": "Show 'View all' button", "default": true }
   ],
   "presets": [{ "name": "Featured products" }]

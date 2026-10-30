@@ -28,6 +28,7 @@ p{margin:0 0 1em}
     padding: 0 14px;
   }
 }
+.container--wide{max-width:1400px}
 .container--narrow{max-width:820px}
 .container--tiny{max-width:460px}
 .eyebrow{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-dark);margin:0 0 .8em;font-weight:500}
@@ -177,25 +178,68 @@ p{margin:0 0 1em}
 /* Grid + Fashion Product Cards */
 .grid{display:grid;gap:16px}
 
-/* Dynamic Centered Product Grid */
-.grid--products {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+/* ==========================================================================
+   UNIVERSAL PRODUCT GRID — 5 Columns Desktop / 2 Columns Mobile
+   ========================================================================== */
+.grid--products,
+.grid--compact-accessories,
+.grid--fashion-catalog {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
   align-items: stretch;
-  gap: 24px;
-  width: 100%;
 }
 
-.grid--products > .card {
-  flex: 0 1 clamp(270px, 46vw, 340px);
-  max-width: 380px;
+.grid--products > .card,
+.grid--compact-accessories > .card,
+.grid--fashion-catalog > .card {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  flex: none;
+  border-radius: 18px;
+  border: 1px solid rgba(184, 155, 101, 0.28);
+  background: #FFFFFF;
+  box-shadow: 0 6px 22px rgba(24, 23, 22, 0.05);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
 }
 
-@media (min-width: 1024px) {
-  .grid--products {
-    gap: 32px;
+.grid--products > .card:hover,
+.grid--compact-accessories > .card:hover,
+.grid--fashion-catalog > .card:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold);
+  box-shadow: 0 16px 36px rgba(24, 23, 22, 0.1);
+}
+
+.section--accessories .container,
+.main-collection-section .container,
+.recommendations-section .container {
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 24px;
+}
+
+@media (max-width: 1200px) and (min-width: 1024px) {
+  .grid--products,
+  .grid--compact-accessories,
+  .grid--fashion-catalog {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .grid--products,
+  .grid--compact-accessories,
+  .grid--fashion-catalog {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
   }
 }
 
@@ -231,32 +275,7 @@ p{margin:0 0 1em}
   margin: 10px auto 14px;
 }
 
-.grid--compact-accessories {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: stretch;
-  gap: 22px;
-  max-width: 860px;
-  margin: 0 auto;
-}
-
-.grid--compact-accessories > .card {
-  flex: 0 1 clamp(210px, 22vw, 250px);
-  max-width: 260px;
-  min-width: 200px;
-  border-radius: 18px;
-  border: 1px solid rgba(184, 155, 101, 0.28);
-  background: #FFFFFF;
-  box-shadow: 0 6px 22px rgba(24, 23, 22, 0.05);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.grid--compact-accessories > .card:hover {
-  transform: translateY(-5px);
-  border-color: var(--gold);
-  box-shadow: 0 16px 36px rgba(24, 23, 22, 0.1);
-}
+/* Card inner styling for compact accessories */
 
 .grid--compact-accessories .card__media-wrap {
   aspect-ratio: 1 / 1;
@@ -628,8 +647,15 @@ p{margin:0 0 1em}
    Optimized 2 cards per row on mobile view
    ========================================================================== */
 @media (max-width: 767px) {
+  .section--accessories .container,
+  .main-collection-section .container,
+  .recommendations-section .container {
+    padding: 0 14px;
+  }
+
   .grid--products,
-  .grid--compact-accessories {
+  .grid--compact-accessories,
+  .grid--fashion-catalog {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 12px !important;
@@ -638,7 +664,8 @@ p{margin:0 0 1em}
   }
 
   .grid--products > .card,
-  .grid--compact-accessories > .card {
+  .grid--compact-accessories > .card,
+  .grid--fashion-catalog > .card {
     flex: none !important;
     max-width: 100% !important;
     min-width: 0 !important;
