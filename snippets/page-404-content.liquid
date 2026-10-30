@@ -15,8 +15,13 @@
     <div class="page-404__quicklinks">
       <p class="eyebrow">Couture Curations &amp; Quick Links</p>
       <div class="quicklink-pills">
+        <a class="pill" href="{{ routes.collections_url }}/womens-wear">Women's Wear</a>
+        <a class="pill" href="{{ routes.collections_url }}/mens-wear">Men's Wear</a>
+        <a class="pill" href="{{ routes.collections_url }}/kidswear">Kidswear</a>
+        <a class="pill" href="{{ routes.collections_url }}/festive-collection">Festive Edit</a>
+        <a class="pill" href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a>
+        <a class="pill" href="{{ routes.collections_url }}/sale" style="color:var(--sale)">Sale Offers</a>
         <a class="pill" href="{{ routes.all_products_collection_url }}">All Creations</a>
-        <a class="pill" href="{{ routes.root_url }}#RunwayOrbit">The Runway Edit</a>
         {%- assign shipping_link = pages['shipping-policy'].url | default: pages['shipping'].url | default: '/pages/shipping-policy' -%}
         {%- assign refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: '/pages/refund-policy' -%}
         {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: '/pages/track-order' -%}

@@ -47,12 +47,13 @@
         {%- if fm != blank and fm.links.size > 0 -%}
           {%- for l in fm.links -%}<li><a href="{{ l.url }}">{{ l.title }}</a></li>{%- endfor -%}
         {%- else -%}
-          <li><a href="{{ routes.root_url }}#RunwayOrbit">The Runway Edit</a></li>
-          <li><a href="{{ routes.root_url }}#FashionShowcase">Dresses &amp; Gowns</a></li>
-          <li><a href="{{ routes.root_url }}#FashionShowcase">Outerwear &amp; Jackets</a></li>
-          <li><a href="{{ routes.root_url }}#RunwayRail">Runway Lookbook Rail</a></li>
-          <li><a href="{{ routes.collections_url }}/accessories">Runway Accessories</a></li>
-          <li><a href="{{ routes.all_products_collection_url }}">All Fashion Collections</a></li>
+          <li><a href="{{ routes.collections_url }}/womens-wear">Women's Wear</a></li>
+          <li><a href="{{ routes.collections_url }}/mens-wear">Men's Wear</a></li>
+          <li><a href="{{ routes.collections_url }}/kidswear">Kidswear Collection</a></li>
+          <li><a href="{{ routes.collections_url }}/festive-collection">Festive Royal Edit</a></li>
+          <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
+          <li><a href="{{ routes.collections_url }}/sale" style="color:var(--sale)">Sale &bull; Save Extra</a></li>
+          <li><a href="{{ routes.all_products_collection_url }}">All Creations</a></li>
         {%- endif -%}
       </ul>
     </div>

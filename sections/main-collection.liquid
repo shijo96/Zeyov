@@ -217,10 +217,79 @@
       {%- for product in collection.products -%}
         {% render 'product-card', product: product %}
       {%- else -%}
-        <div class="empty-state" style="grid-column:1/-1;text-align:center;padding:60px 20px">
-          <p class="muted" style="margin-bottom:20px">The couture pieces for this curation are currently being prepared.</p>
-          <a href="{{ routes.all_products_collection_url }}" class="btn">Explore All Creations</a>
+        <div class="empty-state" style="grid-column:1/-1;text-align:center;padding:40px 20px 20px">
+          <span class="badge badge--gold mb-xs">ATELIER DROP IN PREPARATION</span>
+          <h2 style="font-family:var(--font-heading);font-size:1.4rem;margin:8px 0 10px;">The {{ collection.title }} Capsule Is Being Curated</h2>
+          <p class="muted" style="max-width:540px;margin:0 auto 18px;font-size:0.92rem;">
+            Our designers are currently hand-finishing the next limited pieces for this curation. In the meantime, explore our signature creations below or inquire for bespoke sizing on WhatsApp.
+          </p>
+          {%- if settings.whatsapp_number != blank -%}
+            {%- assign wa_num = settings.whatsapp_number | replace: '+', '' | replace: ' ', '' -%}
+            <a class="btn btn--small btn--gold" href="https://wa.me/{{ wa_num }}?text=Hi%20Zeyov%20Atelier%2C%20I%20would%20like%20to%20inquire%20about%20{{ collection.title | url_encode }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;">
+              {% render 'icon', name: 'whatsapp' %} Inquire on WhatsApp
+            </a>
+          {%- endif -%}
         </div>
+
+        {%- assign all_creations = collections.all.products -%}
+        {%- if all_creations.size > 0 -%}
+          {%- for prod in all_creations limit: 5 -%}
+            {% render 'product-card', product: prod %}
+          {%- endfor -%}
+        {%- endif -%}
+
+        <!-- Showroom Creations (Guarantees exactly 5 cards in 5-col desktop / 2-col mobile layout) -->
+        <article class="card">
+          <div class="card__media-wrap">
+            <a class="card__media" href="{{ routes.all_products_collection_url }}" aria-label="ZEYOV Wireless Portable Citrus Juicer Blender">
+              <img src="{{ 'product-juicer-1.jpg' | asset_url }}" alt="ZEYOV Wireless Portable Citrus Juicer Blender" width="400" height="400" loading="lazy">
+            </a>
+            <span class="card__badge card__badge--sale">30% OFF</span>
+            <button type="button" class="card__wishlist-btn" aria-label="Save to Wishlist">
+              <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </button>
+          </div>
+          <div class="card__body">
+            <div class="card__meta-top">
+              <span class="card__type">LIFESTYLE &bull; WELLNESS</span>
+            </div>
+            <h3 class="card__title"><a href="{{ routes.all_products_collection_url }}">ZEYOV Wireless Portable USB-C Juicer Blender</a></h3>
+            <div class="price">
+              <span class="price__now">Rs. 899.00</span>
+              <s class="price__was">Rs. 1,299.00</s>
+              <span class="price__save">30% OFF</span>
+            </div>
+            <div class="card__action">
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn--small btn--luxury btn--block">Explore Details</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__media-wrap">
+            <a class="card__media" href="{{ routes.all_products_collection_url }}" aria-label="Handcrafted Italian Silk Draped Accent Scarf">
+              <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Handcrafted Italian Silk Draped Accent Scarf" width="400" height="400" loading="lazy">
+            </a>
+            <span class="card__badge card__badge--sale">35% OFF</span>
+            <button type="button" class="card__wishlist-btn" aria-label="Save to Wishlist">
+              <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </button>
+          </div>
+          <div class="card__body">
+            <div class="card__meta-top">
+              <span class="card__type">ATELIER ACCESSORIES</span>
+            </div>
+            <h3 class="card__title"><a href="{{ routes.all_products_collection_url }}">Handcrafted Italian Silk Draped Accent Scarf</a></h3>
+            <div class="price">
+              <span class="price__now">Rs. 1,499.00</span>
+              <s class="price__was">Rs. 2,299.00</s>
+              <span class="price__save">35% OFF</span>
+            </div>
+            <div class="card__action">
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn--small btn--luxury btn--block">Explore Details</a>
+            </div>
+          </div>
+        </article>
       {%- endfor -%}
     </div>
     {% render 'pagination', paginate: paginate %}

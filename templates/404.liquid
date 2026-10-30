@@ -41,6 +41,11 @@
   <div id="FallbackFaq" class="zeyov-fallback-page" style="display:none;">
     {% render 'page-faq-content' %}
   </div>
+
+  <!-- Dynamic Collection Fallback (zero 404 for any fashion collection URL) -->
+  <div id="FallbackCollection" class="zeyov-fallback-page" style="display:none;">
+    {% render 'page-collection-fallback' %}
+  </div>
 </div>
 
 <script>
@@ -50,7 +55,444 @@
       var def = document.getElementById('Zeyov404Default');
       var matchedId = null;
 
-      if (p.indexOf('shipping') !== -1 || p.indexOf('delivery') !== -1) {
+      if (p.indexOf('/collections/') !== -1) {
+        matchedId = 'FallbackCollection';
+        var parts = p.split('/collections/');
+        var rawHandle = (parts[1] || '').split('/')[0].split('?')[0].split('#')[0].toLowerCase().trim();
+
+        var collectionMap = {
+          'kidswear': {
+            title: "Kidswear Collection",
+            dept: "KIDS ATELIER",
+            desc: "Gentle, skin-friendly fabrics, playful silhouettes, and durable everyday essentials for babies, boys, and girls.",
+            pills: [
+              { t: "Baby Clothing", u: "/collections/baby-clothing" },
+              { t: "Baby Rompers", u: "/collections/baby-rompers" },
+              { t: "Boys Clothing", u: "/collections/boys-clothing" },
+              { t: "Girls Clothing", u: "/collections/girls-clothing" },
+              { t: "Kids Dresses", u: "/collections/kids-dresses" },
+              { t: "Kids Accessories", u: "/collections/kids-accessories" }
+            ]
+          },
+          'baby-clothing': {
+            title: "Baby Clothing & Essentials",
+            dept: "KIDS ATELIER • BABY & TODDLERS",
+            desc: "Ultra-soft organic cotton and flannel essentials specially crafted for newborns, infants, and toddlers.",
+            pills: [
+              { t: "All Kidswear", u: "/collections/kidswear" },
+              { t: "Baby Rompers", u: "/collections/baby-rompers" },
+              { t: "Kids Accessories", u: "/collections/kids-accessories" }
+            ]
+          },
+          'baby-rompers': {
+            title: "Baby Rompers & Onesies",
+            dept: "KIDS ATELIER • BABY & TODDLERS",
+            desc: "Cozy reversible thermal flannel and breathable pure cotton rompers with hassle-free diaper snaps.",
+            pills: [
+              { t: "Baby Clothing", u: "/collections/baby-clothing" },
+              { t: "Kids Dresses", u: "/collections/kids-dresses" },
+              { t: "All Kidswear", u: "/collections/kidswear" }
+            ]
+          },
+          'kids-accessories': {
+            title: "Kids Accessories",
+            dept: "KIDS ATELIER • ACCESSORIES",
+            desc: "Soft caps, mittens, bibs, and adorable styling accents designed for delicate skin.",
+            pills: [
+              { t: "Baby Clothing", u: "/collections/baby-clothing" },
+              { t: "Boys Clothing", u: "/collections/boys-clothing" },
+              { t: "Girls Clothing", u: "/collections/girls-clothing" }
+            ]
+          },
+          'boys-clothing': {
+            title: "Boys Clothing",
+            dept: "KIDS ATELIER • BOYS COLLECTION",
+            desc: "Play-ready shirts, tees, trousers, and festive ethnic kurtas tailored for young gentlemen.",
+            pills: [
+              { t: "Tops & Bottomwear", u: "/collections/kids-tops-bottoms" },
+              { t: "Baby Clothing", u: "/collections/baby-clothing" },
+              { t: "All Kidswear", u: "/collections/kidswear" }
+            ]
+          },
+          'girls-clothing': {
+            title: "Girls Clothing",
+            dept: "KIDS ATELIER • GIRLS COLLECTION",
+            desc: "Charming dresses, frocks, festive pattu pavadas, and coordinate sets for young fashionistas.",
+            pills: [
+              { t: "Kids Dresses", u: "/collections/kids-dresses" },
+              { t: "Tops & Bottomwear", u: "/collections/kids-tops-bottoms" },
+              { t: "All Kidswear", u: "/collections/kidswear" }
+            ]
+          },
+          'kids-dresses': {
+            title: "Kids Dresses & Frocks",
+            dept: "KIDS ATELIER • DRESSES",
+            desc: "Occasion-ready party frocks and breathable everyday flared dresses with skin-friendly linings.",
+            pills: [
+              { t: "Girls Clothing", u: "/collections/girls-clothing" },
+              { t: "Baby Rompers", u: "/collections/baby-rompers" },
+              { t: "All Kidswear", u: "/collections/kidswear" }
+            ]
+          },
+          'kids-tops-bottoms': {
+            title: "Kids Tops & Bottomwear",
+            dept: "KIDS ATELIER • SEPARATES",
+            desc: "Versatile cotton t-shirts, joggers, shorts, and skirts made for active movement.",
+            pills: [
+              { t: "Boys Clothing", u: "/collections/boys-clothing" },
+              { t: "Girls Clothing", u: "/collections/girls-clothing" },
+              { t: "All Kidswear", u: "/collections/kidswear" }
+            ]
+          },
+          'womens-wear': {
+            title: "Women's Wear Collection",
+            dept: "WOMEN'S RUNWAY ATELIER",
+            desc: "Sculpted silhouettes, flowing Grade-6A silks, tailored outerwear, and modern Indian pret-a-porter.",
+            pills: [
+              { t: "Dresses & Gowns", u: "/collections/womens-dresses" },
+              { t: "Kurtis & Ethnic", u: "/collections/kurtis-ethnic-wear" },
+              { t: "Tops & T-Shirts", u: "/collections/womens-tops-tshirts" },
+              { t: "Shirts & Blouses", u: "/collections/womens-shirts" },
+              { t: "Co-ord Sets", u: "/collections/coord-sets" },
+              { t: "Bottomwear", u: "/collections/womens-bottomwear" }
+            ]
+          },
+          'womens-dresses': {
+            title: "Dresses & Evening Gowns",
+            dept: "WOMEN'S ATELIER • DRESSES",
+            desc: "Elegantly draped evening gowns, midi dresses, and effortless day dresses sculpted for distinction.",
+            pills: [
+              { t: "All Women's", u: "/collections/womens-wear" },
+              { t: "Co-ord Sets", u: "/collections/coord-sets" },
+              { t: "Western Wear", u: "/collections/western-wear" }
+            ]
+          },
+          'womens-tops-tshirts': {
+            title: "Women's Tops & T-Shirts",
+            dept: "WOMEN'S ATELIER • TOPS",
+            desc: "Premium modal knit tops, ribbed tees, and breathable everyday fashion essentials.",
+            pills: [
+              { t: "Shirts & Blouses", u: "/collections/womens-shirts" },
+              { t: "Bottomwear", u: "/collections/womens-bottomwear" },
+              { t: "All Women's", u: "/collections/womens-wear" }
+            ]
+          },
+          'womens-shirts': {
+            title: "Shirts & Blouses",
+            dept: "WOMEN'S ATELIER • SHIRTS",
+            desc: "Crisp cotton poplin button-downs, fluid satin shirts, and versatile workwear blouses.",
+            pills: [
+              { t: "Tops & T-Shirts", u: "/collections/womens-tops-tshirts" },
+              { t: "Western Wear", u: "/collections/western-wear" },
+              { t: "All Women's", u: "/collections/womens-wear" }
+            ]
+          },
+          'kurtis-ethnic-wear': {
+            title: "Kurtis & Ethnic Wear",
+            dept: "WOMEN'S ATELIER • ETHNIC",
+            desc: "Artisanal embroidered kurtas, handcrafted anarkalis, and celebratory ethnic separates.",
+            pills: [
+              { t: "Co-ord Sets", u: "/collections/coord-sets" },
+              { t: "Dresses & Gowns", u: "/collections/womens-dresses" },
+              { t: "All Women's", u: "/collections/womens-wear" }
+            ]
+          },
+          'western-wear': {
+            title: "Western Wear",
+            dept: "WOMEN'S ATELIER • CONTEMPORARY",
+            desc: "Tailored blazers, chic outerwear, and contemporary western wardrobe staples.",
+            pills: [
+              { t: "Dresses & Gowns", u: "/collections/womens-dresses" },
+              { t: "Shirts & Blouses", u: "/collections/womens-shirts" },
+              { t: "All Women's", u: "/collections/womens-wear" }
+            ]
+          },
+          'coord-sets': {
+            title: "Co-ord Sets",
+            dept: "WOMEN'S ATELIER • MATCHED SETS",
+            desc: "Seamlessly paired monochrome and printed coordinate sets for effortless luxury styling.",
+            pills: [
+              { t: "Kurtis & Ethnic", u: "/collections/kurtis-ethnic-wear" },
+              { t: "Dresses & Gowns", u: "/collections/womens-dresses" },
+              { t: "All Women's", u: "/collections/womens-wear" }
+            ]
+          },
+          'womens-bottomwear': {
+            title: "Women's Bottomwear & Trousers",
+            dept: "WOMEN'S ATELIER • BOTTOMS",
+            desc: "High-waisted tailored trousers, wide-leg palazzos, and luxury casual bottoms.",
+            pills: [
+              { t: "Shirts & Blouses", u: "/collections/womens-shirts" },
+              { t: "Tops & T-Shirts", u: "/collections/womens-tops-tshirts" },
+              { t: "All Women's", u: "/collections/womens-wear" }
+            ]
+          },
+          'womens-accessories': {
+            title: "Women's Accessories",
+            dept: "WOMEN'S ATELIER • ACCENTS",
+            desc: "Italian silk scarves, statement belts, and curated accents to complete the ensemble.",
+            pills: [
+              { t: "Dresses & Gowns", u: "/collections/womens-dresses" },
+              { t: "All Women's", u: "/collections/womens-wear" },
+              { t: "Sale Edit", u: "/collections/sale" }
+            ]
+          },
+          'mens-wear': {
+            title: "Men's Wear Collection",
+            dept: "MEN'S TAILORED ATELIER",
+            desc: "Sharp tailoring, refined casual essentials, and traditional Indian craftsmanship for men.",
+            pills: [
+              { t: "T-Shirts & Polos", u: "/collections/mens-tshirts" },
+              { t: "Shirts", u: "/collections/mens-shirts" },
+              { t: "Trousers & Chinos", u: "/collections/mens-trousers" },
+              { t: "Denim Jeans", u: "/collections/mens-jeans" },
+              { t: "Casual Wear", u: "/collections/mens-casual-wear" },
+              { t: "Ethnic Wear", u: "/collections/mens-ethnic-wear" }
+            ]
+          },
+          'mens-tshirts': {
+            title: "Men's T-Shirts & Polos",
+            dept: "MEN'S ATELIER • TEES & POLOS",
+            desc: "Supima cotton crewnecks, textured knit polo shirts, and minimal everyday staples.",
+            pills: [
+              { t: "Casual & Formal Shirts", u: "/collections/mens-shirts" },
+              { t: "Trousers & Chinos", u: "/collections/mens-trousers" },
+              { t: "All Men's", u: "/collections/mens-wear" }
+            ]
+          },
+          'mens-shirts': {
+            title: "Casual & Formal Shirts",
+            dept: "MEN'S ATELIER • SHIRTS",
+            desc: "Tailored French-cuff formals, breathable pure linen button-downs, and weekend overshirts.",
+            pills: [
+              { t: "T-Shirts & Polos", u: "/collections/mens-tshirts" },
+              { t: "Trousers & Chinos", u: "/collections/mens-trousers" },
+              { t: "All Men's", u: "/collections/mens-wear" }
+            ]
+          },
+          'mens-trousers': {
+            title: "Trousers & Chinos",
+            dept: "MEN'S ATELIER • TROUSERS",
+            desc: "Pleated dress trousers, stretch cotton chinos, and modern tailored pants.",
+            pills: [
+              { t: "Denim Jeans", u: "/collections/mens-jeans" },
+              { t: "Shirts", u: "/collections/mens-shirts" },
+              { t: "All Men's", u: "/collections/mens-wear" }
+            ]
+          },
+          'mens-jeans': {
+            title: "Denim Jeans",
+            dept: "MEN'S ATELIER • DENIM",
+            desc: "Premium selvedge and stretch denim crafted for enduring comfort and contour.",
+            pills: [
+              { t: "Trousers & Chinos", u: "/collections/mens-trousers" },
+              { t: "T-Shirts & Polos", u: "/collections/mens-tshirts" },
+              { t: "All Men's", u: "/collections/mens-wear" }
+            ]
+          },
+          'mens-casual-wear': {
+            title: "Casual Jackets & Vests",
+            dept: "MEN'S ATELIER • CASUAL OUTERWEAR",
+            desc: "Relaxed-fit overshirts, layerable jackets, and everyday weekend staples.",
+            pills: [
+              { t: "T-Shirts & Polos", u: "/collections/mens-tshirts" },
+              { t: "Denim Jeans", u: "/collections/mens-jeans" },
+              { t: "All Men's", u: "/collections/mens-wear" }
+            ]
+          },
+          'mens-ethnic-wear': {
+            title: "Men's Ethnic Wear",
+            dept: "MEN'S ATELIER • ROYAL ETHNIC",
+            desc: "Regal bandhgalas, raw silk kurtas, and handcrafted festive ensembles.",
+            pills: [
+              { t: "Festive Collection", u: "/collections/festive-collection" },
+              { t: "Shirts", u: "/collections/mens-shirts" },
+              { t: "All Men's", u: "/collections/mens-wear" }
+            ]
+          },
+          'mens-accessories': {
+            title: "Belts & Men's Accessories",
+            dept: "MEN'S ATELIER • ACCESSORIES",
+            desc: "Full-grain leather belts, pure silk pocket squares, and minimalist accessories.",
+            pills: [
+              { t: "Shirts", u: "/collections/mens-shirts" },
+              { t: "Trousers & Chinos", u: "/collections/mens-trousers" },
+              { t: "All Men's", u: "/collections/mens-wear" }
+            ]
+          },
+          'festive-collection': {
+            title: "Festive Collection",
+            dept: "ZEYOV FESTIVE ATELIER",
+            desc: "Bespoke royal festive couture for weddings, Onam, Diwali, Eid, Christmas, and grand celebrations across India.",
+            pills: [
+              { t: "Christmas Collection", u: "/collections/christmas-collection" },
+              { t: "Onam Collection", u: "/collections/onam-collection" },
+              { t: "Vishu Collection", u: "/collections/vishu-collection" },
+              { t: "Eid Collection", u: "/collections/eid-collection" },
+              { t: "Diwali Collection", u: "/collections/diwali-collection" },
+              { t: "Festival Specials", u: "/collections/festival-specials" }
+            ]
+          },
+          'christmas-collection': {
+            title: "Christmas Collection",
+            dept: "FESTIVE ATELIER • CHRISTMAS EDIT",
+            desc: "Deep emerald velvets, ruby crimson silks, and cozy winter eveningwear curated for holiday celebrations.",
+            pills: [
+              { t: "New Year Collection", u: "/collections/new-year-collection" },
+              { t: "All Festive", u: "/collections/festive-collection" },
+              { t: "Festival Specials", u: "/collections/festival-specials" }
+            ]
+          },
+          'onam-collection': {
+            title: "Onam Collection",
+            dept: "FESTIVE ATELIER • ONAM EDIT",
+            desc: "Traditional kasavu gold handlooms, ivory silk sets, festive pattu pavadas, and festive jubbas.",
+            pills: [
+              { t: "Vishu Collection", u: "/collections/vishu-collection" },
+              { t: "All Festive", u: "/collections/festive-collection" },
+              { t: "Festival Specials", u: "/collections/festival-specials" }
+            ]
+          },
+          'vishu-collection': {
+            title: "Vishu Collection",
+            dept: "FESTIVE ATELIER • VISHU SPECIAL",
+            desc: "Luminous gold and emerald hues celebrating renewal, abundance, and auspicious beginnings.",
+            pills: [
+              { t: "Onam Collection", u: "/collections/onam-collection" },
+              { t: "All Festive", u: "/collections/festive-collection" }
+            ]
+          },
+          'eid-collection': {
+            title: "Eid Collection",
+            dept: "FESTIVE ATELIER • EID EDIT",
+            desc: "Graceful zari embroidery, fluid chiffons, and celebratory regal ethnic tailoring.",
+            pills: [
+              { t: "Diwali Collection", u: "/collections/diwali-collection" },
+              { t: "All Festive", u: "/collections/festive-collection" }
+            ]
+          },
+          'diwali-collection': {
+            title: "Diwali Collection",
+            dept: "FESTIVE ATELIER • DIWALI ROYAL EDIT",
+            desc: "Warm saffron, radiant amber gold, and intricate brocades illuminating the festival of lights.",
+            pills: [
+              { t: "Eid Collection", u: "/collections/eid-collection" },
+              { t: "Christmas Collection", u: "/collections/christmas-collection" },
+              { t: "All Festive", u: "/collections/festive-collection" }
+            ]
+          },
+          'new-year-collection': {
+            title: "New Year Collection",
+            dept: "FESTIVE ATELIER • NEW YEAR DROP",
+            desc: "Glamorous silhouettes, structured eveningwear, and midnight sparkles to welcome the new season.",
+            pills: [
+              { t: "Christmas Collection", u: "/collections/christmas-collection" },
+              { t: "Valentine's Collection", u: "/collections/valentines-collection" },
+              { t: "All Festive", u: "/collections/festive-collection" }
+            ]
+          },
+          'valentines-collection': {
+            title: "Valentine's Collection",
+            dept: "FESTIVE ATELIER • VALENTINE'S EDIT",
+            desc: "Romantic blush silks, tailored date-night ensembles, and curated luxury gifting pieces.",
+            pills: [
+              { t: "Dresses & Gowns", u: "/collections/womens-dresses" },
+              { t: "All Festive", u: "/collections/festive-collection" }
+            ]
+          },
+          'festival-specials': {
+            title: "All Festival Specials",
+            dept: "FESTIVE ATELIER • LIMITED CAPSULES",
+            desc: "Limited capsule drops and handcrafted celebratory wear curated exclusively for festive seasons.",
+            pills: [
+              { t: "Christmas Collection", u: "/collections/christmas-collection" },
+              { t: "Onam Collection", u: "/collections/onam-collection" },
+              { t: "All Festive", u: "/collections/festive-collection" }
+            ]
+          },
+          'new-arrivals': {
+            title: "New Arrivals",
+            dept: "ZEYOV ATELIER • FRESH DROPS",
+            desc: "The latest ready-to-wear runway drops, fresh seasonal color palettes, and artisanal creations.",
+            pills: [
+              { t: "Best Sellers", u: "/collections/best-sellers" },
+              { t: "Trending Now", u: "/collections/trending-now" },
+              { t: "All Creations", u: "/collections/all" }
+            ]
+          },
+          'best-sellers': {
+            title: "Best Sellers",
+            dept: "ZEYOV ATELIER • MOST LOVED",
+            desc: "Our most coveted luxury pieces, loved across India for unparalleled drape and craftsmanship.",
+            pills: [
+              { t: "New Arrivals", u: "/collections/new-arrivals" },
+              { t: "Sale Edit", u: "/collections/sale" },
+              { t: "All Creations", u: "/collections/all" }
+            ]
+          },
+          'sale': {
+            title: "The Sale Edit",
+            dept: "ZEYOV ATELIER • ARCHIVE SAVINGS",
+            desc: "Exceptional privilege savings on select runway favorites and limited-inventory pieces.",
+            pills: [
+              { t: "New Arrivals", u: "/collections/new-arrivals" },
+              { t: "Best Sellers", u: "/collections/best-sellers" },
+              { t: "All Creations", u: "/collections/all" }
+            ]
+          }
+        };
+
+        var item = collectionMap[rawHandle];
+        if (!item) {
+          var niceTitle = rawHandle.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }) || 'Fashion Collection';
+          item = {
+            title: niceTitle,
+            dept: 'ZEYOV ATELIER • READY-TO-WEAR',
+            desc: 'Discover precision-tailored garments, sculpted silhouettes, and handcrafted luxury accessories designed for modern distinction.',
+            pills: [
+              { t: 'Kidswear', u: '/collections/kidswear' },
+              { t: "Women's Wear", u: '/collections/womens-wear' },
+              { t: "Men's Wear", u: '/collections/mens-wear' },
+              { t: 'Festive Collection', u: '/collections/festive-collection' },
+              { t: 'New Arrivals', u: '/collections/new-arrivals' },
+              { t: 'Sale', u: '/collections/sale' }
+            ]
+          };
+        }
+
+        document.title = item.title + ' – ZEYOV Runway Atelier';
+        var t = document.getElementById('FallbackColTitle');
+        if (t) t.textContent = item.title;
+        var cr = document.getElementById('FallbackColCrumb');
+        if (cr) cr.textContent = item.title;
+        var d = document.getElementById('FallbackColDept');
+        if (d) d.textContent = item.dept;
+        var desc = document.getElementById('FallbackColDesc');
+        if (desc) desc.textContent = item.desc;
+        var ac = document.getElementById('FallbackActiveChip');
+        if (ac) ac.textContent = item.title;
+
+        var pillsWrap = document.getElementById('FallbackColPills');
+        if (pillsWrap && item.pills && item.pills.length) {
+          pillsWrap.innerHTML = '';
+          for (var i = 0; i < item.pills.length; i++) {
+            var a = document.createElement('a');
+            a.className = 'cat-pill';
+            a.href = item.pills[i].u;
+            a.textContent = item.pills[i].t;
+            pillsWrap.appendChild(a);
+          }
+        }
+
+        var waBtn = document.getElementById('FallbackWaBtn');
+        if (waBtn) {
+          var baseWa = waBtn.getAttribute('href') || '';
+          var phoneMatch = baseWa.match(/wa\.me\/([0-9]+)/);
+          if (phoneMatch && phoneMatch[1]) {
+            waBtn.href = 'https://wa.me/' + phoneMatch[1] + '?text=' + encodeURIComponent('Hi Zeyov Atelier, I want to inquire about the ' + item.title + ' collection.');
+          }
+        }
+      } else if (p.indexOf('shipping') !== -1 || p.indexOf('delivery') !== -1) {
         matchedId = 'FallbackShipping';
         document.title = 'Shipping & Delivery Policy – ZEYOV';
       } else if (p.indexOf('refund') !== -1 || p.indexOf('return') !== -1) {
