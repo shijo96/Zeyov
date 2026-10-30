@@ -175,6 +175,34 @@
               {%- endif -%}
               {%- assign p_img = product.featured_image | image_url: width: 800 -%}
 
+              {%- assign p_size_opt = nil -%}
+              {%- unless product.has_only_default_variant -%}
+                {%- for opt in product.options_with_values -%}
+                  {%- assign opt_l = opt.name | downcase -%}
+                  {%- if opt_l contains 'size' -%}
+                    {%- assign p_size_opt = opt -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endunless -%}
+
+              {%- capture p_sizes_json -%}
+              [
+                {%- if p_size_opt and p_size_opt.values.size > 0 -%}
+                  {%- for s_val in p_size_opt.values -%}
+                    {%- assign s_vid = '' -%}
+                    {%- for s_var in product.variants -%}
+                      {%- if s_var.options contains s_val -%}
+                        {%- assign s_vid = s_var.id -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                    {"name": {{ s_val | json }}, "variant_id": "{{ s_vid }}"}{% unless forloop.last %},{% endunless %}
+                  {%- endfor -%}
+                {%- endif -%}
+              ]
+              {%- endcapture -%}
+
               <article class="rail-card{% if forloop.first %} is-active{% endif %}" 
                 data-cat="{{ p_cat }}" 
                 data-gender="{{ p_gender }}" 
@@ -183,7 +211,10 @@
                 data-look="LOOK {{ forloop.index | prepend: '0' | slice: -2, 2 }}" 
                 data-img="{{ p_img }}"
                 data-variant-id="{{ v.id }}"
-                data-product-url="{{ product.url }}">
+                data-product-url="{{ product.url }}"
+                data-sizes='{{ p_sizes_json | strip }}'
+                data-size-name="{{ p_size_opt.name | default: 'Size' | escape }}"
+                data-variants='{{ product.variants | json | escape }}'>
                 <div class="rail-card__media">
                   <span class="rail-card__badge badge--gold">{{ product.type | default: 'RUNWAY' | upcase }}</span>
                   <a href="{{ product.url }}" class="rail-card__media-link" aria-label="{{ product.title | escape }}">
@@ -275,7 +306,7 @@
 
           {%- else -%}
             <!-- Luxury starter fallback cards if store has zero products -->
-            <article class="rail-card is-active" data-cat="dresses" data-gender="women" data-title="Emerald Silk Draped Gown" data-price="Rs. 3,899.00" data-look="LOOK 02" data-img="{{ 'fashion-model-dress.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}">
+            <article class="rail-card is-active" data-cat="dresses" data-gender="women" data-title="Emerald Silk Draped Gown" data-price="Rs. 3,899.00" data-look="LOOK 02" data-img="{{ 'fashion-model-dress.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-sizes='[{"name":"XS"},{"name":"S"},{"name":"M"},{"name":"L"},{"name":"XL"}]' data-size-name="Size">
               <div class="rail-card__media">
                 <span class="rail-card__badge badge--gold">RUNWAY COUTURE</span>
                 <a href="{{ routes.all_products_collection_url }}" class="rail-card__media-link"><img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Emerald Silk Draped Gown" width="400" height="400" loading="lazy" class="rail-card__img"></a>
@@ -294,7 +325,7 @@
               </div>
             </article>
 
-            <article class="rail-card" data-cat="outerwear" data-gender="women men" data-title="Amber Puffer Vest" data-price="Rs. 2,499.00" data-look="LOOK 01" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}">
+            <article class="rail-card" data-cat="outerwear" data-gender="women men" data-title="Amber Puffer Vest" data-price="Rs. 2,499.00" data-look="LOOK 01" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-sizes='[{"name":"S"},{"name":"M"},{"name":"L"},{"name":"XL"}]' data-size-name="Size">
               <div class="rail-card__media">
                 <span class="rail-card__badge badge--dark">A/W 24 SIGNATURE</span>
                 <a href="{{ routes.all_products_collection_url }}" class="rail-card__media-link"><img src="{{ 'fashion-puffer-jacket.jpg' | asset_url }}" alt="Amber Puffer Vest" width="400" height="400" loading="lazy" class="rail-card__img"></a>
@@ -313,7 +344,7 @@
               </div>
             </article>
 
-            <article class="rail-card" data-cat="outerwear" data-gender="women men" data-title="Camel Tailored Wool Trench" data-price="Rs. 4,299.00" data-look="LOOK 03" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}">
+            <article class="rail-card" data-cat="outerwear" data-gender="women men" data-title="Camel Tailored Wool Trench" data-price="Rs. 4,299.00" data-look="LOOK 03" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-sizes='[{"name":"S"},{"name":"M"},{"name":"L"},{"name":"XL"}]' data-size-name="Size">
               <div class="rail-card__media">
                 <span class="rail-card__badge badge--gold">100% VIRGIN WOOL</span>
                 <a href="{{ routes.all_products_collection_url }}" class="rail-card__media-link"><img src="{{ 'fashion-wool-coat.jpg' | asset_url }}" alt="Camel Tailored Wool Trench" width="400" height="400" loading="lazy" class="rail-card__img"></a>
@@ -332,7 +363,7 @@
               </div>
             </article>
 
-            <article class="rail-card" data-cat="tops" data-gender="women men" data-title="Cream Sherpa Half-Zip" data-price="Rs. 2,899.00" data-look="LOOK 04" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}">
+            <article class="rail-card" data-cat="tops" data-gender="women men" data-title="Cream Sherpa Half-Zip" data-price="Rs. 2,899.00" data-look="LOOK 04" data-img="{{ 'fashion-model-editorial.jpg' | asset_url }}" data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-sizes='[{"name":"XS"},{"name":"S"},{"name":"M"},{"name":"L"}]' data-size-name="Size">
               <div class="rail-card__media">
                 <span class="rail-card__badge badge--dark">THERMAL FLEECE</span>
                 <a href="{{ routes.all_products_collection_url }}" class="rail-card__media-link"><img src="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}" alt="Cream Sherpa Half-Zip" width="400" height="400" loading="lazy" class="rail-card__img"></a>
@@ -375,25 +406,10 @@
           <span class="docked-bar__price" id="FloatingBarPrice">{% if first_p %}{{ first_p.price | money }}{% else %}Rs. 3,899.00{% endif %}</span>
         </div>
 
-        {%- assign size_opt = nil -%}
-        {%- if first_p and first_p.has_only_default_variant == false -%}
-          {%- for opt in first_p.options_with_values -%}
-            {%- assign opt_lower = opt.name | downcase -%}
-            {%- if opt_lower contains 'size' -%}
-              {%- assign size_opt = opt -%}
-              {%- break -%}
-            {%- endif -%}
-          {%- endfor -%}
-        {%- endif -%}
-
-        {%- if size_opt and size_opt.values.size > 1 -%}
-          <div class="docked-bar__sizes">
-            <span class="size-label">Select {{ size_opt.name }}:</span>
-            {%- for val in size_opt.values -%}
-              <button type="button" class="bar-size-btn{% if forloop.first %} is-active{% endif %}">{{ val }}</button>
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
+        <div class="docked-bar__sizes" id="FloatingBarSizes" style="display: none;">
+          <span class="size-label" id="FloatingBarSizeLabel">Select Size:</span>
+          <div class="docked-bar__size-buttons" id="FloatingBarSizeButtons"></div>
+        </div>
 
         <div class="docked-bar__action">
           <button type="button" class="btn btn--gold docked-bar__btn" id="FloatingBarAddBtn" data-variant-id="{% if first_p %}{{ first_p.selected_or_first_available_variant.id }}{% endif %}">

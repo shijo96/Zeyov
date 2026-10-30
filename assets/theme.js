@@ -1287,6 +1287,80 @@
       if (floatAddBtn && vid) floatAddBtn.setAttribute('data-variant-id', vid);
       var floatPdp = $('#FloatingBarPdpLink');
       if (floatPdp && url) floatPdp.setAttribute('href', url);
+
+      // Dynamically sync real sizes for active piece in docked bar
+      var sizesContainer = $('#FloatingBarSizes', showcase);
+      var sizeButtonsContainer = $('#FloatingBarSizeButtons', showcase);
+      var sizeLabel = $('#FloatingBarSizeLabel', showcase);
+      var sizesData = card.getAttribute('data-sizes');
+      var sizeName = card.getAttribute('data-size-name') || 'Size';
+
+      if (sizesContainer && sizeButtonsContainer) {
+        var sizes = [];
+        try {
+          if (sizesData) sizes = JSON.parse(sizesData);
+        } catch (err) {
+          sizes = [];
+        }
+
+        var variants = [];
+        try {
+          var vData = card.getAttribute('data-variants');
+          if (vData) variants = JSON.parse(vData);
+        } catch (e) {
+          variants = [];
+        }
+
+        if (Array.isArray(sizes) && sizes.length > 0) {
+          if (sizeLabel) sizeLabel.textContent = 'Select ' + sizeName + ':';
+          sizeButtonsContainer.innerHTML = '';
+
+          var selectedSize = sizes[0].name;
+
+          function getMatchingVariantId(chosenSize) {
+            if (variants && variants.length > 0) {
+              var match = variants.find(function (v) {
+                var hasColor = !colorVal || (v.options && v.options.indexOf(colorVal) > -1) || (v.title && v.title.indexOf(colorVal) > -1);
+                var hasSize = (v.options && v.options.indexOf(chosenSize) > -1) || (v.title && v.title.indexOf(chosenSize) > -1);
+                return hasColor && hasSize;
+              });
+              if (match) return match.id;
+              match = variants.find(function (v) {
+                return (v.options && v.options.indexOf(chosenSize) > -1) || (v.title && v.title.indexOf(chosenSize) > -1);
+              });
+              if (match) return match.id;
+            }
+            var sObj = sizes.find(function (s) { return s.name === chosenSize; });
+            return (sObj && sObj.variant_id) ? sObj.variant_id : vid;
+          }
+
+          sizes.forEach(function (s, idx) {
+            var sBtn = document.createElement('button');
+            sBtn.type = 'button';
+            sBtn.className = 'bar-size-btn' + (idx === 0 ? ' is-active' : '');
+            sBtn.textContent = s.name;
+            sBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              $$('.bar-size-btn', sizeButtonsContainer).forEach(function (b) { b.classList.remove('is-active'); });
+              sBtn.classList.add('is-active');
+              selectedSize = s.name;
+              var targetVid = getMatchingVariantId(selectedSize);
+              if (targetVid && floatAddBtn) {
+                floatAddBtn.setAttribute('data-variant-id', targetVid);
+              }
+            });
+            sizeButtonsContainer.appendChild(sBtn);
+          });
+
+          var initialVid = getMatchingVariantId(selectedSize);
+          if (initialVid && floatAddBtn) {
+            floatAddBtn.setAttribute('data-variant-id', initialVid);
+          }
+          sizesContainer.style.display = 'flex';
+        } else {
+          sizesContainer.style.display = 'none';
+        }
+      }
     }
 
     railCards.forEach(function (card) {
@@ -1342,13 +1416,10 @@
       });
     });
 
-    // Auto-sync initial active card with showcase model image
+    // Auto-sync initial active card with showcase model image and floating bar
     var initialActiveCard = $('.rail-card.is-active', showcase) || railCards[0];
-    if (initialActiveCard && modelImg) {
-      var initialImg = initialActiveCard.getAttribute('data-img');
-      if (initialImg && (!modelImg.getAttribute('src') || modelImg.getAttribute('src').indexOf('fashion-model-dress') > -1)) {
-        modelImg.src = initialImg;
-      }
+    if (initialActiveCard) {
+      activateCard(initialActiveCard);
     }
 
     // Quick add buttons on rail cards with real Shopify Cart API

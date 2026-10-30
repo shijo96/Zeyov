@@ -934,11 +934,15 @@ p{margin:0 0 1em}
 /* PRODUCT PAGE */
 /* PRODUCT PAGE — Refined, Compact & Ultra-Responsive */
 .pdp {
+  width: 100%;
   max-width: 1140px;
+  min-width: 0;
+  box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
   padding-top: clamp(12px, 2vw, 20px);
   padding-bottom: clamp(36px, 5vw, 60px);
+  overflow-x: clip;
 }
 .pdp__breadcrumbs {
   margin-bottom: 14px;
@@ -957,6 +961,10 @@ p{margin:0 0 1em}
 
 .pdp__grid {
   display: grid;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   gap: clamp(18px, 3vw, 36px);
 }
 @media (min-width: 900px) {
@@ -981,6 +989,9 @@ p{margin:0 0 1em}
 .gallery {
   width: 100%;
   max-width: 480px;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
   margin: 0 auto;
 }
 .gallery__main {
@@ -1060,14 +1071,18 @@ p{margin:0 0 1em}
   gap: 8px;
   margin-top: 10px;
   overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 2px 2px 6px;
   scrollbar-width: thin;
-  max-width: 480px;
+  -webkit-overflow-scrolling: touch;
   margin-left: auto;
   margin-right: auto;
 }
 .gallery__thumb {
-  flex: none;
+  flex: 0 0 58px;
   width: 58px;
   height: 58px;
   border-radius: 10px;
@@ -1096,6 +1111,12 @@ p{margin:0 0 1em}
 }
 
 /* Info Column & Details */
+.pdp__info {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
 .pdp__eyebrow {
   display: inline-block;
   font-size: 0.68rem;
@@ -1553,12 +1574,54 @@ p{margin:0 0 1em}
 
 /* Responsive Media Queries Across All Viewport Sizes */
 @media (max-width: 640px) {
+  .pdp__rating-bar {
+    justify-content: flex-start;
+    gap: 8px 12px;
+  }
+  .pdp__stock-pill {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .opt__header {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+  .size-hint {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
   .pdp-tiers {
     padding: 10px 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .pdp-tiers__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-bottom: 8px;
   }
   .pdp-tier {
     padding: 8px 10px;
     gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .pdp-tier__price-box {
+    flex-shrink: 0;
+    margin-left: auto;
+    text-align: right;
+  }
+  .pdp-tier__price {
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .pdp-tier__was {
+    font-size: 0.75rem;
+    white-space: nowrap;
   }
 }
 
@@ -1578,6 +1641,7 @@ p{margin:0 0 1em}
   .gallery__thumb {
     width: 50px;
     height: 50px;
+    flex: 0 0 50px;
     border-radius: 8px;
   }
   .pdp__title {
@@ -4578,6 +4642,13 @@ p{margin:0 0 1em}
 .docked-bar__sizes {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.docked-bar__size-buttons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
