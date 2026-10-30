@@ -176,11 +176,11 @@
 
           <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
           <li><a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a></li>
-          <li>
+          {% comment %} <li>
             <a href="{{ routes.collections_url }}/sale" style="color:var(--sale);">
               Sale <span class="nav-badge--sale">Save Extra</span>
             </a>
-          </li>
+          </li> {% endcomment %}
           {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
           <li><a href="{{ contact_link }}">Contact</a></li>
         {%- endif -%}
