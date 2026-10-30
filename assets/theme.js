@@ -1265,7 +1265,9 @@
       var url = card.getAttribute('data-product-url') || '';
       var vid = card.getAttribute('data-variant-id') || '';
 
-      if (activeLook) activeLook.textContent = title;
+      var activeDot = $('.swatch-dot.is-active', card);
+      var colorVal = activeDot ? activeDot.getAttribute('data-color-val') : '';
+      if (activeLook) activeLook.textContent = title + (colorVal ? ' (' + colorVal + ')' : '');
       if (activePrice) activePrice.textContent = price;
 
       var activeLink = $('#ShowcaseActiveLink', showcase);
@@ -1280,7 +1282,7 @@
       }
 
       // Update sticky floating bar
-      if (floatTitle) floatTitle.textContent = title;
+      if (floatTitle) floatTitle.textContent = title + (colorVal ? ' (' + colorVal + ')' : '');
       if (floatPrice) floatPrice.textContent = price;
       if (floatAddBtn && vid) floatAddBtn.setAttribute('data-variant-id', vid);
       var floatPdp = $('#FloatingBarPdpLink');
@@ -1299,6 +1301,7 @@
           var vId = dot.getAttribute('data-variant-id');
           var cardImg = $('.rail-card__img', card);
           var quickBtn = $('.rail-card__quick-add', card);
+          var colorName = dot.getAttribute('data-color-val') || '';
 
           if (vImg && cardImg) {
             cardImg.src = vImg;
@@ -1308,6 +1311,25 @@
             card.setAttribute('data-variant-id', vId);
             if (quickBtn) quickBtn.setAttribute('data-quick-add-id', vId);
           }
+
+          var hintEl = $('#ShowcaseVariantHint', showcase);
+          if (hintEl && colorName) {
+            var hintText = hintEl.querySelector('.variant-hint__text');
+            if (hintText && !hintEl._animating) {
+              hintEl._animating = true;
+              var origHTML = hintText.innerHTML;
+              hintText.innerHTML = '<span style="color:#B89B65;font-weight:700;">✦ Previewing ' + escapeHtml(colorName) + '</span>';
+              hintEl.style.borderColor = 'var(--gold)';
+              hintEl.style.background = 'rgba(24, 23, 22, 0.88)';
+              setTimeout(function () {
+                hintText.innerHTML = origHTML;
+                hintEl.style.borderColor = '';
+                hintEl.style.background = '';
+                hintEl._animating = false;
+              }, 2200);
+            }
+          }
+
           activateCard(card);
         });
       });

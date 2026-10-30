@@ -117,17 +117,29 @@
             <div class="showcase__model-overlay"></div>
           </div>
 
-          <!-- Editorial Floating Pin / Look Tag -->
+          <!-- Editorial Floating Pin / Look Tag (Ultra-compact & refined) -->
           <div class="showcase__look-tag">
             <span class="look-tag__dot"></span>
             <div class="look-tag__content">
               <span class="look-tag__num">FEATURED PIECE</span>
               <strong class="look-tag__name" id="ShowcaseActiveLook">{% if first_p %}{{ first_p.title }}{% else %}Emerald Silk Draped Gown{% endif %}</strong>
-              <span class="look-tag__price" id="ShowcaseActivePrice">{% if first_p %}{{ first_p.price | money }}{% else %}Rs. 3,899.00{% endif %}</span>
-              <a href="{% if first_p %}{{ first_p.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}" id="ShowcaseActiveLink" class="look-tag__link">
-                Shop Piece &rarr;
-              </a>
+              <div class="look-tag__meta">
+                <span class="look-tag__price" id="ShowcaseActivePrice">{% if first_p %}{{ first_p.price | money }}{% else %}Rs. 3,899.00{% endif %}</span>
+                <span class="look-tag__sep">&bull;</span>
+                <a href="{% if first_p %}{{ first_p.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}" id="ShowcaseActiveLink" class="look-tag__link">
+                  Shop &rarr;
+                </a>
+              </div>
             </div>
+          </div>
+
+          <!-- Color Variant Preview Hint (Interactive Cue) -->
+          <div class="showcase__variant-hint" id="ShowcaseVariantHint" aria-label="Select color variants on right to preview here">
+            <span class="variant-hint__pulse"></span>
+            <span class="variant-hint__text">
+              <span class="variant-hint__desktop">Select color variants on right to preview &rarr;</span>
+              <span class="variant-hint__mobile">Select color variants below to preview &darr;</span>
+            </span>
           </div>
 
           <!-- Bottom Quote / Craftsmanship Badge -->
@@ -242,7 +254,7 @@
                         {%- for variant in product.variants -%}
                           {%- if variant.options contains color_val -%}
                             {%- if variant.image -%}
-                              {%- assign var_img = variant.image | image_url: width: 500 -%}
+                              {%- assign var_img = variant.image | image_url: width: 900 -%}
                             {%- endif -%}
                             {%- assign var_id = variant.id -%}
                             {%- break -%}
