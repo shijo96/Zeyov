@@ -1459,12 +1459,12 @@
   if (lookRailViewport) {
     if (lookPrev) {
       lookPrev.addEventListener('click', function () {
-        lookRailViewport.scrollBy({ left: -340, behavior: 'smooth' });
+        lookRailViewport.scrollBy({ left: -260, behavior: 'smooth' });
       });
     }
     if (lookNext) {
       lookNext.addEventListener('click', function () {
-        lookRailViewport.scrollBy({ left: 340, behavior: 'smooth' });
+        lookRailViewport.scrollBy({ left: 260, behavior: 'smooth' });
       });
     }
   }

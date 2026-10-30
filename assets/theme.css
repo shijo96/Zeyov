@@ -4478,24 +4478,24 @@ p{margin:0 0 1em}
 }
 
 /* ==========================================================================
-   FASHION LOOKBOOK RAIL (Curated Silhouettes)
+   FASHION LOOKBOOK RAIL (Curated Silhouettes) — Compact & Refined
    ========================================================================== */
 .fashion-rail-section {
-  padding: clamp(50px, 8vw, 85px) 0;
+  padding: clamp(36px, 5vw, 54px) 0;
   background: var(--bg);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
 
 .fashion-rail-section .container {
-  max-width: 1440px;
+  max-width: 1280px;
 }
 
 .fashion-rail__header {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 36px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 @media (min-width: 768px) {
@@ -4509,74 +4509,95 @@ p{margin:0 0 1em}
 .fashion-rail__header-actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 18px;
 }
 
 .fashion-rail__nav-arrows {
   display: flex;
   gap: 8px;
-}
-
-@media (min-width: 1100px) {
-  .fashion-rail__nav-arrows {
-    display: none;
-  }
+  flex-shrink: 0;
 }
 
 .fashion-rail__tag {
-  font-size: 0.78rem;
-  letter-spacing: 0.25em;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
   color: var(--gold-dark);
-  font-weight: 600;
+  font-weight: 700;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .fashion-rail__title {
   font-family: var(--font-heading), 'Playfair Display', serif;
-  font-size: clamp(2rem, 3.8vw, 2.8rem);
+  font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+  letter-spacing: -0.01em;
   margin: 0;
+  line-height: 1.2;
 }
 
 .fashion-rail__desc {
-  max-width: 440px;
-  font-size: 0.95rem;
+  max-width: 360px;
+  font-size: 0.82rem;
   color: var(--muted);
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .fashion-rail__viewport {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding: 10px 4px 24px;
-  scrollbar-width: thin;
+  padding: 6px 2px 20px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fashion-rail__viewport::-webkit-scrollbar {
+  display: none;
 }
 
 .fashion-rail__track {
   display: flex;
-  gap: 22px;
+  gap: 16px;
+  width: max-content;
+  min-width: 100%;
 }
 
 .fashion-rail__slide {
-  flex: 0 0 clamp(280px, 45vw, 340px);
+  flex: 0 0 clamp(200px, 22vw, 245px);
+  max-width: 250px;
   scroll-snap-align: start;
 }
 
-@media (min-width: 1100px) {
-  .fashion-rail__viewport {
-    overflow-x: visible;
-    padding: 10px 0 0;
-  }
+@media (min-width: 1024px) {
   .fashion-rail__track {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    width: 100%;
+    gap: 18px;
   }
   .fashion-rail__slide {
-    flex: initial;
-    width: 100%;
+    flex: 0 0 240px;
+    max-width: 245px;
+  }
+}
+
+@media (max-width: 767px) {
+  .fashion-rail-section {
+    padding: 28px 0 36px;
+  }
+  .fashion-rail__header {
+    margin-bottom: 18px;
+  }
+  .fashion-rail__title {
+    font-size: 1.35rem;
+  }
+  .fashion-rail__desc {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .fashion-rail__track {
+    gap: 12px;
+  }
+  .fashion-rail__slide {
+    flex: 0 0 clamp(165px, 50vw, 190px);
+    max-width: 195px;
   }
 }
 
@@ -4585,22 +4606,24 @@ p{margin:0 0 1em}
   flex-direction: column;
   background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 22px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(51, 37, 31, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 14px rgba(51, 37, 31, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   height: 100%;
+  cursor: pointer;
 }
 
 .look-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 42px rgba(51, 37, 31, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(51, 37, 31, 0.08);
 }
 
 .look-card__media {
   position: relative;
   background: #FAF8F4;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
+  max-height: 225px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -4613,47 +4636,51 @@ p{margin:0 0 1em}
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 16px;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 12px;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .look-card:hover .look-card__media img {
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 
 .look-card__number {
   position: absolute;
-  top: 14px;
-  left: 14px;
-  background: rgba(17, 17, 17, 0.85);
+  top: 10px;
+  left: 10px;
+  background: rgba(18, 16, 14, 0.85);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--gold);
-  font-size: 0.72rem;
-  letter-spacing: 0.15em;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 3px 8px;
   border-radius: 999px;
   z-index: 2;
+  line-height: 1.2;
 }
 
 .look-card__quick-tag {
   position: absolute;
-  bottom: 14px;
-  right: 14px;
+  bottom: 8px;
+  right: 8px;
   background: rgba(24, 23, 22, 0.92);
   color: #FAF8F4;
   backdrop-filter: blur(8px);
-  font-size: 0.72rem;
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 6px 14px;
+  padding: 4px 10px;
   border-radius: 999px;
   border: 1px solid rgba(198, 161, 91, 0.4);
   opacity: 0;
-  transform: translateY(6px);
-  transition: all 0.3s ease;
+  transform: translateY(4px);
+  transition: all 0.25s ease;
   z-index: 2;
+  white-space: nowrap;
 }
 
 .look-card:hover .look-card__quick-tag {
@@ -4662,27 +4689,45 @@ p{margin:0 0 1em}
 }
 
 .look-card__details {
-  padding: 20px;
+  padding: 12px 14px 14px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
+@media (max-width: 767px) {
+  .look-card__media {
+    max-height: 175px;
+  }
+  .look-card__media img {
+    padding: 8px;
+  }
+  .look-card__details {
+    padding: 10px 10px 12px;
+  }
+}
+
 .look-card__category {
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
   color: var(--gold-dark);
   font-weight: 700;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
+  text-transform: uppercase;
 }
 
 .look-card__name {
   font-family: var(--font-heading), 'Playfair Display', serif;
-  font-size: 1.25rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  margin: 0 0 6px;
-  line-height: 1.3;
+  margin: 0 0 4px;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.2em;
 }
 
 .look-card__name a {
@@ -4696,50 +4741,74 @@ p{margin:0 0 1em}
 }
 
 .look-card__fabric {
-  font-size: 0.85rem;
+  font-size: 0.72rem;
   color: var(--muted);
-  margin: 0 0 16px;
-  line-height: 1.5;
+  margin: 0 0 10px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .look-card__foot {
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 10px;
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 6px;
 }
 
 .look-card__price {
-  font-size: 1.15rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--text);
   font-family: var(--font-price, 'Inter', sans-serif);
+  white-space: nowrap;
 }
 
 .look-card__link {
-  font-size: 0.8rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #FAF8F4;
   background: #181716;
-  padding: 8px 18px;
+  padding: 5px 12px;
   border-radius: 999px;
   text-decoration: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 14px rgba(24, 23, 22, 0.15);
+  gap: 4px;
+  box-shadow: 0 3px 10px rgba(24, 23, 22, 0.12);
+  white-space: nowrap;
 }
 
 .look-card__link:hover {
   background: var(--gold-dark);
   color: #FFFFFF;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(184, 155, 101, 0.4);
+  box-shadow: 0 5px 14px rgba(184, 155, 101, 0.35);
+}
+
+@media (max-width: 767px) {
+  .look-card__name {
+    font-size: 0.8rem;
+  }
+  .look-card__fabric {
+    font-size: 0.66rem;
+    margin-bottom: 6px;
+  }
+  .look-card__price {
+    font-size: 0.8rem;
+  }
+  .look-card__link {
+    font-size: 0.62rem;
+    padding: 4px 8px;
+  }
 }
 
 /* ==========================================================================
