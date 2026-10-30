@@ -308,7 +308,7 @@
 
     <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
     <li><a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a></li>
-    <li><a href="{{ routes.collections_url }}/sale" style="color:var(--sale);">Sale <span class="nav-badge--sale">Save Extra</span></a></li>
+    {% comment %} <li><a href="{{ routes.collections_url }}/sale" style="color:var(--sale);">Sale <span class="nav-badge--sale">Save Extra</span></a></li> {% endcomment %}
 
     {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
     {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: pages['about-zeyov'].url | default: '/pages/about-us' -%}
