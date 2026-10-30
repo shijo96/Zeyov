@@ -1914,11 +1914,15 @@
       filtered.slice(0, 4).forEach(function (p) {
         html += '<a href="' + encodeURI(p.url) + '" class="personalized-card">' +
           '<div class="personalized-card__media">' +
-            (p.image ? '<img src="' + encodeURI(p.image) + '" alt="' + escapeHtml(p.title) + '" loading="lazy">' : '') +
+            (p.image ? '<img src="' + encodeURI(p.image) + '" alt="' + escapeHtml(p.title) + '" loading="lazy" width="400" height="400">' : '') +
           '</div>' +
           '<div class="personalized-card__info">' +
-            '<span class="personalized-card__title">' + escapeHtml(p.title) + '</span>' +
-            '<span class="personalized-card__price">' + escapeHtml(p.price) + '</span>' +
+            '<span class="personalized-card__tag">RECENTLY VIEWED</span>' +
+            '<h3 class="personalized-card__title">' + escapeHtml(p.title) + '</h3>' +
+            '<div class="personalized-card__price-row">' +
+              '<span class="personalized-card__price">' + escapeHtml(p.price) + '</span>' +
+              '<span class="personalized-card__action">View &rarr;</span>' +
+            '</div>' +
           '</div>' +
         '</a>';
       });
@@ -1936,11 +1940,15 @@
               var price = (p.variants && p.variants[0]) ? formatMoney(p.variants[0].price * 100) : '';
               html += '<a href="/products/' + encodeURI(p.handle) + '" class="personalized-card">' +
                 '<div class="personalized-card__media">' +
-                  (img ? '<img src="' + encodeURI(img) + '" alt="' + escapeHtml(p.title) + '" loading="lazy">' : '') +
+                  (img ? '<img src="' + encodeURI(img) + '" alt="' + escapeHtml(p.title) + '" loading="lazy" width="400" height="400">' : '') +
                 '</div>' +
                 '<div class="personalized-card__info">' +
-                  '<span class="personalized-card__title">' + escapeHtml(p.title) + '</span>' +
-                  '<span class="personalized-card__price">' + escapeHtml(price) + '</span>' +
+                  '<span class="personalized-card__tag">RECOMMENDED</span>' +
+                  '<h3 class="personalized-card__title">' + escapeHtml(p.title) + '</h3>' +
+                  '<div class="personalized-card__price-row">' +
+                    '<span class="personalized-card__price">' + escapeHtml(price) + '</span>' +
+                    '<span class="personalized-card__action">View &rarr;</span>' +
+                  '</div>' +
                 '</div>' +
               '</a>';
             });
