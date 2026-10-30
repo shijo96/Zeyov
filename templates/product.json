@@ -53,7 +53,7 @@
       "type": "product-recommendations",
       "settings": {
         "heading": "You May Also Like",
-        "limit": 4
+        "limit": 5
       }
     }
   },

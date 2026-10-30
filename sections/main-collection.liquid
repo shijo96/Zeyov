@@ -67,6 +67,151 @@
       </div>
     </div>
 
+    <!-- Online Store 2.0 Facets & Filtering Form -->
+    {%- assign total_active_filters = 0 -%}
+    {%- for filter in collection.filters -%}
+      {%- assign total_active_filters = total_active_filters | plus: filter.active_values.size -%}
+      {%- if filter.type == 'price_range' -%}
+        {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+          {%- assign total_active_filters = total_active_filters | plus: 1 -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if collection.filters.size > 0 -%}
+      <div class="collection-facets-wrap" id="CollectionFacets">
+        <div class="facets__header">
+          <h3 class="facets__title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+            Refine &amp; Filter Collection
+          </h3>
+          <div class="facets__summary-bar">
+            <span>Showing {{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}</span>
+            {%- if total_active_filters > 0 -%}
+              <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="active-filters__clear-all">Reset All Filters ({{ total_active_filters }})</a>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <form class="facets__form" id="FacetFiltersForm" method="get" action="{{ collection.url }}">
+          <input type="hidden" name="sort_by" value="{{ sort_by }}">
+
+          {%- for filter in collection.filters -%}
+            <div class="facet-group">
+              <span class="facet-group__title">{{ filter.label }}</span>
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  <ul class="facet-group__list">
+                    {%- for value in filter.values -%}
+                      <li>
+                        <label class="facet-checkbox-label">
+                          <input type="checkbox"
+                                 name="{{ value.param_name }}"
+                                 value="{{ value.value }}"
+                                 id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                                 {% if value.active %}checked{% endif %}
+                                 {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                                 onchange="this.closest('form').submit();">
+                          <span>{{ value.label }}</span>
+                          <span class="facet-checkbox-count">({{ value.count }})</span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- when 'price_range' -%}
+                  <div class="facet-price-range">
+                    <div class="facet-price-input-wrap">
+                      <span class="facet-price-currency">{{ cart.currency.symbol }}</span>
+                      <input class="facet-price-input"
+                             name="{{ filter.min_value.param_name }}"
+                             id="Filter-{{ filter.min_value.param_name }}"
+                             {%- if filter.min_value.value -%}
+                               value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                             {%- endif -%}
+                             type="number"
+                             placeholder="Min"
+                             min="0"
+                             max="{{ filter.range_max | money_without_currency | replace: ',', '' }}">
+                    </div>
+                    <span class="facet-price-sep">&ndash;</span>
+                    <div class="facet-price-input-wrap">
+                      <span class="facet-price-currency">{{ cart.currency.symbol }}</span>
+                      <input class="facet-price-input"
+                             name="{{ filter.max_value.param_name }}"
+                             id="Filter-{{ filter.max_value.param_name }}"
+                             {%- if filter.max_value.value -%}
+                               value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                             {%- endif -%}
+                             type="number"
+                             placeholder="Max"
+                             min="0"
+                             max="{{ filter.range_max | money_without_currency | replace: ',', '' }}">
+                    </div>
+                    <button type="submit" class="facet-price-apply" aria-label="Apply price filter">Go</button>
+                  </div>
+              {%- endcase -%}
+            </div>
+          {%- endfor -%}
+        </form>
+
+        {%- if total_active_filters > 0 -%}
+          <div class="active-filters">
+            <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:600">Active Filters:</span>
+            {%- for filter in collection.filters -%}
+              {%- for value in filter.active_values -%}
+                <a href="{{ value.url_to_remove }}" class="active-filter-chip">
+                  <span>{{ filter.label }}: {{ value.label }}</span>
+                  <span class="active-filter-chip__remove" aria-hidden="true">&times;</span>
+                </a>
+              {%- endfor -%}
+              {%- if filter.type == 'price_range' -%}
+                {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                  <a href="{{ filter.url_to_remove }}" class="active-filter-chip">
+                    <span>
+                      {{ cart.currency.symbol }}{{ filter.min_value.value | default: 0 | money_without_currency }} &ndash;
+                      {{ cart.currency.symbol }}{{ filter.max_value.value | default: filter.range_max | money_without_currency }}
+                    </span>
+                    <span class="active-filter-chip__remove" aria-hidden="true">&times;</span>
+                  </a>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+            <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="active-filters__clear-all">Clear All</a>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- elsif collection.all_tags.size > 0 -%}
+      <!-- Fallback Tag Filtering when OS 2.0 Facets are not configured yet in Shopify Admin -->
+      <div class="collection-facets-wrap" id="CollectionTagFilters">
+        <div class="facets__header">
+          <h3 class="facets__title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+            Filter by Department &amp; Style
+          </h3>
+          <div class="facets__summary-bar">
+            <span>Showing {{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}</span>
+            {%- if current_tags -%}
+              <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="active-filters__clear-all">Clear Filter</a>
+            {%- endif -%}
+          </div>
+        </div>
+        <div class="active-filters" style="border:none;margin:0;padding-top:14px">
+          {%- for tag in collection.all_tags -%}
+            {%- if current_tags contains tag -%}
+              <span class="active-filter-chip" style="background:var(--gold-dark);color:#fff">
+                {{ tag }}
+                <a href="{{ collection.url }}" style="color:#fff;margin-left:4px;text-decoration:none">&times;</a>
+              </span>
+            {%- else -%}
+              <a href="{{ collection.url }}/{{ tag | handleize }}?sort_by={{ sort_by }}" class="active-filter-chip">
+                + {{ tag }}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
     <!-- Product Grid -->
     <div class="grid grid--products grid--fashion-catalog">
       {%- for product in collection.products -%}

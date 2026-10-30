@@ -11,15 +11,15 @@
       {%- endif -%}
     </a>
 
-    <nav class="header__nav" aria-label="Main">
+    <nav class="header__nav" aria-label="Main Navigation">
       <ul role="list">
-        {%- if menu != blank and menu.links.size > 0 -%}
+        {%- if section.settings.use_custom_nav == false and menu != blank and menu.links.size > 3 -%}
           {%- for link in menu.links -%}
             <li class="{% if link.links.size > 0 %}has-sub{% endif %}">
               <a href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>
                 {{ link.title }}
-                {%- if link.title contains 'Combo' or link.title contains 'Bundle' -%}
-                  <span class="badge badge--gold nav-badge">Save 20%</span>
+                {%- if link.title contains 'Sale' or link.title contains 'Offer' -%}
+                  <span class="nav-badge--sale">Save</span>
                 {%- endif -%}
                 {% if link.links.size > 0 %}{% render 'icon', name: 'chevron' %}{% endif %}
               </a>
@@ -33,32 +33,155 @@
             </li>
           {%- endfor -%}
         {%- else -%}
+          <!-- Master ZEYOV Fashion Navigation Structure -->
           <li><a href="{{ routes.root_url }}">Home</a></li>
-          <li><a href="{{ routes.root_url }}#RunwayOrbit" class="nav-highlight">The Runway Edit</a></li>
-          <li class="has-sub">
-            <a href="{{ routes.all_products_collection_url }}">Fashion Atelier {% render 'icon', name: 'chevron' %}</a>
-            <ul class="sub" role="list">
-              <li><a href="{{ routes.root_url }}#FashionShowcase">Dresses &amp; Gowns</a></li>
-              <li><a href="{{ routes.root_url }}#FashionShowcase">Outerwear &amp; Jackets</a></li>
-              <li><a href="{{ routes.root_url }}#FashionShowcase">Tops &amp; Knitwear</a></li>
-              <li><a href="{{ routes.root_url }}#RunwayRail">Runway Lookbook</a></li>
-              <li><a href="{{ routes.root_url }}#GarmentCraft">Artisan Craftsmanship</a></li>
-            </ul>
+
+          <!-- KIDSWEAR MEGA MENU -->
+          <li class="has-mega">
+            <a href="{{ routes.collections_url }}/kidswear">
+              Kidswear {% render 'icon', name: 'chevron' %}
+            </a>
+            <div class="mega-dropdown">
+              <div class="container mega-dropdown__inner">
+                <div class="mega-dropdown__grid">
+                  <div>
+                    <span class="mega-dropdown__col-title">Baby &amp; Toddlers</span>
+                    <a href="{{ routes.collections_url }}/baby-clothing" class="mega-dropdown__link">Baby Clothing</a>
+                    <a href="{{ routes.collections_url }}/baby-rompers" class="mega-dropdown__link">Baby Rompers &amp; Onesies</a>
+                    <a href="{{ routes.collections_url }}/kids-accessories" class="mega-dropdown__link">Kids Accessories</a>
+                  </div>
+                  <div>
+                    <span class="mega-dropdown__col-title">Boys &amp; Girls</span>
+                    <a href="{{ routes.collections_url }}/boys-clothing" class="mega-dropdown__link">Boys Clothing</a>
+                    <a href="{{ routes.collections_url }}/girls-clothing" class="mega-dropdown__link">Girls Clothing</a>
+                    <a href="{{ routes.collections_url }}/kids-dresses" class="mega-dropdown__link">Kids Dresses &amp; Frocks</a>
+                    <a href="{{ routes.collections_url }}/kids-tops-bottoms" class="mega-dropdown__link">Tops &amp; Bottomwear</a>
+                  </div>
+                </div>
+                <div class="mega-dropdown__featured-card">
+                  <div>
+                    <span class="mega-dropdown__card-tag">LITTLE ATELIER</span>
+                    <h4 class="mega-dropdown__card-heading">Cozy &amp; Fluffy Baby Rompers</h4>
+                    <p class="mega-dropdown__card-desc">Reversible thermal flannel rompers &amp; gentle cotton essentials for Indian weather.</p>
+                  </div>
+                  <a href="{{ routes.collections_url }}/kidswear" class="mega-dropdown__card-btn">Shop All Kidswear &rarr;</a>
+                </div>
+              </div>
+            </div>
           </li>
-          <li class="has-sub">
-            <a href="{{ routes.collections_url }}/accessories">Accessories {% render 'icon', name: 'chevron' %}</a>
-            <ul class="sub" role="list">
-              <li><a href="{{ routes.collections_url }}/accessories">All Fashion Accessories</a></li>
-              <li><a href="{{ routes.collections_url }}/accessories">Italian Silk Scarves</a></li>
-              <li><a href="{{ routes.collections_url }}/accessories">Tailored Leather Belts</a></li>
-              <li><a href="{{ routes.collections_url }}/accessories">Runway Jewelry &amp; Clutches</a></li>
-            </ul>
+
+          <!-- WOMEN'S WEAR MEGA MENU -->
+          <li class="has-mega">
+            <a href="{{ routes.collections_url }}/womens-wear">
+              Women's Wear {% render 'icon', name: 'chevron' %}
+            </a>
+            <div class="mega-dropdown">
+              <div class="container mega-dropdown__inner">
+                <div class="mega-dropdown__grid">
+                  <div>
+                    <span class="mega-dropdown__col-title">Apparel &amp; Outerwear</span>
+                    <a href="{{ routes.collections_url }}/womens-dresses" class="mega-dropdown__link">Dresses &amp; Gowns</a>
+                    <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="mega-dropdown__link">Tops &amp; T-Shirts</a>
+                    <a href="{{ routes.collections_url }}/womens-shirts" class="mega-dropdown__link">Shirts &amp; Blouses</a>
+                    <a href="{{ routes.collections_url }}/western-wear" class="mega-dropdown__link">Western Wear</a>
+                  </div>
+                  <div>
+                    <span class="mega-dropdown__col-title">Ethnic &amp; Accents</span>
+                    <a href="{{ routes.collections_url }}/kurtis-ethnic-wear" class="mega-dropdown__link">Kurtis &amp; Ethnic Wear</a>
+                    <a href="{{ routes.collections_url }}/coord-sets" class="mega-dropdown__link">Co-ord Sets</a>
+                    <a href="{{ routes.collections_url }}/womens-bottomwear" class="mega-dropdown__link">Bottomwear &amp; Trousers</a>
+                    <a href="{{ routes.collections_url }}/womens-accessories" class="mega-dropdown__link">Women's Accessories</a>
+                  </div>
+                </div>
+                <div class="mega-dropdown__featured-card">
+                  <div>
+                    <span class="mega-dropdown__card-tag">RUNWAY COUTURE</span>
+                    <h4 class="mega-dropdown__card-heading">Teddy Fur &amp; Silk Silhouette</h4>
+                    <p class="mega-dropdown__card-desc">Sculpted to flatter Indian silhouettes with pre-shrunk colorfast integrity.</p>
+                  </div>
+                  <a href="{{ routes.collections_url }}/womens-wear" class="mega-dropdown__card-btn">Shop All Women's &rarr;</a>
+                </div>
+              </div>
+            </div>
           </li>
-          {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
-          {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: pages['about-zeyov'].url | default: '/pages/about-us' -%}
+
+          <!-- MEN'S WEAR MEGA MENU -->
+          <li class="has-mega">
+            <a href="{{ routes.collections_url }}/mens-wear">
+              Men's Wear {% render 'icon', name: 'chevron' %}
+            </a>
+            <div class="mega-dropdown">
+              <div class="container mega-dropdown__inner">
+                <div class="mega-dropdown__grid">
+                  <div>
+                    <span class="mega-dropdown__col-title">Everyday &amp; Casual</span>
+                    <a href="{{ routes.collections_url }}/mens-tshirts" class="mega-dropdown__link">T-Shirts &amp; Polos</a>
+                    <a href="{{ routes.collections_url }}/mens-shirts" class="mega-dropdown__link">Casual &amp; Formal Shirts</a>
+                    <a href="{{ routes.collections_url }}/mens-casual-wear" class="mega-dropdown__link">Casual Jackets &amp; Vests</a>
+                  </div>
+                  <div>
+                    <span class="mega-dropdown__col-title">Bottoms &amp; Accessories</span>
+                    <a href="{{ routes.collections_url }}/mens-trousers" class="mega-dropdown__link">Trousers &amp; Chinos</a>
+                    <a href="{{ routes.collections_url }}/mens-jeans" class="mega-dropdown__link">Denim Jeans</a>
+                    <a href="{{ routes.collections_url }}/mens-ethnic-wear" class="mega-dropdown__link">Men's Ethnic Wear</a>
+                    <a href="{{ routes.collections_url }}/mens-accessories" class="mega-dropdown__link">Belts &amp; Accessories</a>
+                  </div>
+                </div>
+                <div class="mega-dropdown__featured-card">
+                  <div>
+                    <span class="mega-dropdown__card-tag">MODERN TAILORING</span>
+                    <h4 class="mega-dropdown__card-heading">Tailored Mobility &amp; Fit</h4>
+                    <p class="mega-dropdown__card-desc">Generous shoulder ergonomics and premium breathable fabrics designed for all-day comfort.</p>
+                  </div>
+                  <a href="{{ routes.collections_url }}/mens-wear" class="mega-dropdown__card-btn">Shop All Men's &rarr;</a>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!-- FESTIVE COLLECTION MEGA MENU -->
+          <li class="has-mega">
+            <a href="{{ routes.collections_url }}/festive-collection">
+              Festive {% render 'icon', name: 'chevron' %}
+            </a>
+            <div class="mega-dropdown">
+              <div class="container mega-dropdown__inner">
+                <div class="mega-dropdown__grid">
+                  <div>
+                    <span class="mega-dropdown__col-title">Celebration Edits</span>
+                    <a href="{{ routes.collections_url }}/christmas-collection" class="mega-dropdown__link">Christmas Collection</a>
+                    <a href="{{ routes.collections_url }}/onam-collection" class="mega-dropdown__link">Onam Collection</a>
+                    <a href="{{ routes.collections_url }}/vishu-collection" class="mega-dropdown__link">Vishu Collection</a>
+                    <a href="{{ routes.collections_url }}/eid-collection" class="mega-dropdown__link">Eid Collection</a>
+                  </div>
+                  <div>
+                    <span class="mega-dropdown__col-title">Season &amp; Specials</span>
+                    <a href="{{ routes.collections_url }}/diwali-collection" class="mega-dropdown__link">Diwali Collection</a>
+                    <a href="{{ routes.collections_url }}/new-year-collection" class="mega-dropdown__link">New Year Collection</a>
+                    <a href="{{ routes.collections_url }}/valentines-collection" class="mega-dropdown__link">Valentine's Collection</a>
+                    <a href="{{ routes.collections_url }}/festival-specials" class="mega-dropdown__link">All Festival Specials</a>
+                  </div>
+                </div>
+                <div class="mega-dropdown__featured-card">
+                  <div>
+                    <span class="mega-dropdown__card-tag">FESTIVE EXCLUSIVE</span>
+                    <h4 class="mega-dropdown__card-heading">Timeless Celebration Drops</h4>
+                    <p class="mega-dropdown__card-desc">Curated festive couture for Indian festivities. Pre-order and express delivery across India.</p>
+                  </div>
+                  <a href="{{ routes.collections_url }}/festive-collection" class="mega-dropdown__card-btn">Explore Festive Edit &rarr;</a>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
+          <li><a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a></li>
+          <li>
+            <a href="{{ routes.collections_url }}/sale" style="color:var(--sale);">
+              Sale <span class="nav-badge--sale">Save Extra</span>
+            </a>
+          </li>
           {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
-          <li><a href="{{ track_link }}">Track Order</a></li>
-          <li><a href="{{ about_link }}">About Us</a></li>
           <li><a href="{{ contact_link }}">Contact</a></li>
         {%- endif -%}
       </ul>
@@ -99,45 +222,102 @@
     <button class="icon-btn" type="button" data-close="NavDrawer" aria-label="Close menu">{% render 'icon', name: 'close' %}</button>
   </div>
   <ul class="drawer__list" role="list">
-    {%- if menu != blank and menu.links.size > 0 -%}
-      {%- for link in menu.links -%}
-        <li>
-          <a href="{{ link.url }}">{{ link.title }}</a>
-          {%- for sub in link.links -%}
-            <a class="drawer__sub" href="{{ sub.url }}">{{ sub.title }}</a>
-          {%- endfor -%}
-        </li>
-      {%- endfor -%}
-    {%- else -%}
-      <li><a href="{{ routes.root_url }}">Home</a></li>
-      <li><a href="{{ routes.root_url }}#RunwayOrbit" class="nav-highlight">The Runway Edit (Issue 01)</a></li>
-      <li>
-        <span class="drawer__category-label">Fashion Atelier</span>
-        <a class="drawer__sub" href="{{ routes.root_url }}#FashionShowcase">Dresses &amp; Gowns</a>
-        <a class="drawer__sub" href="{{ routes.root_url }}#FashionShowcase">Outerwear &amp; Jackets</a>
-        <a class="drawer__sub" href="{{ routes.root_url }}#RunwayRail">Runway Lookbook Rail</a>
-        <a class="drawer__sub" href="{{ routes.root_url }}#GarmentCraft">Artisan Craftsmanship</a>
-      </li>
-      <li>
-        <span class="drawer__category-label">Fashion Accessories</span>
-        <a class="drawer__sub" href="{{ routes.collections_url }}/accessories">All Fashion Accessories</a>
-        <a class="drawer__sub" href="{{ routes.collections_url }}/accessories">Italian Silk Scarves</a>
-        <a class="drawer__sub" href="{{ routes.collections_url }}/accessories">Tailored Leather Belts</a>
-        <a class="drawer__sub" href="{{ routes.collections_url }}/accessories">Runway Jewelry &amp; Clutches</a>
-      </li>
-      {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
-      {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: pages['about-zeyov'].url | default: '/pages/about-us' -%}
-      {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
-      {%- assign faq_link = pages['faq'].url | default: pages['faqs'].url | default: pages['frequently-asked-questions'].url | default: '/pages/faq' -%}
-      {%- assign shipping_link = pages['shipping-policy'].url | default: pages['shipping'].url | default: pages['shipping-and-delivery-policy'].url | default: shop.shipping_policy.url | default: '/pages/shipping-policy' -%}
-      {%- assign refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: pages['return-policy'].url | default: pages['return-and-refund-policy'].url | default: shop.refund_policy.url | default: '/pages/refund-policy' -%}
-      <li><a href="{{ track_link }}">Track Your Order</a></li>
-      <li><a href="{{ about_link }}">About Zeyov</a></li>
-      <li><a href="{{ contact_link }}">Contact Us</a></li>
-      <li><a href="{{ faq_link }}">FAQs</a></li>
-      <li><a href="{{ shipping_link }}">Shipping &amp; Delivery Policy</a></li>
-      <li><a href="{{ refund_link }}">Return &amp; Refund Policy</a></li>
-    {%- endif -%}
+    <li><a href="{{ routes.root_url }}">Home</a></li>
+
+    <!-- Kidswear Accordion -->
+    <li>
+      <details class="drawer__accordion">
+        <summary class="drawer__accordion-summary">
+          <span>Kidswear</span>
+          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer__accordion-sublist">
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/baby-clothing">Baby Clothing</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/baby-rompers">Baby Rompers &amp; Onesies</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/boys-clothing">Boys Clothing</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/girls-clothing">Girls Clothing</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/kids-dresses">Kids Dresses</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/kids-tops-bottoms">Kids Tops &amp; Bottoms</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/kids-accessories">Kids Accessories</a>
+          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/kidswear">View All Kidswear &rarr;</a>
+        </div>
+      </details>
+    </li>
+
+    <!-- Women's Wear Accordion -->
+    <li>
+      <details class="drawer__accordion">
+        <summary class="drawer__accordion-summary">
+          <span>Women's Wear</span>
+          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer__accordion-sublist">
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-dresses">Dresses &amp; Gowns</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-tops-tshirts">Tops &amp; T-Shirts</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-shirts">Shirts &amp; Blouses</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/kurtis-ethnic-wear">Kurtis &amp; Ethnic Wear</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/western-wear">Western Wear</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/coord-sets">Co-ord Sets</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-bottomwear">Bottomwear</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-accessories">Women's Accessories</a>
+          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/womens-wear">View All Women's Wear &rarr;</a>
+        </div>
+      </details>
+    </li>
+
+    <!-- Men's Wear Accordion -->
+    <li>
+      <details class="drawer__accordion">
+        <summary class="drawer__accordion-summary">
+          <span>Men's Wear</span>
+          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer__accordion-sublist">
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-tshirts">T-Shirts &amp; Polos</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-shirts">Shirts</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-trousers">Trousers &amp; Chinos</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-jeans">Jeans</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-casual-wear">Casual Wear</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-ethnic-wear">Ethnic Wear</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-accessories">Men's Accessories</a>
+          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/mens-wear">View All Men's Wear &rarr;</a>
+        </div>
+      </details>
+    </li>
+
+    <!-- Festive Collection Accordion -->
+    <li>
+      <details class="drawer__accordion">
+        <summary class="drawer__accordion-summary">
+          <span style="color:var(--gold-dark)">Festive Collection</span>
+          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer__accordion-sublist">
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/christmas-collection">Christmas Collection</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/onam-collection">Onam Collection</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/vishu-collection">Vishu Collection</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/eid-collection">Eid Collection</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/diwali-collection">Diwali Collection</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/new-year-collection">New Year Collection</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/valentines-collection">Valentine's Collection</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/festival-specials">Festival Specials</a>
+          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/festive-collection">View All Festive &rarr;</a>
+        </div>
+      </details>
+    </li>
+
+    <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
+    <li><a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a></li>
+    <li><a href="{{ routes.collections_url }}/sale" style="color:var(--sale);">Sale <span class="nav-badge--sale">Save Extra</span></a></li>
+
+    {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
+    {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: pages['about-zeyov'].url | default: '/pages/about-us' -%}
+    {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
+    {%- assign faq_link = pages['faq'].url | default: pages['faqs'].url | default: pages['frequently-asked-questions'].url | default: '/pages/faq' -%}
+    <li><a href="{{ track_link }}">Track Your Order</a></li>
+    <li><a href="{{ about_link }}">About Zeyov</a></li>
+    <li><a href="{{ contact_link }}">Contact Us</a></li>
+    <li><a href="{{ faq_link }}">FAQs</a></li>
     <li><a href="{{ routes.cart_url }}">Cart ({% if cart.item_count > 0 %}{{ cart.item_count }}{% else %}0{% endif %})</a></li>
     {%- if shop.customer_accounts_enabled -%}
       <li><a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">{% if customer %}My account{% else %}Login / Sign up{% endif %}</a></li>

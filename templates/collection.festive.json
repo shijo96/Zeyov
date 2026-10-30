@@ -1,0 +1,34 @@
+{
+  "sections": {
+    "festive_banner": {
+      "type": "festival-campaign-banner",
+      "settings": {
+        "enable_campaign": true,
+        "theme_style": "luxury_gold",
+        "badge_text": "ROYAL FESTIVE ATELIER",
+        "heading": "Curated Festive Celebrations",
+        "subheading": "Hand-finished silks, royal kurtas, festive kidswear, and contemporary ethnic co-ords crafted for joyful celebrations.",
+        "discount_code": "FESTIVE10",
+        "discount_text": "Special 10% Festive Savings applied at checkout",
+        "button_label": "Shop Festive Drop",
+        "button_link": "",
+        "enable_whatsapp_cta": true
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "per_page": 15
+      }
+    },
+    "trust": {
+      "type": "trust-bar",
+      "settings": {}
+    }
+  },
+  "order": [
+    "festive_banner",
+    "main",
+    "trust"
+  ]
+}
