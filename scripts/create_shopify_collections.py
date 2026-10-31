@@ -80,6 +80,36 @@ COLLECTIONS_BLUEPRINT = [
         "rule": {"column": "tag", "relation": "equals", "condition": "category:womens-dresses"}
     },
     {
+        "title": "Women's Maxi Dresses",
+        "handle": "womens-maxi-dresses",
+        "body_html": "<p>Flowing floor-length maxi dresses, tiered cotton flares, and elegant evening silhouettes tailored for all Indian weather.</p>",
+        "rule": {"column": "tag", "relation": "equals", "condition": "category:maxi-dresses"}
+    },
+    {
+        "title": "Cotton Dresses",
+        "handle": "cotton-dresses",
+        "body_html": "<p>Ultra-breathable 100% pure cotton dresses, block-printed casual gowns, and summer comfort wear for women.</p>",
+        "rule": {"column": "tag", "relation": "equals", "condition": "category:cotton-dresses"}
+    },
+    {
+        "title": "Ethnic Wear",
+        "handle": "ethnic-wear",
+        "body_html": "<p>Artisanal embroidered kurtas, handcrafted anarkalis, festive pattu sets, and contemporary ethnic separates.</p>",
+        "rule": {"column": "tag", "relation": "equals", "condition": "category:ethnic-wear"}
+    },
+    {
+        "title": "Plus Size Dresses",
+        "handle": "plus-size-dresses",
+        "body_html": "<p>Flattering plus-size maxi dresses, relaxed-fit gowns, and sculpted silhouettes designed to celebrate every curve.</p>",
+        "rule": {"column": "tag", "relation": "equals", "condition": "category:plus-size"}
+    },
+    {
+        "title": "Designer Gowns",
+        "handle": "designer-gowns",
+        "body_html": "<p>Sculpted runway gowns, Grade-6A mulberry silks, and red-carpet eveningwear crafted with bespoke distinction.</p>",
+        "rule": {"column": "tag", "relation": "equals", "condition": "category:designer-gowns"}
+    },
+    {
         "title": "Tops & T-Shirts",
         "handle": "womens-tops-tshirts",
         "body_html": "<p>Premium knit tops, ribbed tees, and breathable everyday fashion tops.</p>",

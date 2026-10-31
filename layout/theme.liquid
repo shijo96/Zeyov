@@ -18,14 +18,38 @@
     <link rel="apple-touch-icon" href="{{ 'favicon.png' | asset_url }}">
   {%- endif -%}
 
-  <title>{{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}{% unless page_title contains 'ZEYOV' %} &ndash; ZEYOV{% endunless %}</title>
-  {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
+  {%- capture seo_title -%}
+    {%- if template.name == 'index' -%}
+      {%- if page_title contains 'My Store' or page_title == 'ZEYOV' or page_title == blank or page_title == 'ZEYOV: My Store' -%}
+        ZEYOV | Women’s Maxi Dresses, Gowns & Ethnic Wear Online India
+      {%- else -%}
+        {{ page_title }}
+      {%- endif -%}
+    {%- else -%}
+      {{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}{% unless page_title contains 'ZEYOV' %} &ndash; ZEYOV{% endunless %}
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- capture seo_description -%}
+    {%- if template.name == 'index' -%}
+      {%- if page_description != blank and page_description != 'My Store' and page_description != 'ZEYOV' -%}
+        {{ page_description }}
+      {%- else -%}
+        Shop ZEYOV for stylish women’s maxi dresses, cotton gowns, ethnic wear and plus-size fashion. Free delivery on prepaid orders across India. Easy online shopping.
+      {%- endif -%}
+    {%- else -%}
+      {{ page_description | default: 'Shop ZEYOV for stylish women’s maxi dresses, cotton gowns, ethnic wear and luxury fashion. Free delivery on prepaid orders across India.' }}
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <title>{{ seo_title | strip }}</title>
+  <meta name="description" content="{{ seo_description | strip | escape }}">
 
   <meta property="og:site_name" content="ZEYOV">
   <meta property="og:url" content="{{ canonical_url }}">
-  <meta property="og:title" content="{{ page_title | escape }}">
+  <meta property="og:title" content="{{ seo_title | strip | escape }}">
   <meta property="og:type" content="{% if template.name == 'product' %}product{% else %}website{% endif %}">
-  <meta property="og:description" content="{{ page_description | default: 'ZEYOV Runway Atelier • Premium Indian Fashion & Lifestyle' | escape }}">
+  <meta property="og:description" content="{{ seo_description | strip | escape }}">
   {%- if template.name == 'product' and product.featured_image -%}
     <meta property="og:image" content="https:{{ product.featured_image | image_url: width: 1200 }}">
   {%- else -%}
