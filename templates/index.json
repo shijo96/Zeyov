@@ -133,6 +133,22 @@
         "show_all": true
       }
     },
+    "festive_campaign": {
+      "type": "festival-campaign-banner",
+      "disabled": true,
+      "settings": {
+        "enable_campaign": true,
+        "theme_style": "luxury_gold",
+        "badge_text": "LIMITED FESTIVE DROP",
+        "heading": "Curated Festive Celebrations",
+        "subheading": "Hand-finished silks, royal kurtas, festive kidswear, and contemporary ethnic co-ords crafted for joyful celebrations.",
+        "discount_code": "FESTIVE10",
+        "discount_text": "Flat 10% Extra OFF on all Festive Orders",
+        "button_label": "Explore Festive Atelier",
+        "button_link": "/collections/festive-collection",
+        "enable_whatsapp_cta": true
+      }
+    },
     "why": {
       "type": "why-us",
       "blocks": {
@@ -240,21 +256,6 @@
       "settings": {
         "heading": "Join the Zeyov list",
         "text": "New arrivals and offers, straight to your inbox. No spam."
-      }
-    },
-    "festive_campaign": {
-      "type": "festival-campaign-banner",
-      "settings": {
-        "enable_campaign": true,
-        "theme_style": "luxury_gold",
-        "badge_text": "LIMITED FESTIVE DROP",
-        "heading": "Curated Festive Celebrations",
-        "subheading": "Hand-finished silks, royal kurtas, festive kidswear, and contemporary ethnic co-ords crafted for joyful celebrations.",
-        "discount_code": "FESTIVE10",
-        "discount_text": "Flat 10% Extra OFF on all Festive Orders",
-        "button_label": "Explore Festive Atelier",
-        "button_link": "/collections/festive-collection",
-        "enable_whatsapp_cta": true
       }
     }
   },
