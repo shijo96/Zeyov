@@ -7875,3 +7875,147 @@ p{margin:0 0 1em}
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   MOBILE VS DESKTOP DIFFERENTIATION (REAL MYNTRA / FLIPKART MOBILE ARCHITECTURE)
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* 1. Complete Mobile Grid & Card Sizing */
+  .rail-card {
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 8px !important;
+    border-radius: 10px !important;
+    border: 1px solid #ECECEC !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04) !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .rail-card__media {
+    aspect-ratio: 3 / 4 !important;
+    margin-bottom: 6px !important;
+    border-radius: 8px !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rail-card__img {
+    aspect-ratio: 3 / 4 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: top center !important;
+  }
+
+  .rail-card__info {
+    padding: 2px 2px 4px !important;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .rail-card__title {
+    font-family: var(--font-body), 'Inter', sans-serif !important;
+    font-size: 0.76rem !important;
+    font-weight: 400 !important;
+    color: #535766 !important;
+    line-height: 1.3 !important;
+    margin: 2px 0 4px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .rail-card__title a {
+    color: #535766 !important;
+  }
+
+  .rail-card__price-row {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 4px 6px !important;
+    margin: 2px 0 6px !important;
+    line-height: 1 !important;
+  }
+
+  .rail-card__price {
+    font-size: 0.94rem !important;
+    font-weight: 700 !important;
+    color: #212121 !important;
+    font-family: var(--font-price), 'Inter', sans-serif !important;
+  }
+
+  .rail-card__mrp {
+    font-size: 0.72rem !important;
+    color: #878787 !important;
+    text-decoration: line-through !important;
+  }
+
+  .rail-card__off {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #03a685 !important;
+  }
+
+  .rail-card__quick-add {
+    position: static !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    margin-top: auto !important;
+    background: #FAF8F4 !important;
+    color: #20201F !important;
+    border: 1px solid var(--border) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+  }
+
+  /* 2. Compact Mobile Header */
+  .header__inner {
+    min-height: 56px !important;
+    padding: 0 4px !important;
+  }
+
+  .logo-img {
+    width: 110px !important;
+    height: auto !important;
+  }
+
+  /* 3. High Conversion Promo Slider Mobile Sizing */
+  .promo-slide__media-wrap {
+    aspect-ratio: 2 / 1 !important;
+    min-height: 160px !important;
+  }
+
+  .promo-slide__heading {
+    font-size: 1.15rem !important;
+    line-height: 1.15 !important;
+    margin: 2px 0 6px !important;
+  }
+
+  .promo-slide__badge {
+    font-size: 0.58rem !important;
+    padding: 2px 8px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .promo-slide__btn {
+    padding: 6px 14px !important;
+    font-size: 0.74rem !important;
+  }
+
+  /* 4. Speed & Performance: smooth touch physics */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
