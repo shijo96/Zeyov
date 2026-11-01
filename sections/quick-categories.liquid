@@ -5,15 +5,6 @@
 
 <section class="quick-cats-section" id="QuickCategories-{{ section.id }}" data-section-id="{{ section.id }}">
   <div class="container container--wide">
-    {%- if section.settings.heading != blank -%}
-      <div class="quick-cats__head">
-        <h3 class="quick-cats__title">{{ section.settings.heading }}</h3>
-        {%- if section.settings.view_all_link != blank -%}
-          <a href="{{ section.settings.view_all_link }}" class="quick-cats__view-all">{{ section.settings.view_all_text | default: 'View All' }} &rarr;</a>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-
     <div class="quick-cats__slider" role="region" aria-label="Product Categories">
       <div class="quick-cats__track">
         {%- if section.blocks.size > 0 -%}
@@ -44,7 +35,7 @@
           <!-- Default Preset Luxury Fashion Categories (Women, Kurtas, Dresses, Kidswear, etc.) -->
           <a href="{{ routes.collections_url }}/womens-wear" class="quick-cat-item is-featured">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'fashion-model-dress.jpg' | asset_url }}" alt="Women's Wear" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'fashion-model-dress.jpg' | asset_url }}" alt="Women's Edit" width="180" height="180" loading="eager" class="quick-cat-item__img">
               <span class="quick-cat-item__badge">Trending</span>
             </div>
             <span class="quick-cat-item__label">Women's Edit</span>
@@ -52,21 +43,21 @@
 
           <a href="{{ routes.collections_url }}/womens-maxi-dresses" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Maxi Dresses" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Maxi Dresses" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
             <span class="quick-cat-item__label">Maxi Dresses</span>
           </a>
 
           <a href="{{ routes.collections_url }}/cotton-dresses" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'fashion-model-editorial.jpg' | asset_url }}" alt="Cotton Dresses" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'fashion-model-editorial.jpg' | asset_url }}" alt="Cotton Wear" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
             <span class="quick-cat-item__label">Cotton Wear</span>
           </a>
 
           <a href="{{ routes.collections_url }}/coord-sets" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'collection-runway.jpg' | asset_url }}" alt="Co-ord Sets" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'cat-coords.jpg' | asset_url }}" alt="Co-ords" width="180" height="180" loading="eager" class="quick-cat-item__img">
               <span class="quick-cat-item__badge">Hot</span>
             </div>
             <span class="quick-cat-item__label">Co-ords</span>
@@ -74,7 +65,7 @@
 
           <a href="{{ routes.collections_url }}/festive-collection" class="quick-cat-item is-featured">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'collection-festive.jpg' | asset_url }}" alt="Festive Drop" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'cat-festive.jpg' | asset_url }}" alt="Festive Atelier" width="180" height="180" loading="eager" class="quick-cat-item__img">
               <span class="quick-cat-item__badge quick-cat-item__badge--gold">New</span>
             </div>
             <span class="quick-cat-item__label">Festive Atelier</span>
@@ -82,21 +73,21 @@
 
           <a href="{{ routes.collections_url }}/kidswear" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'collection-kidswear.jpg' | asset_url }}" alt="Kidswear" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'cat-kidswear.jpg' | asset_url }}" alt="Kidswear" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
             <span class="quick-cat-item__label">Kidswear</span>
           </a>
 
           <a href="{{ routes.collections_url }}/baby-rompers" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'collection-baby.jpg' | asset_url }}" alt="Baby Rompers" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'cat-baby.jpg' | asset_url }}" alt="Baby Rompers" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
             <span class="quick-cat-item__label">Baby Rompers</span>
           </a>
 
           <a href="{{ routes.collections_url }}/accessories" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'product-juicer-1.jpg' | asset_url }}" alt="Accessories" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'cat-accessories.jpg' | asset_url }}" alt="Accessories" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
             <span class="quick-cat-item__label">Accessories</span>
           </a>
@@ -104,7 +95,7 @@
           <a href="{{ routes.all_products_collection_url }}" class="quick-cat-item">
             <div class="quick-cat-item__bubble quick-cat-item__bubble--all">
               <div class="quick-cat-item__all-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
               </div>
             </div>
             <span class="quick-cat-item__label">All Pieces</span>
