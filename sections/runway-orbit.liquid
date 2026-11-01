@@ -204,31 +204,44 @@
 
           {%- else -%}
             <!-- Starter Luxury Defaults -->
-            <article class="orbit__item is-active" data-item-idx="0" data-title="Amber Puffer Vest" data-price="Rs. 2,499.00" data-tag="AUTUMN / WINTER 24" data-desc="Engineered with thermal air-loft insulation and water-resistant nylon shell. Minimalist obsidian contrast detailing." data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-img="{{ 'fashion-puffer-jacket.jpg' | asset_url }}">
+            {%- assign d1 = collections.all.products[0] -%}
+            {%- assign d2 = collections.all.products[1] -%}
+            {%- assign d3 = collections.all.products[2] -%}
+            {%- assign d4 = collections.all.products[3] -%}
+            {%- assign u1 = d1.url | default: routes.all_products_collection_url -%}
+            {%- assign u2 = d2.url | default: routes.all_products_collection_url -%}
+            {%- assign u3 = d3.url | default: routes.all_products_collection_url -%}
+            {%- assign u4 = d4.url | default: routes.all_products_collection_url -%}
+
+            <article class="orbit__item is-active" data-item-idx="0" data-title="Amber Puffer Vest" data-price="Rs. 2,499.00" data-tag="AUTUMN / WINTER 24" data-desc="Engineered with thermal air-loft insulation and water-resistant nylon shell. Minimalist obsidian contrast detailing." data-variant-id="{{ d1.selected_or_first_available_variant.id }}" data-product-url="{{ u1 }}" data-img="{{ 'fashion-puffer-jacket.jpg' | asset_url }}">
               <div class="orbit__item-card">
                 <img src="{{ 'fashion-puffer-jacket.jpg' | asset_url }}" alt="Amber Puffer Vest" width="600" height="600" loading="eager" class="orbit__garment-img">
                 <div class="orbit__shadow" aria-hidden="true"></div>
+                <span class="orbit__tap-pill">View Product &rarr;</span>
               </div>
             </article>
 
-            <article class="orbit__item" data-item-idx="1" data-title="Emerald Silk Draped Gown" data-price="Rs. 3,899.00" data-tag="RUNWAY COUTURE" data-desc="Handcrafted from pure Mulberry silk with an asymmetrical Grecian drape and flowing champagne sash. Designed for effortless grace." data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-img="{{ 'fashion-silk-dress.jpg' | asset_url }}">
+            <article class="orbit__item" data-item-idx="1" data-title="Emerald Silk Draped Gown" data-price="Rs. 3,899.00" data-tag="RUNWAY COUTURE" data-desc="Handcrafted from pure Mulberry silk with an asymmetrical Grecian drape and flowing champagne sash. Designed for effortless grace." data-variant-id="{{ d2.selected_or_first_available_variant.id }}" data-product-url="{{ u2 }}" data-img="{{ 'fashion-silk-dress.jpg' | asset_url }}">
               <div class="orbit__item-card">
                 <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Emerald Silk Draped Gown" width="600" height="600" loading="eager" class="orbit__garment-img">
                 <div class="orbit__shadow" aria-hidden="true"></div>
+                <span class="orbit__tap-pill">View Product &rarr;</span>
               </div>
             </article>
 
-            <article class="orbit__item" data-item-idx="2" data-title="Camel Tailored Wool Trench" data-price="Rs. 4,299.00" data-tag="TIMELESS OUTERWEAR" data-desc="Double-breasted virgin wool trench coat with waist cinching belt and custom horn buttons. Structured shoulder silhouette." data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-img="{{ 'fashion-wool-coat.jpg' | asset_url }}">
+            <article class="orbit__item" data-item-idx="2" data-title="Camel Tailored Wool Trench" data-price="Rs. 4,299.00" data-tag="TIMELESS OUTERWEAR" data-desc="Double-breasted virgin wool trench coat with waist cinching belt and custom horn buttons. Structured shoulder silhouette." data-variant-id="{{ d3.selected_or_first_available_variant.id }}" data-product-url="{{ u3 }}" data-img="{{ 'fashion-wool-coat.jpg' | asset_url }}">
               <div class="orbit__item-card">
                 <img src="{{ 'fashion-wool-coat.jpg' | asset_url }}" alt="Camel Tailored Wool Trench" width="600" height="600" loading="lazy" class="orbit__garment-img">
                 <div class="orbit__shadow" aria-hidden="true"></div>
+                <span class="orbit__tap-pill">View Product &rarr;</span>
               </div>
             </article>
 
-            <article class="orbit__item" data-item-idx="3" data-title="Cream Sherpa Half-Zip" data-price="Rs. 2,899.00" data-tag="COMFORT LUXURY" data-desc="Ultra-soft bonded sherpa fleece with reinforced navy twill chest pocket and brass zipper. Relaxed ergonomic contemporary cut." data-variant-id="" data-product-url="{{ routes.all_products_collection_url }}" data-img="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}">
+            <article class="orbit__item" data-item-idx="3" data-title="Cream Sherpa Half-Zip" data-price="Rs. 2,899.00" data-tag="COMFORT LUXURY" data-desc="Ultra-soft bonded sherpa fleece with reinforced navy twill chest pocket and brass zipper. Relaxed ergonomic contemporary cut." data-variant-id="{{ d4.selected_or_first_available_variant.id }}" data-product-url="{{ u4 }}" data-img="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}">
               <div class="orbit__item-card">
                 <img src="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}" alt="Cream Sherpa Half-Zip" width="600" height="600" loading="lazy" class="orbit__garment-img">
                 <div class="orbit__shadow" aria-hidden="true"></div>
+                <span class="orbit__tap-pill">View Product &rarr;</span>
               </div>
             </article>
           {%- endif -%}
@@ -258,12 +271,12 @@
           </div>
 
           <div class="orbit__actions-row">
-            <button class="btn btn--gold orbit__quick-btn" type="button" data-open-orbit-modal>
-              Quick View &amp; Select Size &rarr;
-            </button>
-            <a href="{{ routes.all_products_collection_url }}" class="orbit__pdp-link" data-orbit-pdp-link>
-              View Product &rarr;
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn--gold orbit__quick-btn" data-orbit-pdp-btn>
+              Shop Look &bull; View Product &rarr;
             </a>
+            <button class="orbit__pdp-link" type="button" data-open-orbit-modal>
+              Quick Details
+            </button>
           </div>
         </div>
       </div>
