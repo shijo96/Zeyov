@@ -956,6 +956,8 @@
 
         var pdpLink = $('[data-orbit-pdp-link]', orbitSection);
         if (pdpLink && url) pdpLink.setAttribute('href', url);
+        var pdpBtn = $('[data-orbit-pdp-btn]', orbitSection);
+        if (pdpBtn && url) pdpBtn.setAttribute('href', url);
 
         // Animate rolling serif typography (Video 1 signature)
         if (watermark) {
@@ -968,16 +970,47 @@
       }
     }
 
-    if (prevBtn) prevBtn.addEventListener('click', function () { updateOrbit(activeIdx - 1); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { updateOrbit(activeIdx + 1); });
+    // Auto-advance timer (Every 4.5 seconds automatic animation)
+    var orbitTimer = null;
+    function startOrbitTimer() {
+      if (orbitTimer) clearInterval(orbitTimer);
+      orbitTimer = setInterval(function () {
+        updateOrbit(activeIdx + 1);
+      }, 4500);
+    }
+    function resetOrbitTimer() {
+      startOrbitTimer();
+    }
+    startOrbitTimer();
+
+    // Pause on hover
+    orbitSection.addEventListener('mouseenter', function () {
+      if (orbitTimer) clearInterval(orbitTimer);
+    });
+    orbitSection.addEventListener('mouseleave', function () {
+      startOrbitTimer();
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { updateOrbit(activeIdx - 1); resetOrbitTimer(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { updateOrbit(activeIdx + 1); resetOrbitTimer(); });
 
     trackItems.forEach(function (t, i) {
-      t.addEventListener('click', function () { updateOrbit(i); });
+      t.addEventListener('click', function () { updateOrbit(i); resetOrbitTimer(); });
     });
 
     orbitItems.forEach(function (item, i) {
-      item.addEventListener('click', function () {
-        if (i !== activeIdx) updateOrbit(i);
+      item.addEventListener('click', function (e) {
+        if (i !== activeIdx) {
+          e.preventDefault();
+          updateOrbit(i);
+          resetOrbitTimer();
+        } else {
+          // DIRECT NAVIGATION TO PRODUCT DETAILS PAGE!
+          var url = item.getAttribute('data-product-url');
+          if (url && url !== '#') {
+            window.location.href = url;
+          }
+        }
       });
     });
 
@@ -988,6 +1021,7 @@
       var touchEndX = 0;
       carouselEl.addEventListener('touchstart', function (e) {
         touchStartX = e.changedTouches[0].screenX;
+        if (orbitTimer) clearInterval(orbitTimer);
       }, { passive: true });
       carouselEl.addEventListener('touchend', function (e) {
         touchEndX = e.changedTouches[0].screenX;
@@ -999,6 +1033,7 @@
             updateOrbit(activeIdx - 1);
           }
         }
+        startOrbitTimer();
       }, { passive: true });
     }
 
