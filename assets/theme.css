@@ -3786,6 +3786,41 @@ p{margin:0 0 1em}
   filter: blur(4px);
 }
 
+.orbit__tap-pill {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(24, 23, 22, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #F4EBD9;
+  border: 1px solid rgba(212, 175, 55, 0.65);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.orbit__item.is-active .orbit__tap-pill {
+  opacity: 1;
+}
+
+.orbit__item.is-active:hover .orbit__tap-pill {
+  background: var(--gold-dark);
+  color: #FFFFFF;
+  border-color: #FFFFFF;
+  transform: translateX(-50%) scale(1.05);
+}
+
 /* Controller & Navigation */
 .orbit__controller {
   margin-top: 24px;
