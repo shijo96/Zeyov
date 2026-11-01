@@ -1,0 +1,187 @@
+{%- comment -%}
+  ZEYOV Circular Quick Categories (Myntra / Meesho Style)
+  Mobile-first horizontal scrollable circle navigation + Desktop luxury row
+{%- endcomment -%}
+
+<section class="quick-cats-section" id="QuickCategories-{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="container container--wide">
+    {%- if section.settings.heading != blank -%}
+      <div class="quick-cats__head">
+        <h3 class="quick-cats__title">{{ section.settings.heading }}</h3>
+        {%- if section.settings.view_all_link != blank -%}
+          <a href="{{ section.settings.view_all_link }}" class="quick-cats__view-all">{{ section.settings.view_all_text | default: 'View All' }} &rarr;</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="quick-cats__slider" role="region" aria-label="Product Categories">
+      <div class="quick-cats__track">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- assign col = block.settings.collection -%}
+            {%- assign link = block.settings.custom_link | default: col.url | default: routes.all_products_collection_url -%}
+            {%- assign title = block.settings.title | default: col.title | default: 'Category' -%}
+            {%- assign img = block.settings.image | default: col.featured_image -%}
+
+            <a href="{{ link }}" class="quick-cat-item{% if block.settings.is_featured %} is-featured{% endif %}" {{ block.shopify_attributes }}>
+              <div class="quick-cat-item__bubble">
+                {%- if img != blank -%}
+                  {{ img | image_url: width: 220, height: 220, crop: 'center' | image_tag: loading: 'eager', widths: '100, 160, 220', sizes: '80px', alt: title, class: 'quick-cat-item__img' }}
+                {%- else -%}
+                  <div class="quick-cat-item__fallback">
+                    <span class="quick-cat-item__fallback-icon">{% render 'icon', name: block.settings.icon | default: 'sparkles' %}</span>
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.badge != blank -%}
+                  <span class="quick-cat-item__badge">{{ block.settings.badge }}</span>
+                {%- endif -%}
+              </div>
+              <span class="quick-cat-item__label">{{ title }}</span>
+            </a>
+          {%- endfor -%}
+        {%- else -%}
+          <!-- Default Preset Luxury Fashion Categories (Women, Kurtas, Dresses, Kidswear, etc.) -->
+          <a href="{{ routes.collections_url }}/womens-wear" class="quick-cat-item is-featured">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'fashion-model-dress.jpg' | asset_url }}" alt="Women's Wear" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <span class="quick-cat-item__badge">Trending</span>
+            </div>
+            <span class="quick-cat-item__label">Women's Edit</span>
+          </a>
+
+          <a href="{{ routes.collections_url }}/womens-maxi-dresses" class="quick-cat-item">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Maxi Dresses" width="160" height="160" loading="eager" class="quick-cat-item__img">
+            </div>
+            <span class="quick-cat-item__label">Maxi Dresses</span>
+          </a>
+
+          <a href="{{ routes.collections_url }}/cotton-dresses" class="quick-cat-item">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'fashion-model-editorial.jpg' | asset_url }}" alt="Cotton Dresses" width="160" height="160" loading="eager" class="quick-cat-item__img">
+            </div>
+            <span class="quick-cat-item__label">Cotton Wear</span>
+          </a>
+
+          <a href="{{ routes.collections_url }}/coord-sets" class="quick-cat-item">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'collection-runway.jpg' | asset_url }}" alt="Co-ord Sets" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <span class="quick-cat-item__badge">Hot</span>
+            </div>
+            <span class="quick-cat-item__label">Co-ords</span>
+          </a>
+
+          <a href="{{ routes.collections_url }}/festive-collection" class="quick-cat-item is-featured">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'collection-festive.jpg' | asset_url }}" alt="Festive Drop" width="160" height="160" loading="eager" class="quick-cat-item__img">
+              <span class="quick-cat-item__badge quick-cat-item__badge--gold">New</span>
+            </div>
+            <span class="quick-cat-item__label">Festive Atelier</span>
+          </a>
+
+          <a href="{{ routes.collections_url }}/kidswear" class="quick-cat-item">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'collection-kidswear.jpg' | asset_url }}" alt="Kidswear" width="160" height="160" loading="eager" class="quick-cat-item__img">
+            </div>
+            <span class="quick-cat-item__label">Kidswear</span>
+          </a>
+
+          <a href="{{ routes.collections_url }}/baby-rompers" class="quick-cat-item">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'collection-baby.jpg' | asset_url }}" alt="Baby Rompers" width="160" height="160" loading="eager" class="quick-cat-item__img">
+            </div>
+            <span class="quick-cat-item__label">Baby Rompers</span>
+          </a>
+
+          <a href="{{ routes.collections_url }}/accessories" class="quick-cat-item">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'product-juicer-1.jpg' | asset_url }}" alt="Accessories" width="160" height="160" loading="eager" class="quick-cat-item__img">
+            </div>
+            <span class="quick-cat-item__label">Accessories</span>
+          </a>
+
+          <a href="{{ routes.all_products_collection_url }}" class="quick-cat-item">
+            <div class="quick-cat-item__bubble quick-cat-item__bubble--all">
+              <div class="quick-cat-item__all-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </div>
+            </div>
+            <span class="quick-cat-item__label">All Pieces</span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Circular Quick Categories",
+  "tag": "section",
+  "class": "section-quick-categories",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading (Optional)",
+      "default": "Shop by Department"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View All Link"
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View All Text",
+      "default": "Explore All"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category Bubble",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Display Title (Overrides collection title)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom Circle Image (Overrides collection image)"
+        },
+        {
+          "type": "url",
+          "id": "custom_link",
+          "label": "Custom Link (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge Text (e.g. New, Hot, 30% Off)"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_featured",
+          "label": "Highlight with Gold Story Ring",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Circular Quick Categories",
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}
