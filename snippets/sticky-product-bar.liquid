@@ -1,0 +1,36 @@
+{%- comment -%}
+  ZEYOV Sticky Mobile Product Bar (Thumb-Zone Optimization)
+  Appears at the bottom of the screen on mobile PDP when user scrolls past the main buy button.
+{%- endcomment -%}
+
+{%- if template.name == 'product' -%}
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {%- assign featured = current_variant.featured_media | default: product.featured_media -%}
+
+  <div class="sticky-pdp-bar" id="StickyPdpBar" aria-hidden="true" data-sticky-pdp-bar>
+    <div class="sticky-pdp-bar__inner">
+      <div class="sticky-pdp-bar__product">
+        {%- if featured != blank -%}
+          {{ featured | image_url: width: 100, height: 100, crop: 'center' | image_tag: loading: 'lazy', alt: product.title, class: 'sticky-pdp-bar__thumb' }}
+        {%- endif -%}
+        <div class="sticky-pdp-bar__meta">
+          <span class="sticky-pdp-bar__title">{{ product.title | truncate: 28 }}</span>
+          <span class="sticky-pdp-bar__price" data-sticky-price>{{ current_variant.price | money }}</span>
+        </div>
+      </div>
+
+      <div class="sticky-pdp-bar__action">
+        {%- if product.available -%}
+          <button type="button" class="btn btn--gold sticky-pdp-bar__btn" data-sticky-trigger-add>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+            <span>Add to Bag</span>
+          </button>
+        {%- else -%}
+          <button type="button" class="btn btn--disabled sticky-pdp-bar__btn" disabled>
+            <span>Sold out</span>
+          </button>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
