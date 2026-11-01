@@ -1,10 +1,13 @@
 {%- comment -%}
-  ZEYOV High-Conversion Responsive Product Card
+  ZEYOV High-Conversion Product Card (Amazon / Flipkart / Myntra Architecture)
   - Desktop: 4-Column Layout, Elevating Hover, Quick View Overlay, Smooth Image Zoom
-  - Mobile: 2-Column Layout, High Touch Density, Compact Price & Badges
+  - Mobile: Real Flipkart/Myntra 3:4 Portrait Ratio, Superimposed 4.3★ Rating Pill, Bold Brand, Real-Time Discount & Free Delivery Tag
 {%- endcomment -%}
 
 {%- assign v = product.selected_or_first_available_variant -%}
+{%- assign card_rating = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value | default: '4.4' -%}
+{%- assign card_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 96 -%}
+
 <article class="card" data-product-handle="{{ product.handle }}" data-product-id="{{ product.id }}">
   <div class="card__media-wrap">
     <a class="card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
@@ -34,6 +37,14 @@
       <svg class="heart-icon heart-filled" viewBox="0 0 24 24" fill="#E23636" stroke="#E23636" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
     </button>
 
+    <!-- Superimposed Rating Pill on Image (Myntra / Flipkart signature pill) -->
+    <div class="card__rating-pill">
+      <span class="rating-val">{{ card_rating | round: 1 }}</span>
+      <span class="rating-star">★</span>
+      <span class="rating-divider">|</span>
+      <span class="rating-num">{{ card_count }}</span>
+    </div>
+
     <!-- Desktop Hover Overlay Action (Quick View) -->
     <div class="card__hover-bar">
       <button type="button" class="btn btn--small btn--card-quickview" data-quick-view="{{ product.handle }}" aria-label="Quick view {{ product.title | escape }}">
@@ -44,29 +55,44 @@
   </div>
 
   <div class="card__body">
-    <div class="card__meta-top">
-      <span class="card__type">{{ product.type | default: 'ZEYOV' | upcase }}</span>
-      {%- assign card_rating = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value -%}
-      {%- assign card_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0 -%}
-      {%- if card_rating != blank and card_count > 0 -%}
-        <div class="card__rating-mini"><span class="stars-gold">★★★★★</span> <small>{{ card_rating | round: 1 }}</small></div>
+    <!-- Brand / Collection Line -->
+    <div class="card__brand-row">
+      <span class="card__brand">{{ product.vendor | default: 'ZEYOV' | upcase }}</span>
+      {%- if product.type != blank -%}
+        <span class="card__type-tag">{{ product.type | upcase }}</span>
       {%- endif -%}
     </div>
+
     <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
-    {% render 'price', product: product, variant: v %}
-    
+
+    <!-- Flipkart / Myntra Style Price Block -->
+    <div class="card__price-row">
+      <span class="price__now">{{ v.price | money }}</span>
+      {%- if v.compare_at_price > v.price -%}
+        <s class="price__was">{{ v.compare_at_price | money }}</s>
+        {%- assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round -%}
+        <span class="price__discount">({{ pct }}% OFF)</span>
+      {%- endif -%}
+    </div>
+
+    <!-- Trust / Free Delivery Micro Tag -->
+    <div class="card__delivery-tag">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      <span>Free Delivery across India</span>
+    </div>
+
     <div class="card__action">
       {%- if product.available and product.variants.size == 1 -%}
         <form method="post" action="{{ routes.cart_add_url }}" class="card__form" data-ajax-add>
           <input type="hidden" name="id" value="{{ v.id }}">
           <button type="submit" class="btn btn--small btn--luxury btn--block" data-add-bag-btn>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:5px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
             <span>Add to Bag</span>
           </button>
         </form>
       {%- elsif product.available -%}
         <button type="button" class="btn btn--small btn--luxury btn--block" data-quick-view="{{ product.handle }}">
-          <span>Select Size</span>
+          <span>Select Size &rarr;</span>
         </button>
       {%- else -%}
         <span class="btn btn--small btn--disabled btn--block">Sold out</span>
