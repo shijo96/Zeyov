@@ -6977,23 +6977,23 @@ p{margin:0 0 1em}
    HIGH-CONVERSION E-COMMERCE UX/UI ARCHITECTURE (ANTIGRAVITY STANDARDS)
    ========================================================================== */
 
-/* 1. CIRCULAR QUICK CATEGORIES (Myntra / Meesho Style) */
+/* 1. CIRCULAR QUICK CATEGORIES (Luxury Atelier / Mobile-First Carousel) */
 .quick-cats-section {
-  padding: 16px 0 12px;
+  padding: 12px 0 10px;
   background: #FFFFFF;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(229, 222, 213, 0.7);
 }
 
 .quick-cats__head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   padding: 0 4px;
 }
 
 .quick-cats__title {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text);
@@ -7030,12 +7030,17 @@ p{margin:0 0 1em}
   gap: 16px;
   align-items: flex-start;
   min-width: min-content;
+  padding: 4px 16px 8px;
 }
 
 @media (min-width: 900px) {
+  .quick-cats-section {
+    padding: 16px 0 14px;
+  }
   .quick-cats__track {
     justify-content: center;
-    gap: 28px;
+    gap: 32px;
+    padding: 6px 20px 10px;
   }
 }
 
@@ -7044,14 +7049,16 @@ p{margin:0 0 1em}
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  width: 76px;
-  flex: none;
+  width: 72px;
+  flex: 0 0 72px;
+  text-align: center;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (min-width: 900px) {
   .quick-cat-item {
-    width: 92px;
+    width: 88px;
+    flex: 0 0 88px;
   }
 }
 
@@ -7065,31 +7072,26 @@ p{margin:0 0 1em}
   height: 66px;
   border-radius: 50%;
   padding: 2.5px;
-  background: linear-gradient(135deg, rgba(184, 155, 101, 0.45) 0%, rgba(229, 222, 213, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(184, 155, 101, 0.4) 0%, rgba(229, 222, 213, 0.85) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(24, 23, 22, 0.06);
+  box-shadow: 0 4px 12px rgba(24, 23, 22, 0.05);
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 @media (min-width: 900px) {
   .quick-cat-item__bubble {
     width: 78px;
     height: 78px;
+    padding: 3px;
   }
 }
 
 .quick-cat-item.is-featured .quick-cat-item__bubble {
   background: linear-gradient(135deg, #D4AF37 0%, #B89B65 50%, #8F7241 100%);
-  box-shadow: 0 4px 16px rgba(184, 155, 101, 0.35);
-  animation: storyRingPulse 2.5s infinite;
-}
-
-@keyframes storyRingPulse {
-  0% { box-shadow: 0 0 0 0 rgba(184, 155, 101, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(184, 155, 101, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(184, 155, 101, 0); }
+  box-shadow: 0 4px 16px rgba(184, 155, 101, 0.32);
 }
 
 .quick-cat-item__img {
@@ -7097,8 +7099,10 @@ p{margin:0 0 1em}
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  background: #FFFFFF;
+  object-position: center 20%;
+  background: #FAF8F5;
   border: 2px solid #FFFFFF;
+  display: block;
 }
 
 .quick-cat-item__fallback {
@@ -7118,7 +7122,8 @@ p{margin:0 0 1em}
 }
 
 .quick-cat-item__bubble--all {
-  background: linear-gradient(135deg, #33251F 0%, #20201F 100%);
+  background: linear-gradient(135deg, #242220 0%, #171615 100%) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .quick-cat-item__all-icon {
@@ -7128,47 +7133,54 @@ p{margin:0 0 1em}
   border: 2px solid #FFFFFF;
   display: grid;
   place-items: center;
-  color: #FAF8F4;
+  color: #F5E8D0;
+  background: #242220;
 }
 
 .quick-cat-item__badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #E23636;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #B3261E;
   color: #FFFFFF;
-  font-size: 0.58rem;
+  font-size: 0.54rem;
   font-weight: 700;
-  padding: 1px 6px;
+  padding: 1.5px 7px;
   border-radius: 999px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  box-shadow: 0 2px 6px rgba(226, 54, 54, 0.3);
-  z-index: 2;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  border: 1.5px solid #FFFFFF;
+  z-index: 3;
+  line-height: 1.2;
 }
 
 .quick-cat-item__badge--gold {
-  background: #B89B65;
-  box-shadow: 0 2px 6px rgba(184, 155, 101, 0.3);
+  background: linear-gradient(135deg, #C9A84C 0%, #9E7D2D 100%);
+  box-shadow: 0 2px 6px rgba(184, 155, 101, 0.35);
 }
 
 .quick-cat-item__label {
-  margin-top: 6px;
-  font-size: 0.74rem;
+  margin-top: 8px;
+  font-size: 0.73rem;
   font-weight: 600;
-  color: var(--text);
+  color: #1F1D1A;
   text-align: center;
-  line-height: 1.25;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  line-height: 1.2;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
   max-width: 100%;
+  display: block;
+  letter-spacing: 0.01em;
 }
 
 @media (min-width: 900px) {
   .quick-cat-item__label {
     font-size: 0.8rem;
+    letter-spacing: 0.02em;
   }
 }
 
