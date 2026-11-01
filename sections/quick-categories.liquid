@@ -28,8 +28,9 @@
                 {%- if img != blank -%}
                   {{ img | image_url: width: 220, height: 220, crop: 'center' | image_tag: loading: 'eager', widths: '100, 160, 220', sizes: '80px', alt: title, class: 'quick-cat-item__img' }}
                 {%- else -%}
+                  {%- assign cat_icon = block.settings.icon | default: 'sparkles' -%}
                   <div class="quick-cat-item__fallback">
-                    <span class="quick-cat-item__fallback-icon">{% render 'icon', name: block.settings.icon | default: 'sparkles' %}</span>
+                    <span class="quick-cat-item__fallback-icon">{% render 'icon', name: cat_icon %}</span>
                   </div>
                 {%- endif -%}
                 {%- if block.settings.badge != blank -%}
