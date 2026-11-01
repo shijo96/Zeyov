@@ -26,50 +26,6 @@
         "tag_4": "COMFORT LUXURY"
       }
     },
-    "trust": {
-      "type": "trust-bar",
-      "blocks": {
-        "t1": {
-          "type": "item",
-          "settings": {
-            "icon": "truck",
-            "title": "Delivery across India",
-            "text": "Tracked shipping"
-          }
-        },
-        "t2": {
-          "type": "item",
-          "settings": {
-            "icon": "lock",
-            "title": "Secure checkout",
-            "text": "Encrypted payments"
-          }
-        },
-        "t3": {
-          "type": "item",
-          "settings": {
-            "icon": "return",
-            "title": "Easy returns",
-            "text": "7-day return window"
-          }
-        },
-        "t4": {
-          "type": "item",
-          "settings": {
-            "icon": "headset",
-            "title": "Real support",
-            "text": "WhatsApp & email"
-          }
-        }
-      },
-      "block_order": [
-        "t1",
-        "t2",
-        "t3",
-        "t4"
-      ],
-      "settings": {}
-    },
     "fashion_showcase": {
       "type": "fashion-showcase",
       "settings": {
@@ -261,7 +217,6 @@
   },
   "order": [
     "runway_orbit",
-    "trust",
     "fashion_showcase",
     "fashion_rail",
     "fashion_reveal",
