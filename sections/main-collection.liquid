@@ -49,35 +49,38 @@
         <span class="toolbar__count-text">Piece{% if collection.products_count != 1 %}s{% endif %} available</span>
       </div>
 
-      <div class="toolbar__sort-wrap">
-        {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-        <label for="CollectionSort" class="sort-label">Sort By</label>
-        <div class="sort-select-box">
-          <select id="CollectionSort" class="sort-select" onchange="location.href='?sort_by='+this.value">
-            <option value="manual" {% if sort_by == 'manual' %}selected{% endif %}>Featured Runway</option>
-            <option value="best-selling" {% if sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
-            <option value="price-ascending" {% if sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
-            <option value="price-descending" {% if sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
-            <option value="created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Newest Additions</option>
-          </select>
-          <span class="sort-chevron" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-          </span>
+      <div class="toolbar__actions-wrap">
+        {%- if collection.filters.size > 0 or collection.all_tags.size > 0 -%}
+          <button type="button" class="btn btn--small btn--outline mobile-filter-btn" data-open-filters aria-label="Open Filters">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+            <span>Filters</span>
+            {%- if total_active_filters > 0 -%}
+              <span class="active-filter-badge">{{ total_active_filters }}</span>
+            {%- endif -%}
+          </button>
+        {%- endif -%}
+
+        <div class="toolbar__sort-wrap">
+          {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+          <label for="CollectionSort" class="sort-label">Sort By</label>
+          <div class="sort-select-box">
+            <select id="CollectionSort" class="sort-select" onchange="location.href='?sort_by='+this.value">
+              <option value="manual" {% if sort_by == 'manual' %}selected{% endif %}>Featured Runway</option>
+              <option value="best-selling" {% if sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
+              <option value="price-ascending" {% if sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
+              <option value="price-descending" {% if sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
+              <option value="created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Newest Additions</option>
+            </select>
+            <span class="sort-chevron" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Online Store 2.0 Facets & Filtering Form -->
-    {%- assign total_active_filters = 0 -%}
-    {%- for filter in collection.filters -%}
-      {%- assign total_active_filters = total_active_filters | plus: filter.active_values.size -%}
-      {%- if filter.type == 'price_range' -%}
-        {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
-          {%- assign total_active_filters = total_active_filters | plus: 1 -%}
-        {%- endif -%}
-      {%- endif -%}
-    {%- endfor -%}
-
+    <!-- Online Store 2.0 Facets & Filtering Form (Bottom Sheet on Mobile) -->
+    <div class="filters-backdrop" data-close-filters></div>
     {%- if collection.filters.size > 0 -%}
       <div class="collection-facets-wrap" id="CollectionFacets">
         <div class="facets__header">
@@ -88,8 +91,11 @@
           <div class="facets__summary-bar">
             <span>Showing {{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}</span>
             {%- if total_active_filters > 0 -%}
-              <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="active-filters__clear-all">Reset All Filters ({{ total_active_filters }})</a>
+              <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="active-filters__clear-all">Reset All ({{ total_active_filters }})</a>
             {%- endif -%}
+            <button type="button" class="icon-btn facets__close-btn" data-close-filters aria-label="Close filters">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
           </div>
         </div>
 
