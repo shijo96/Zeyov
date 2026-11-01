@@ -130,6 +130,7 @@
                 <div class="orbit__item-card">
                   <img src="{{ img_src }}" alt="{{ t | escape }}" width="600" height="600" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" class="orbit__garment-img">
                   <div class="orbit__shadow" aria-hidden="true"></div>
+                  <span class="orbit__tap-pill">View Product &rarr;</span>
                 </div>
               </article>
             {%- endfor -%}
@@ -167,6 +168,7 @@
                   <div class="orbit__item-card">
                     <img src="{{ img_src }}" alt="{{ t | escape }}" width="600" height="600" loading="{% if shown_idx == 0 %}eager{% else %}lazy{% endif %}" class="orbit__garment-img">
                     <div class="orbit__shadow" aria-hidden="true"></div>
+                    <span class="orbit__tap-pill">View Product &rarr;</span>
                   </div>
                 </article>
                 {%- assign shown_idx = shown_idx | plus: 1 -%}
@@ -198,6 +200,7 @@
                 <div class="orbit__item-card">
                   <img src="{{ img_src }}" alt="{{ t | escape }}" width="600" height="600" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" class="orbit__garment-img">
                   <div class="orbit__shadow" aria-hidden="true"></div>
+                  <span class="orbit__tap-pill">View Product &rarr;</span>
                 </div>
               </article>
             {%- endfor -%}
