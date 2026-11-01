@@ -643,14 +643,16 @@ p{margin:0 0 1em}
 }
 
 /* ==========================================================================
-   UNIVERSAL MOBILE 2-CARD GRID SYSTEM (< 768px)
-   Optimized 2 cards per row on mobile view
+   REAL MYNTRA / FLIPKART / AMAZON MOBILE 2-CARD GRID ARCHITECTURE (< 768px)
    ========================================================================== */
 @media (max-width: 767px) {
   .section--accessories .container,
   .main-collection-section .container,
-  .recommendations-section .container {
-    padding: 0 14px;
+  .recommendations-section .container,
+  .fashion-showcase-section .container,
+  .container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
 
   .grid--products,
@@ -658,130 +660,352 @@ p{margin:0 0 1em}
   .grid--fashion-catalog {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px !important;
+    gap: 8px !important;
     width: 100% !important;
     max-width: 100% !important;
+    margin: 0 !important;
   }
 
   .grid--products > .card,
   .grid--compact-accessories > .card,
-  .grid--fashion-catalog > .card {
+  .grid--fashion-catalog > .card,
+  .card {
     flex: none !important;
     max-width: 100% !important;
     min-width: 0 !important;
     width: 100% !important;
-    border-radius: 14px;
-    box-shadow: 0 3px 12px rgba(24, 23, 22, 0.04);
+    border-radius: 10px !important;
+    border: 1px solid #ECECEC !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04) !important;
+    overflow: hidden;
+    position: relative;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
+  /* Myntra / Flipkart 3:4 portrait apparel media */
   .card__media-wrap {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 3 / 4 !important;
+    position: relative;
+    overflow: hidden;
+    background: #F8F6F2;
+    border-radius: 9px 9px 0 0;
+    border-bottom: 1px solid #F0EFEA;
   }
 
-  .grid--compact-accessories .card__media-wrap {
-    padding: 8px;
+  .card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
   }
 
-  .grid--compact-accessories .card__media-wrap img {
-    padding: 4px;
+  /* Top Left Discount Badge (Flipkart/Myntra bold pill) */
+  .card__badge--sale {
+    top: 6px !important;
+    left: 6px !important;
+    font-size: 0.62rem !important;
+    font-weight: 800 !important;
+    padding: 2px 7px !important;
+    border-radius: 4px !important;
+    background: #E23636 !important;
+    color: #FFFFFF !important;
+    letter-spacing: 0.02em !important;
+    box-shadow: 0 2px 6px rgba(226, 54, 54, 0.25) !important;
   }
 
-  .card__badge,
-  .grid--compact-accessories .card__badge {
-    top: 8px;
-    left: 8px;
-    font-size: 0.58rem;
-    padding: 2px 7px;
-    letter-spacing: 0.04em;
-  }
-
+  /* Top Right Touch Wishlist Heart */
   .card__wishlist-btn {
-    top: 8px;
-    right: 8px;
-    width: 28px;
-    height: 28px;
+    top: 6px !important;
+    right: 6px !important;
+    width: 30px !important;
+    height: 30px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(4px) !important;
+    border: 1px solid rgba(220, 220, 220, 0.7) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }
 
   .card__wishlist-btn .heart-icon {
-    width: 14px;
-    height: 14px;
+    width: 15px !important;
+    height: 15px !important;
   }
 
-  .card__body,
-  .grid--compact-accessories .card__body {
-    padding: 10px 10px 12px;
+  /* Superimposed 4.3★ Rating Pill on bottom-left of image (Myntra/Flipkart signature) */
+  .card__rating-pill {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(200, 200, 200, 0.5);
+    border-radius: 999px;
+    padding: 2px 6px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #282c3f;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    line-height: 1;
+  }
+
+  .rating-star {
+    color: #03a685;
+    font-size: 0.65rem;
+  }
+
+  .rating-divider {
+    color: #d4d5d9;
+    font-size: 0.6rem;
+  }
+
+  .rating-num {
+    color: #535766;
+    font-size: 0.6rem;
+    font-weight: 500;
+  }
+
+  /* Card Body - Flipkart / Myntra High-Density Sizing */
+  .card__body {
+    padding: 8px 8px 10px !important;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2px;
+  }
+
+  .card__brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 4px;
-  }
-
-  .card__meta-top {
     margin-bottom: 2px;
   }
 
-  .card__type,
-  .grid--compact-accessories .card__type {
-    font-size: 0.58rem;
-    letter-spacing: 0.1em;
-  }
-
-  .card__rating-mini {
-    font-size: 0.6rem;
-  }
-
-  .card__title,
-  .grid--compact-accessories .card__title {
-    font-size: 0.82rem;
-    line-height: 1.28;
-    margin: 0 0 4px;
-    min-height: 2.6em;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .card__body .price,
-  .grid--compact-accessories .price {
-    font-size: 0.9rem;
-    margin: 2px 0 8px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 3px 6px;
-  }
-
-  .card__body .price__now {
-    font-size: 0.9rem;
-  }
-
-  .card__body .price__was {
+  .card__brand {
     font-size: 0.72rem;
+    font-weight: 700;
+    color: #181716;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
   }
 
-  .card__body .badge--sale {
-    font-size: 0.6rem;
-    padding: 1px 5px;
+  .card__type-tag {
+    font-size: 0.58rem;
+    color: #878787;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .card__title {
+    font-family: var(--font-body), 'Inter', sans-serif !important;
+    font-size: 0.76rem !important;
+    font-weight: 400 !important;
+    color: #535766 !important;
+    line-height: 1.3 !important;
+    margin: 0 0 3px !important;
+    min-height: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .card__title a {
+    color: #535766 !important;
+  }
+
+  /* Real Flipkart/Myntra Price Row */
+  .card__price-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+    margin: 2px 0 4px;
+    line-height: 1;
+  }
+
+  .card__price-row .price__now {
+    font-size: 0.94rem !important;
+    font-weight: 700 !important;
+    color: #212121 !important;
+    font-family: var(--font-price), 'Inter', sans-serif !important;
+  }
+
+  .card__price-row .price__was {
+    font-size: 0.72rem !important;
+    color: #878787 !important;
+    text-decoration: line-through !important;
+    font-weight: 400 !important;
+  }
+
+  .card__price-row .price__discount {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #03a685 !important;
+  }
+
+  /* Free Delivery Micro Tag */
+  .card__delivery-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: #03a685;
+    margin-bottom: 6px;
   }
 
   .card__action {
+    margin-top: auto;
+    width: 100%;
     padding-top: 2px;
   }
 
-  .card__action .btn,
-  .grid--compact-accessories .card__action .btn,
-  .btn--luxury {
-    height: 34px;
-    font-size: 0.72rem;
-    padding: 0 8px;
-    letter-spacing: 0.03em;
-    border-radius: 999px;
+  .card__action .btn {
+    height: 32px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    padding: 0 8px !important;
+    border-radius: 6px !important;
+    background: #FAF8F4 !important;
+    border: 1px solid var(--border) !important;
+    color: #20201F !important;
   }
 
-  .card__action .btn svg {
-    width: 13px;
-    height: 13px;
-    margin-right: 4px;
-    flex-shrink: 0;
+  .card__action .btn:active {
+    background: #20201F !important;
+    color: #FFFFFF !important;
   }
+
+  /* Fashion Showcase Mobile Overhaul: Hide model hero, show direct 2-col product feed! */
+  .showcase__model-col {
+    display: none !important;
+  }
+
+  .showcase__main-grid {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .showcase__rail-track {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    overflow-x: visible !important;
+  }
+
+  .showcase__rail-nav {
+    display: none !important;
+  }
+
+  .showcase__topbar {
+    padding-bottom: 8px;
+  }
+
+  .showcase__heading {
+    font-size: 1.35rem !important;
+  }
+
+  .showcase__eyebrow {
+    font-size: 0.64rem !important;
+  }
+}
+
+/* ==========================================================================
+   DESKTOP PRODUCT CARD ARCHITECTURE (>= 768px)
+   ========================================================================== */
+@media (min-width: 768px) {
+  .card__brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .card__brand {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--gold-dark);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .card__type-tag {
+    font-size: 0.64rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .card__price-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin: 4px 0 10px;
+  }
+
+  .card__price-row .price__now {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .card__price-row .price__was {
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+
+  .card__price-row .price__discount {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--sale);
+  }
+
+  .card__delivery-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: var(--success);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .card__rating-pill {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(220, 220, 220, 0.8);
+    border-radius: 999px;
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #282c3f;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .rating-star { color: #E29631; }
+  .rating-divider { color: #d4d5d9; }
+  .rating-num { color: #77716B; font-weight: 500; font-size: 0.68rem; }
+}
 
   .section--accessories {
     padding: 38px 0 44px;
