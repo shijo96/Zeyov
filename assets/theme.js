@@ -2033,6 +2033,295 @@
     }
   }
 
+  /* ==========================================================================
+     HIGH-CONVERSION UI SCRIPTS (ANTIGRAVITY STANDARDS)
+     ========================================================================== */
+
+  /* 1. Dynamic Promo Slider */
+  function initPromoSliders() {
+    $$('[data-promo-slider]').forEach(function (slider) {
+      var section = slider.closest('.promo-slider-section');
+      var slides = $$('.promo-slide', slider);
+      if (slides.length <= 1) return;
+
+      var dotsContainer = $('[data-slider-dots]', slider);
+      var prevBtn = $('[data-slider-prev]', slider);
+      var nextBtn = $('[data-slider-next]', slider);
+      var currentIndex = 0;
+      var autoplay = section && section.getAttribute('data-autoplay') === 'true';
+      var intervalMs = parseInt(section && section.getAttribute('data-interval')) || 5000;
+      var timer = null;
+
+      // Create dots
+      if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+        slides.forEach(function (_, i) {
+          var dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = 'promo-slider__dot' + (i === 0 ? ' is-active' : '');
+          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+          dot.addEventListener('click', function () { goToSlide(i); });
+          dotsContainer.appendChild(dot);
+        });
+      }
+
+      function goToSlide(idx) {
+        slides[currentIndex].classList.remove('is-active');
+        if (dotsContainer && dotsContainer.children[currentIndex]) {
+          dotsContainer.children[currentIndex].classList.remove('is-active');
+        }
+
+        currentIndex = (idx + slides.length) % slides.length;
+
+        slides[currentIndex].classList.add('is-active');
+        if (dotsContainer && dotsContainer.children[currentIndex]) {
+          dotsContainer.children[currentIndex].classList.add('is-active');
+        }
+      }
+
+      function nextSlide() { goToSlide(currentIndex + 1); }
+      function prevSlide() { goToSlide(currentIndex - 1); }
+
+      if (nextBtn) nextBtn.addEventListener('click', function () { nextSlide(); resetTimer(); });
+      if (prevBtn) prevBtn.addEventListener('click', function () { prevSlide(); resetTimer(); });
+
+      // Touch swipe support
+      var touchStartX = 0;
+      slider.addEventListener('touchstart', function (e) {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      slider.addEventListener('touchend', function (e) {
+        var touchEndX = e.changedTouches[0].screenX;
+        if (touchStartX - touchEndX > 45) { nextSlide(); resetTimer(); }
+        else if (touchEndX - touchStartX > 45) { prevSlide(); resetTimer(); }
+      }, { passive: true });
+
+      function startTimer() {
+        if (autoplay) {
+          timer = setInterval(nextSlide, intervalMs);
+        }
+      }
+
+      function resetTimer() {
+        if (timer) clearInterval(timer);
+        startTimer();
+      }
+
+      startTimer();
+    });
+  }
+
+  /* 2. Instant Quick View Modal */
+  function initQuickView() {
+    var modal = $('#QuickViewModal');
+    var content = $('#QuickViewContent');
+    if (!modal || !content) return;
+
+    function closeQuickView() {
+      modal.hidden = true;
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    modal.addEventListener('click', function (e) {
+      if (e.target.hasAttribute('data-close-quick-view') || e.target.closest('[data-close-quick-view]')) {
+        closeQuickView();
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) closeQuickView();
+    });
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-quick-view]');
+      if (!btn) return;
+      e.preventDefault();
+
+      var handle = btn.getAttribute('data-quick-view');
+      if (!handle) return;
+
+      modal.hidden = false;
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      content.innerHTML = '<div class="quick-view-loading"><div class="quick-view-spinner"></div><span>Loading garment details...</span></div>';
+
+      fetch('/products/' + encodeURIComponent(handle) + '.js')
+        .then(function (r) {
+          if (!r.ok) throw new Error('Product not found');
+          return r.json();
+        })
+        .then(function (product) {
+          var featuredImg = (product.images && product.images[0]) || '';
+          var variants = product.variants || [];
+          var selectedVariant = variants[0] || {};
+          var priceFormatted = formatMoney(selectedVariant.price);
+          var comparePriceFormatted = selectedVariant.compare_at_price > selectedVariant.price ? formatMoney(selectedVariant.compare_at_price) : '';
+
+          var optionsHtml = '';
+          if (product.options && product.options.length > 0 && !(product.options.length === 1 && product.options[0].name === 'Title')) {
+            product.options.forEach(function (opt, optIdx) {
+              optionsHtml += '<div class="quick-view-options"><span class="quick-view-option-title">' + escapeHtml(opt.name) + '</span><div class="quick-view-pills">';
+              opt.values.forEach(function (val, valIdx) {
+                optionsHtml += '<button type="button" class="quick-view-pill' + (valIdx === 0 ? ' is-selected' : '') + '" data-qv-opt-index="' + optIdx + '" data-qv-val="' + escapeHtml(val) + '">' + escapeHtml(val) + '</button>';
+              });
+              optionsHtml += '</div></div>';
+            });
+          }
+
+          content.innerHTML = 
+            '<div class="quick-view-grid">' +
+              '<div class="quick-view-media">' +
+                (featuredImg ? '<img src="' + encodeURI(featuredImg) + '" alt="' + escapeHtml(product.title) + '" id="QvMainImg">' : '') +
+              '</div>' +
+              '<div class="quick-view-details">' +
+                '<span class="eyebrow" style="margin-bottom:4px">' + escapeHtml(product.vendor || 'ZEYOV') + '</span>' +
+                '<h2 class="quick-view-title" id="QuickViewTitle">' + escapeHtml(product.title) + '</h2>' +
+                '<div class="quick-view-price">' +
+                  '<span id="QvPrice">' + priceFormatted + '</span>' +
+                  (comparePriceFormatted ? '<s style="color:var(--muted);font-size:1rem" id="QvCompare">' + comparePriceFormatted + '</s>' : '') +
+                '</div>' +
+                optionsHtml +
+                '<button type="button" class="btn btn--gold btn--block quick-view-atc-btn" id="QvAddBtn" data-qv-id="' + selectedVariant.id + '">' +
+                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>' +
+                  '<span>Add to Bag</span>' +
+                '</button>' +
+                '<div style="margin-top:14px;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:6px">' +
+                  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' +
+                  '<span>Free Pan-India Delivery &bull; 7-Day Easy Returns</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+
+          // Option pill selection logic
+          var selectedOptions = product.options.map(function (opt) { return opt.values[0]; });
+
+          function updateVariant() {
+            var matched = variants.find(function (v) {
+              return v.options.every(function (val, idx) { return val === selectedOptions[idx]; });
+            });
+            var qvBtn = $('#QvAddBtn');
+            var qvPrice = $('#QvPrice');
+            var qvImg = $('#QvMainImg');
+
+            if (matched) {
+              if (qvBtn) {
+                qvBtn.setAttribute('data-qv-id', matched.id);
+                qvBtn.disabled = !matched.available;
+                $('span', qvBtn).textContent = matched.available ? 'Add to Bag' : 'Sold out';
+              }
+              if (qvPrice) qvPrice.textContent = formatMoney(matched.price);
+              if (matched.featured_image && qvImg) {
+                qvImg.src = matched.featured_image.src;
+              }
+            }
+          }
+
+          content.querySelectorAll('.quick-view-pill').forEach(function (pill) {
+            pill.addEventListener('click', function () {
+              var optIdx = parseInt(this.getAttribute('data-qv-opt-index'));
+              var val = this.getAttribute('data-qv-val');
+              this.parentElement.querySelectorAll('.quick-view-pill').forEach(function (p) { p.classList.remove('is-selected'); });
+              this.classList.add('is-selected');
+              selectedOptions[optIdx] = val;
+              updateVariant();
+            });
+          });
+
+          // Add to Bag action from Quick View
+          var addBtn = $('#QvAddBtn');
+          if (addBtn) {
+            addBtn.addEventListener('click', function () {
+              var vid = this.getAttribute('data-qv-id');
+              if (!vid) return;
+              var btnSpan = $('span', addBtn);
+              var origText = btnSpan ? btnSpan.textContent : 'Add to Bag';
+              if (btnSpan) btnSpan.textContent = 'Adding...';
+
+              addItems([{ id: parseInt(vid), quantity: 1 }])
+                .then(function () {
+                  if (btnSpan) btnSpan.textContent = 'Added to Bag!';
+                  toast('Added ' + product.title + ' to bag', true);
+                  setTimeout(function () {
+                    closeQuickView();
+                  }, 800);
+                })
+                .catch(function (err) {
+                  alert(err.message || 'Could not add to bag');
+                  if (btnSpan) btnSpan.textContent = origText;
+                });
+            });
+          }
+        })
+        .catch(function (err) {
+          content.innerHTML = '<div style="text-align:center;padding:30px 10px"><p>Could not load garment details.</p><button type="button" class="btn btn--small btn--gold" data-close-quick-view>Close</button></div>';
+        });
+    });
+  }
+
+  /* 3. Sticky Mobile PDP Bar */
+  function initStickyPdpBar() {
+    var bar = $('#StickyPdpBar');
+    var mainAtc = $('[data-add-btn]');
+    if (!bar || !mainAtc) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        // If main ATC is out of view (scrolled past), show sticky bar
+        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+          bar.classList.add('is-visible');
+        } else {
+          bar.classList.remove('is-visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    observer.observe(mainAtc);
+
+    var triggerBtn = $('[data-sticky-trigger-add]', bar);
+    if (triggerBtn) {
+      triggerBtn.addEventListener('click', function () {
+        if (mainAtc && !mainAtc.disabled) {
+          mainAtc.click();
+        }
+      });
+    }
+  }
+
+  /* 4. Mobile Bottom Sheet Filters */
+  function initMobileFilters() {
+    var openBtn = $('[data-open-filters]');
+    var closeBackdrop = $('[data-close-filters]');
+    var facetsWrap = $('#CollectionFacets');
+    if (!facetsWrap) return;
+
+    function openFilters() {
+      facetsWrap.classList.add('is-open');
+      if (closeBackdrop) closeBackdrop.classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFilters() {
+      facetsWrap.classList.remove('is-open');
+      if (closeBackdrop) closeBackdrop.classList.remove('is-active');
+      document.body.style.overflow = '';
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openFilters);
+    if (closeBackdrop) closeBackdrop.addEventListener('click', closeFilters);
+
+    $$('[data-close-filters]').forEach(function (el) {
+      el.addEventListener('click', closeFilters);
+    });
+  }
+
+  // Initialize all conversion enhancements
+  initPromoSliders();
+  initQuickView();
+  initStickyPdpBar();
+  initMobileFilters();
+
   trackCurrentProductView();
   renderPersonalizedRecs();
 
