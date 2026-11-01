@@ -1,10 +1,15 @@
-{%- comment -%} Usage: {% render 'product-card', product: product %} {%- endcomment -%}
+{%- comment -%}
+  ZEYOV High-Conversion Responsive Product Card
+  - Desktop: 4-Column Layout, Elevating Hover, Quick View Overlay, Smooth Image Zoom
+  - Mobile: 2-Column Layout, High Touch Density, Compact Price & Badges
+{%- endcomment -%}
+
 {%- assign v = product.selected_or_first_available_variant -%}
 <article class="card" data-product-handle="{{ product.handle }}" data-product-id="{{ product.id }}">
   <div class="card__media-wrap">
     <a class="card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
       {%- if product.featured_image -%}
-        {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '300, 450, 600, 700', sizes: '(min-width: 900px) 25vw, 50vw', alt: product.featured_image.alt | default: product.title }}
+        {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '280, 420, 560, 700', sizes: '(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw', alt: product.featured_image.alt | default: product.title }}
       {%- else -%}
         <div class="card__placeholder">{{ product.title | truncate: 1, '' }}</div>
       {%- endif -%}
@@ -13,10 +18,12 @@
       {%- endif -%}
     </a>
 
-    <!-- Top Left Sale Badge -->
+    <!-- Top Left Badges: % Off / Bestseller / Sold Out -->
     {%- if v.compare_at_price > v.price -%}
       {%- assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round -%}
       <span class="card__badge card__badge--sale">{{ pct }}% OFF</span>
+    {%- elsif product.tags contains 'bestseller' or product.tags contains 'Bestseller' -%}
+      <span class="card__badge card__badge--gold">BESTSELLER</span>
     {%- elsif product.available == false -%}
       <span class="card__badge card__badge--soldout">Sold out</span>
     {%- endif -%}
@@ -26,6 +33,14 @@
       <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
       <svg class="heart-icon heart-filled" viewBox="0 0 24 24" fill="#E23636" stroke="#E23636" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
     </button>
+
+    <!-- Desktop Hover Overlay Action (Quick View) -->
+    <div class="card__hover-bar">
+      <button type="button" class="btn btn--small btn--card-quickview" data-quick-view="{{ product.handle }}" aria-label="Quick view {{ product.title | escape }}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>Quick View</span>
+      </button>
+    </div>
   </div>
 
   <div class="card__body">
@@ -39,6 +54,7 @@
     </div>
     <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     {% render 'price', product: product, variant: v %}
+    
     <div class="card__action">
       {%- if product.available and product.variants.size == 1 -%}
         <form method="post" action="{{ routes.cart_add_url }}" class="card__form" data-ajax-add>
@@ -49,7 +65,9 @@
           </button>
         </form>
       {%- elsif product.available -%}
-        <a href="{{ product.url }}" class="btn btn--small btn--luxury btn--block">Select Options</a>
+        <button type="button" class="btn btn--small btn--luxury btn--block" data-quick-view="{{ product.handle }}">
+          <span>Select Size</span>
+        </button>
       {%- else -%}
         <span class="btn btn--small btn--disabled btn--block">Sold out</span>
       {%- endif -%}
