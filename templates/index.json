@@ -9,21 +9,17 @@
  */
 {
   "sections": {
-    "runway_orbit": {
-      "type": "runway-orbit",
+    "quick_categories": {
+      "type": "quick-categories",
       "settings": {
-        "color_scheme": "espresso",
-        "eyebrow": "ZEYOV RUNWAY EDIT • ISSUE 01",
-        "heading": "NOT A STORE. A RUNWAY.",
-        "collection": "",
-        "product_1": "",
-        "tag_1": "AUTUMN / WINTER 24",
-        "product_2": "",
-        "tag_2": "RUNWAY COUTURE",
-        "product_3": "",
-        "tag_3": "TIMELESS OUTERWEAR",
-        "product_4": "",
-        "tag_4": "COMFORT LUXURY"
+        "heading": "Popular Departments"
+      }
+    },
+    "promo_slider": {
+      "type": "dynamic-promo-slider",
+      "settings": {
+        "autoplay": true,
+        "autoplay_interval": 5000
       }
     },
     "fashion_showcase": {
@@ -216,7 +212,8 @@
     }
   },
   "order": [
-    "runway_orbit",
+    "quick_categories",
+    "promo_slider",
     "fashion_showcase",
     "fashion_rail",
     "fashion_reveal",
