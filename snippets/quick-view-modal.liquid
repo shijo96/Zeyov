@@ -1,0 +1,22 @@
+{%- comment -%}
+  ZEYOV Instant Quick View Modal
+  Triggered by clicking "Quick View" on product cards.
+  Loads live product JSON via AJAX and supports instant variant switching & Add to Bag.
+{%- endcomment -%}
+
+<div class="quick-view-modal" id="QuickViewModal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="QuickViewTitle">
+  <div class="quick-view-modal__backdrop" data-close-quick-view></div>
+  <div class="quick-view-modal__dialog">
+    <button type="button" class="quick-view-modal__close" data-close-quick-view aria-label="Close Quick View">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+
+    <div class="quick-view-modal__body" id="QuickViewContent">
+      <!-- Loading Skeleton -->
+      <div class="quick-view-loading">
+        <div class="quick-view-spinner"></div>
+        <span>Loading garment details...</span>
+      </div>
+    </div>
+  </div>
+</div>
