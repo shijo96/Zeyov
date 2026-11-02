@@ -5,21 +5,45 @@
 {%- endcomment -%}
 
 {%- assign v = product.selected_or_first_available_variant -%}
-{%- assign card_rating = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value | default: '4.4' -%}
-{%- assign card_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 96 -%}
+{%- assign card_rating = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value -%}
+{%- assign card_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count -%}
 
 <article class="card" data-product-handle="{{ product.handle }}" data-product-id="{{ product.id }}">
   <div class="card__media-wrap">
-    <a class="card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
-      {%- if product.featured_image -%}
-        {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '280, 420, 560, 700', sizes: '(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw', alt: product.featured_image.alt | default: product.title }}
-      {%- else -%}
-        <div class="card__placeholder">{{ product.title | truncate: 1, '' }}</div>
-      {%- endif -%}
-      {%- if product.images.size > 1 -%}
-        {{ product.images[1] | image_url: width: 700 | image_tag: loading: 'lazy', class: 'card__hover', alt: '' }}
-      {%- endif -%}
-    </a>
+    {%- if product.images.size > 1 -%}
+      <!-- Multi-image swipe slider (Myntra / Flipkart swipe architecture) -->
+      <div class="card__slider" data-card-slider>
+        <div class="card__slider-track" data-card-track>
+          {%- for img in product.images limit: 5 -%}
+            <a href="{{ product.url }}" class="card__slider-slide" data-slide-index="{{ forloop.index0 }}" aria-label="{{ product.title | escape }} - View {{ forloop.index }}">
+              <img 
+                src="{{ img | image_url: width: 700 }}" 
+                alt="{{ img.alt | default: product.title | escape }}" 
+                width="600" 
+                height="800" 
+                loading="{% if forloop.first %}lazy{% else %}lazy{% endif %}" 
+                class="card__slider-img"
+              >
+            </a>
+          {%- endfor -%}
+        </div>
+        <div class="card__slider-dots" data-card-dots aria-hidden="true">
+          {%- for img in product.images limit: 5 -%}
+            <span class="card__slider-dot{% if forloop.first %} is-active{% endif %}"></span>
+          {%- endfor -%}
+        </div>
+        <button type="button" class="card__slider-nav prev" data-card-slide-prev aria-label="Previous photo">&lsaquo;</button>
+        <button type="button" class="card__slider-nav next" data-card-slide-next aria-label="Next photo">&rsaquo;</button>
+      </div>
+    {%- else -%}
+      <a class="card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+        {%- if product.featured_image -%}
+          {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '280, 420, 560, 700', sizes: '(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw', alt: product.featured_image.alt | default: product.title }}
+        {%- else -%}
+          <div class="card__placeholder">{{ product.title | truncate: 1, '' }}</div>
+        {%- endif -%}
+      </a>
+    {%- endif -%}
 
     <!-- Top Left Badges: % Off / Bestseller / Sold Out -->
     {%- if v.compare_at_price > v.price -%}
@@ -37,13 +61,15 @@
       <svg class="heart-icon heart-filled" viewBox="0 0 24 24" fill="#E23636" stroke="#E23636" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
     </button>
 
-    <!-- Superimposed Rating Pill on Image (Myntra / Flipkart signature pill) -->
-    <div class="card__rating-pill">
-      <span class="rating-val">{{ card_rating | round: 1 }}</span>
-      <span class="rating-star">★</span>
-      <span class="rating-divider">|</span>
-      <span class="rating-num">{{ card_count }}</span>
-    </div>
+    <!-- Superimposed Rating Pill on Image (Only shown when genuine reviews exist) -->
+    {%- if card_rating != blank and card_count != blank and card_count > 0 -%}
+      <div class="card__rating-pill">
+        <span class="rating-val">{{ card_rating | round: 1 }}</span>
+        <span class="rating-star">★</span>
+        <span class="rating-divider">|</span>
+        <span class="rating-num">{{ card_count }}</span>
+      </div>
+    {%- endif -%}
 
     <!-- Desktop Hover Overlay Action (Quick View) -->
     <div class="card__hover-bar">
