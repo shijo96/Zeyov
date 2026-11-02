@@ -25,7 +25,9 @@
       <!-- Gender & Line Switcher -->
       <div class="showcase__filter-group">
         <div class="showcase__segmented" role="tablist" aria-label="Gender Selection">
-          <button type="button" class="segment-btn is-active" data-gender-filter="women">Women's Edit</button>
+          <button type="button" class="segment-btn is-active" data-gender-filter="all">All Edits</button>
+          <button type="button" class="segment-btn" data-gender-filter="women">Women's Edit</button>
+          <button type="button" class="segment-btn" data-gender-filter="kids">Kidswear</button>
           <button type="button" class="segment-btn" data-gender-filter="men">Men's Edit</button>
         </div>
       </div>
@@ -163,15 +165,19 @@
             {%- for product in col.products limit: section.settings.limit -%}
               {%- assign v = product.selected_or_first_available_variant -%}
               {%- assign p_cat = product.type | handleize | default: 'all' -%}
-              {%- assign p_gender = 'women men' -%}
-              {%- if product.tags contains 'men' -%}
-                {%- unless product.tags contains 'women' -%}
-                  {%- assign p_gender = 'men' -%}
-                {%- endunless -%}
-              {%- elsif product.tags contains 'women' -%}
-                {%- unless product.tags contains 'men' -%}
-                  {%- assign p_gender = 'women' -%}
-                {%- endunless -%}
+              {%- assign title_l = product.title | downcase -%}
+              {%- assign type_l = product.type | downcase -%}
+              {%- assign tags_l = product.tags | join: ' ' | downcase -%}
+              
+              {%- assign p_gender = 'women' -%}
+              {%- if type_l contains 'kid' or type_l contains 'baby' or title_l contains 'baby' or title_l contains 'kid' or title_l contains 'panda' or title_l contains 'romper' or tags_l contains 'kid' or tags_l contains 'baby' -%}
+                {%- assign p_gender = 'kids' -%}
+              {%- elsif type_l contains 'men' and type_l contains 'women' == false and tags_l contains 'women' == false -%}
+                {%- assign p_gender = 'men' -%}
+              {%- elsif tags_l contains 'men' and tags_l contains 'women' == false -%}
+                {%- assign p_gender = 'men' -%}
+              {%- elsif type_l contains 'women' or title_l contains 'women' or tags_l contains 'women' or title_l contains 'dress' or title_l contains 'gown' or title_l contains 'saree' or title_l contains 'cargo' or title_l contains 'jeans' or title_l contains 't-shirt' or title_l contains 'lycra' -%}
+                {%- assign p_gender = 'women' -%}
               {%- endif -%}
               {%- assign p_img = product.featured_image | image_url: width: 800 -%}
 
@@ -217,13 +223,32 @@
                 data-variants='{{ product.variants | json | escape }}'>
                 <div class="rail-card__media">
                   <span class="rail-card__badge badge--gold">{{ product.type | default: 'RUNWAY' | upcase }}</span>
-                  <a href="{{ product.url }}" class="rail-card__media-link" aria-label="{{ product.title | escape }}">
-                    {%- if product.featured_image -%}
-                      <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" width="400" height="400" loading="lazy" class="rail-card__img">
-                    {%- else -%}
-                      <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="{{ product.title | escape }}" width="400" height="400" loading="lazy" class="rail-card__img">
-                    {%- endif -%}
-                  </a>
+                  {%- if product.images.size > 1 -%}
+                    <div class="card__slider rail-card__slider" data-card-slider>
+                      <div class="card__slider-track" data-card-track>
+                        {%- for img in product.images limit: 5 -%}
+                          <a href="{{ product.url }}" class="card__slider-slide" data-slide-index="{{ forloop.index0 }}" aria-label="{{ product.title | escape }} - View {{ forloop.index }}">
+                            <img src="{{ img | image_url: width: 500 }}" alt="{{ product.title | escape }}" width="400" height="400" loading="lazy" class="card__slider-img rail-card__img">
+                          </a>
+                        {%- endfor -%}
+                      </div>
+                      <div class="card__slider-dots" data-card-dots aria-hidden="true">
+                        {%- for img in product.images limit: 5 -%}
+                          <span class="card__slider-dot{% if forloop.first %} is-active{% endif %}"></span>
+                        {%- endfor -%}
+                      </div>
+                      <button type="button" class="card__slider-nav prev" data-card-slide-prev aria-label="Previous photo">&lsaquo;</button>
+                      <button type="button" class="card__slider-nav next" data-card-slide-next aria-label="Next photo">&rsaquo;</button>
+                    </div>
+                  {%- else -%}
+                    <a href="{{ product.url }}" class="rail-card__media-link" aria-label="{{ product.title | escape }}">
+                      {%- if product.featured_image -%}
+                        <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" width="400" height="400" loading="lazy" class="rail-card__img">
+                      {%- else -%}
+                        <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="{{ product.title | escape }}" width="400" height="400" loading="lazy" class="rail-card__img">
+                      {%- endif -%}
+                    </a>
+                  {%- endif -%}
                   <button type="button" class="rail-card__quick-add" data-quick-add-id="{{ v.id }}" data-quick-add-title="{{ product.title | escape }}" data-quick-add-price="{{ product.price | money | escape }}" aria-label="Quick add {{ product.title | escape }} to bag">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
                     <span>Add to Bag</span>
