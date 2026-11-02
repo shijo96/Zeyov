@@ -2250,7 +2250,87 @@
     });
   }
 
+  /* ==========================================================================
+     PRODUCT CARD MULTI-IMAGE SWIPE SLIDER (Flipkart / Myntra Architecture)
+     ========================================================================== */
+  function initCardSliders() {
+    var sliders = $$('[data-card-slider]');
+    sliders.forEach(function (slider) {
+      if (slider.__sliderInitialized) return;
+      slider.__sliderInitialized = true;
+
+      var track = $('[data-card-track]', slider);
+      if (!track) return;
+      var dots = $$('.card__slider-dot', slider);
+      var prevBtn = $('[data-card-slide-prev]', slider);
+      var nextBtn = $('[data-card-slide-next]', slider);
+
+      var startX = 0;
+      var moved = false;
+
+      // Update dots as user scrolls / swipes
+      var scrollTimer = null;
+      track.addEventListener('scroll', function () {
+        if (scrollTimer) cancelAnimationFrame(scrollTimer);
+        scrollTimer = requestAnimationFrame(function () {
+          var slideWidth = track.clientWidth || 1;
+          var index = Math.round(track.scrollLeft / slideWidth);
+          dots.forEach(function (dot, i) {
+            dot.classList.toggle('is-active', i === index);
+          });
+        });
+      }, { passive: true });
+
+      // Touch drag tracking to prevent navigation while swiping
+      track.addEventListener('touchstart', function (e) {
+        if (e.touches && e.touches[0]) {
+          startX = e.touches[0].clientX;
+          moved = false;
+        }
+      }, { passive: true });
+
+      track.addEventListener('touchmove', function (e) {
+        if (e.touches && e.touches[0]) {
+          var diff = Math.abs(e.touches[0].clientX - startX);
+          if (diff > 8) {
+            moved = true;
+          }
+        }
+      }, { passive: true });
+
+      var slides = $$('.card__slider-slide', track);
+      slides.forEach(function (slide) {
+        slide.addEventListener('click', function (e) {
+          if (moved) {
+            e.preventDefault();
+            e.stopPropagation();
+            moved = false;
+          }
+        });
+      });
+
+      // Desktop arrow controls
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var slideWidth = track.clientWidth || 250;
+          track.scrollBy({ left: -slideWidth, behavior: 'smooth' });
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var slideWidth = track.clientWidth || 250;
+          track.scrollBy({ left: slideWidth, behavior: 'smooth' });
+        });
+      }
+    });
+  }
+
   // Initialize all conversion enhancements
+  initCardSliders();
   initPromoSliders();
   initQuickView();
   initStickyPdpBar();
