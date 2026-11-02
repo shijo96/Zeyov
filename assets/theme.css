@@ -437,6 +437,156 @@ p{margin:0 0 1em}
   transform: scale(1.05);
 }
 
+/* ==========================================================================
+   PRODUCT CARD MULTI-IMAGE SWIPE SLIDER (Flipkart / Myntra Architecture)
+   ========================================================================== */
+.card__slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.card__slider-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.card__slider-track::-webkit-scrollbar {
+  display: none;
+}
+
+.card__slider-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: block;
+  position: relative;
+  text-decoration: none;
+}
+
+.card__slider-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover .card__slider-img {
+  transform: scale(1.04);
+}
+
+.card__slider-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.card__slider-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s ease;
+}
+
+.card__slider-dot.is-active {
+  width: 14px;
+  border-radius: 4px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.card__slider-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #111111;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s;
+  padding: 0;
+}
+
+.card__slider-nav.prev {
+  left: 6px;
+}
+
+.card__slider-nav.next {
+  right: 6px;
+}
+
+.card__slider:hover .card__slider-nav {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.card__slider-nav:hover {
+  background: #FFFFFF;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.rail-card__media .card__slider {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .card__slider-nav {
+    display: none !important;
+  }
+  .card__slider-dots {
+    bottom: 6px;
+    gap: 3px;
+  }
+  .card__slider-dot {
+    width: 4px;
+    height: 4px;
+  }
+  .card__slider-dot.is-active {
+    width: 12px;
+  }
+}
+
+
 /* Wishlist Heart Button on Card */
 .card__wishlist-btn {
   position: absolute;
