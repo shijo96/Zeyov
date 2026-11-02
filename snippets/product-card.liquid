@@ -62,12 +62,13 @@
     </button>
 
     <!-- Superimposed Rating Pill on Image (Only shown when genuine reviews exist) -->
-    {%- if card_rating != blank and card_count != blank and card_count > 0 -%}
+    {%- assign card_count_num = card_count | default: 0 | plus: 0 -%}
+    {%- if card_rating != blank and card_count_num > 0 -%}
       <div class="card__rating-pill">
         <span class="rating-val">{{ card_rating | round: 1 }}</span>
         <span class="rating-star">★</span>
         <span class="rating-divider">|</span>
-        <span class="rating-num">{{ card_count }}</span>
+        <span class="rating-num">{{ card_count_num }}</span>
       </div>
     {%- endif -%}
 
