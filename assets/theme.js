@@ -1169,16 +1169,17 @@
     var floatPrice = $('#FloatingBarPrice');
     var floatAddBtn = $('#FloatingBarAddBtn');
 
+    var activeGenderBtn = $('.segment-btn.is-active', showcase);
     var currentCat = 'all';
-    var currentGender = 'women';
+    var currentGender = activeGenderBtn ? (activeGenderBtn.getAttribute('data-gender-filter') || 'all') : 'all';
     var modelWomen = showcase.getAttribute('data-model-women');
     var modelMen = showcase.getAttribute('data-model-men');
 
     function cardMatches(card, cat, gender) {
       var cardCat = (card.getAttribute('data-cat') || '').trim().toLowerCase();
-      var cardGenders = (card.getAttribute('data-gender') || '').trim().toLowerCase().split(/\s+/);
+      var cardGender = (card.getAttribute('data-gender') || '').trim().toLowerCase();
       var matchCat = (cat === 'all') || (cardCat === cat) || (cardCat.indexOf(cat) > -1);
-      var matchGender = cardGenders.indexOf(gender) > -1;
+      var matchGender = (gender === 'all') || (cardGender === gender) || (cardGender.indexOf(gender) > -1);
       return matchCat && matchGender;
     }
 
@@ -1197,10 +1198,8 @@
         }
         if (count === 0 && cat !== 'all') {
           pill.style.opacity = '0.4';
-          pill.style.pointerEvents = 'none';
         } else {
           pill.style.opacity = '';
-          pill.style.pointerEvents = '';
         }
       });
     }
@@ -1231,6 +1230,9 @@
       }
 
       updateCategoryCounts();
+      if (typeof initCardSliders === 'function') {
+        initCardSliders();
+      }
     }
 
     catPills.forEach(function (pill) {
@@ -1238,6 +1240,27 @@
         catPills.forEach(function (p) { p.classList.remove('is-active'); });
         pill.classList.add('is-active');
         currentCat = pill.getAttribute('data-cat') || 'all';
+
+        // Check if there are any products for this category in currentGender
+        var countInCurrent = 0;
+        railCards.forEach(function (card) {
+          if (cardMatches(card, currentCat, currentGender)) countInCurrent++;
+        });
+
+        // If 0 products in current gender, auto-switch to 'all' so products show immediately
+        if (countInCurrent === 0 && currentCat !== 'all') {
+          var countInAll = 0;
+          railCards.forEach(function (card) {
+            if (cardMatches(card, currentCat, 'all')) countInAll++;
+          });
+          if (countInAll > 0) {
+            currentGender = 'all';
+            genderBtns.forEach(function (b) {
+              b.classList.toggle('is-active', (b.getAttribute('data-gender-filter') || 'all') === 'all');
+            });
+          }
+        }
+
         filterCards();
       });
     });
@@ -1246,7 +1269,7 @@
       btn.addEventListener('click', function () {
         genderBtns.forEach(function (b) { b.classList.remove('is-active'); });
         btn.classList.add('is-active');
-        currentGender = btn.getAttribute('data-gender-filter') || 'women';
+        currentGender = btn.getAttribute('data-gender-filter') || 'all';
 
         // Switch editorial model photo
         var targetModel = (currentGender === 'men') ? modelMen : modelWomen;
@@ -1279,6 +1302,10 @@
     if (resetCatBtn) {
       resetCatBtn.addEventListener('click', function () {
         currentCat = 'all';
+        currentGender = 'all';
+        genderBtns.forEach(function (b) {
+          b.classList.toggle('is-active', (b.getAttribute('data-gender-filter') || 'all') === 'all');
+        });
         catPills.forEach(function (p) {
           p.classList.toggle('is-active', (p.getAttribute('data-cat') || 'all') === 'all');
         });
