@@ -4,7 +4,7 @@
     <button class="icon-btn header__burger" type="button" data-open="NavDrawer" aria-label="Open menu">{% render 'icon', name: 'menu' %}</button>
 
     {%- assign header_logo = section.settings.logo | default: settings.logo -%}
-    <a class="header__logo" href="{{ routes.root_url }}" aria-label="ZEYOV" style="display:inline-flex;align-items:center;min-width:130px;flex-shrink:0;">
+    <a class="header__logo" href="{{ routes.root_url }}" aria-label="ZEYOV" style="display:inline-flex;align-items:center;min-width:130px;flex-shrink:0;margin-right:clamp(12px, 1.8vw, 28px);">
       {%- if header_logo != blank -%}
         {{ header_logo | image_url: width: 500 | image_tag: alt: 'ZEYOV', loading: 'eager', class: 'logo-img', style: 'display:block;width:150px;max-width:165px;height:auto;object-fit:contain;' }}
       {%- else -%}
@@ -35,7 +35,6 @@
           {%- endfor -%}
         {%- else -%}
           <!-- Master ZEYOV Fashion Navigation Structure (Clean Active Collections) -->
-          <li><a href="{{ routes.root_url }}">Home</a></li>
           <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals <span class="nav-badge--sale" style="background:var(--gold-dark);">New</span></a></li>
 
           <!-- WOMEN'S WEAR MEGA MENU -->
@@ -112,8 +111,6 @@
 
           {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
           <li><a href="{{ track_link }}">Track Order</a></li>
-          {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
-          <li><a href="{{ contact_link }}">Contact</a></li>
         {%- endif -%}
       </ul>
     </nav>
