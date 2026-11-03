@@ -1191,7 +1191,15 @@
       var cardCat = (card.getAttribute('data-cat') || '').trim().toLowerCase();
       var cardGender = (card.getAttribute('data-gender') || '').trim().toLowerCase();
       var matchCat = (cat === 'all') || (cardCat === cat) || (cardCat.indexOf(cat) > -1);
-      var matchGender = (gender === 'all') || (cardGender === gender) || (cardGender.indexOf(gender) > -1);
+
+      var matchGender = false;
+      if (gender === 'all') {
+        matchGender = true;
+      } else {
+        var tokens = cardGender.split(/[\s,]+/).filter(Boolean);
+        matchGender = (tokens.indexOf(gender) > -1) || (tokens.indexOf('unisex') > -1);
+      }
+
       return matchCat && matchGender;
     }
 
@@ -1252,27 +1260,6 @@
         catPills.forEach(function (p) { p.classList.remove('is-active'); });
         pill.classList.add('is-active');
         currentCat = pill.getAttribute('data-cat') || 'all';
-
-        // Check if there are any products for this category in currentGender
-        var countInCurrent = 0;
-        railCards.forEach(function (card) {
-          if (cardMatches(card, currentCat, currentGender)) countInCurrent++;
-        });
-
-        // If 0 products in current gender, auto-switch to 'all' so products show immediately
-        if (countInCurrent === 0 && currentCat !== 'all') {
-          var countInAll = 0;
-          railCards.forEach(function (card) {
-            if (cardMatches(card, currentCat, 'all')) countInAll++;
-          });
-          if (countInAll > 0) {
-            currentGender = 'all';
-            genderBtns.forEach(function (b) {
-              b.classList.toggle('is-active', (b.getAttribute('data-gender-filter') || 'all') === 'all');
-            });
-          }
-        }
-
         filterCards();
       });
     });
@@ -1293,18 +1280,11 @@
           }, 150);
         }
 
-        // Check if current category has any products in this gender. If not, auto-reset to 'all'
-        var matchingInCurrentCat = 0;
-        railCards.forEach(function (c) {
-          if (cardMatches(c, currentCat, currentGender)) matchingInCurrentCat++;
+        // Reset category pill to 'all' so customer immediately sees matching items
+        currentCat = 'all';
+        catPills.forEach(function (p) {
+          p.classList.toggle('is-active', (p.getAttribute('data-cat') || 'all') === 'all');
         });
-
-        if (matchingInCurrentCat === 0) {
-          currentCat = 'all';
-          catPills.forEach(function (p) {
-            p.classList.toggle('is-active', (p.getAttribute('data-cat') || 'all') === 'all');
-          });
-        }
 
         filterCards();
       });
@@ -1314,10 +1294,6 @@
     if (resetCatBtn) {
       resetCatBtn.addEventListener('click', function () {
         currentCat = 'all';
-        currentGender = 'all';
-        genderBtns.forEach(function (b) {
-          b.classList.toggle('is-active', (b.getAttribute('data-gender-filter') || 'all') === 'all');
-        });
         catPills.forEach(function (p) {
           p.classList.toggle('is-active', (p.getAttribute('data-cat') || 'all') === 'all');
         });
