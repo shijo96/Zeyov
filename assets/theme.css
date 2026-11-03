@@ -7200,6 +7200,7 @@ p{margin:0 0 1em}
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  scroll-snap-type: x proximity;
   padding: 4px 0 6px;
 }
 
@@ -7209,10 +7210,10 @@ p{margin:0 0 1em}
 
 .quick-cats__track {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: flex-start;
   min-width: min-content;
-  padding: 4px 16px 8px;
+  padding: 4px 14px 6px;
 }
 
 @media (min-width: 900px) {
@@ -7231,9 +7232,10 @@ p{margin:0 0 1em}
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  width: 72px;
-  flex: 0 0 72px;
+  width: 70px;
+  flex: 0 0 70px;
   text-align: center;
+  scroll-snap-align: start;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
