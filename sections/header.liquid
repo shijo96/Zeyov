@@ -70,41 +70,103 @@
             </div>
           </li>
 
-          <!-- MEN'S WEAR DROPDOWN -->
-          <li class="has-sub">
+          <!-- MEN'S WEAR MEGA MENU -->
+          <li class="has-mega">
             <a href="{{ routes.collections_url }}/mens-wear">
               Men's Wear {% render 'icon', name: 'chevron' %}
             </a>
-            <ul class="sub" role="list">
-              <li><a href="{{ routes.collections_url }}/mens-wear">All Men's Pieces</a></li>
-              <li><a href="{{ routes.collections_url }}/mens-tshirts">T-Shirts &amp; Polos</a></li>
-              <li><a href="{{ routes.collections_url }}/mens-shirts">Casual &amp; Formal Shirts</a></li>
-              <li><a href="{{ routes.collections_url }}/mens-trousers">Trousers &amp; Bottomwear</a></li>
-              <li><a href="{{ routes.collections_url }}/mens-accessories">Belts &amp; Accessories</a></li>
-            </ul>
+            <div class="mega-dropdown">
+              <div class="container mega-dropdown__inner">
+                <div class="mega-dropdown__grid">
+                  <div>
+                    <span class="mega-dropdown__col-title">Upper Wear</span>
+                    <a href="{{ routes.collections_url }}/mens-wear" class="mega-dropdown__link">All Men's Pieces</a>
+                    <a href="{{ routes.collections_url }}/mens-tshirts" class="mega-dropdown__link">T-Shirts &amp; Polos</a>
+                    <a href="{{ routes.collections_url }}/mens-shirts" class="mega-dropdown__link">Casual &amp; Formal Shirts</a>
+                  </div>
+                  <div>
+                    <span class="mega-dropdown__col-title">Bottoms &amp; Outerwear</span>
+                    <a href="{{ routes.collections_url }}/mens-trousers" class="mega-dropdown__link">Trousers &amp; Cargo Pants</a>
+                    <a href="{{ routes.collections_url }}/mens-winterwear" class="mega-dropdown__link">Sweatshirts &amp; Jackets</a>
+                    <a href="{{ routes.collections_url }}/mens-accessories" class="mega-dropdown__link">Belts &amp; Accessories</a>
+                  </div>
+                </div>
+                <div class="mega-dropdown__featured-card" style="background:linear-gradient(145deg, #242c27 0%, #171d1a 100%);">
+                  <div>
+                    <span class="mega-dropdown__card-tag" style="background:rgba(255,255,255,0.15);color:#F4EBD9;">MEN'S EDIT • SS25</span>
+                    <h4 class="mega-dropdown__card-heading" style="color:#FAF8F4;">Waffle Knits &amp; Colorblock</h4>
+                    <p class="mega-dropdown__card-desc" style="color:rgba(255,255,255,0.72);">Textured heavyweight knits, tailored collars, and urban essentials.</p>
+                  </div>
+                  <a href="{{ routes.collections_url }}/mens-wear" class="mega-dropdown__card-btn">Shop Men's Edit &rarr;</a>
+                </div>
+              </div>
+            </div>
           </li>
 
-          <!-- ACCESSORIES DROPDOWN -->
-          <li class="has-sub">
+          <!-- ACCESSORIES MEGA MENU -->
+          <li class="has-mega">
             <a href="{{ routes.collections_url }}/accessories">
               Accessories {% render 'icon', name: 'chevron' %}
             </a>
-            <ul class="sub" role="list">
-              <li><a href="{{ routes.collections_url }}/accessories">All Accessories</a></li>
-              <li><a href="{{ routes.collections_url }}/womens-accessories">Women's Accents &amp; Scarves</a></li>
-              <li><a href="{{ routes.collections_url }}/mens-accessories">Men's Belts &amp; Essentials</a></li>
-            </ul>
+            <div class="mega-dropdown">
+              <div class="container mega-dropdown__inner">
+                <div class="mega-dropdown__grid">
+                  <div>
+                    <span class="mega-dropdown__col-title">Bags &amp; Accents</span>
+                    <a href="{{ routes.collections_url }}/accessories" class="mega-dropdown__link">All Accessories</a>
+                    <a href="{{ routes.collections_url }}/handbags-totes" class="mega-dropdown__link">Handbags &amp; Totes</a>
+                    <a href="{{ routes.collections_url }}/jewellery-accents" class="mega-dropdown__link">Jewellery &amp; Accents</a>
+                  </div>
+                  <div>
+                    <span class="mega-dropdown__col-title">Footwear &amp; Essentials</span>
+                    <a href="{{ routes.collections_url }}/footwear" class="mega-dropdown__link">Footwear &amp; Heels</a>
+                    <a href="{{ routes.collections_url }}/belts-scarves" class="mega-dropdown__link">Belts &amp; Scarves</a>
+                    <a href="{{ routes.collections_url }}/fragrances" class="mega-dropdown__link">Luxury Fragrances</a>
+                  </div>
+                </div>
+                <div class="mega-dropdown__featured-card" style="background:linear-gradient(145deg, #362921 0%, #221812 100%);">
+                  <div>
+                    <span class="mega-dropdown__card-tag" style="background:rgba(255,255,255,0.15);color:#F4EBD9;">CURATED ACCENTS</span>
+                    <h4 class="mega-dropdown__card-heading" style="color:#FAF8F4;">Complete The Runway Look</h4>
+                    <p class="mega-dropdown__card-desc" style="color:rgba(255,255,255,0.72);">Artisan-crafted leather goods, silk scarves, and premium fashion accents.</p>
+                  </div>
+                  <a href="{{ routes.collections_url }}/accessories" class="mega-dropdown__card-btn">Explore Accessories &rarr;</a>
+                </div>
+              </div>
+            </div>
           </li>
 
-          <!-- KIDSWEAR DROPDOWN -->
-          <li class="has-sub">
+          <!-- KIDSWEAR MEGA MENU -->
+          <li class="has-mega">
             <a href="{{ routes.collections_url }}/kidswear">
               Kidswear {% render 'icon', name: 'chevron' %}
             </a>
-            <ul class="sub" role="list">
-              <li><a href="{{ routes.collections_url }}/kidswear">All Kidswear</a></li>
-              <li><a href="{{ routes.collections_url }}/baby-winterwear">Baby Winterwear</a></li>
-            </ul>
+            <div class="mega-dropdown">
+              <div class="container mega-dropdown__inner">
+                <div class="mega-dropdown__grid">
+                  <div>
+                    <span class="mega-dropdown__col-title">Baby &amp; Toddler</span>
+                    <a href="{{ routes.collections_url }}/kidswear" class="mega-dropdown__link">All Kidswear</a>
+                    <a href="{{ routes.collections_url }}/baby-rompers" class="mega-dropdown__link">Rompers &amp; Jumpsuits</a>
+                    <a href="{{ routes.collections_url }}/baby-winterwear" class="mega-dropdown__link">Baby Winterwear &amp; Fleece</a>
+                  </div>
+                  <div>
+                    <span class="mega-dropdown__col-title">Boys &amp; Girls</span>
+                    <a href="{{ routes.collections_url }}/boys-fashion" class="mega-dropdown__link">Boys Casuals &amp; Tees</a>
+                    <a href="{{ routes.collections_url }}/girls-dresses" class="mega-dropdown__link">Girls Dresses &amp; Frocks</a>
+                    <a href="{{ routes.collections_url }}/kids-sets" class="mega-dropdown__link">Matching Co-ord Sets</a>
+                  </div>
+                </div>
+                <div class="mega-dropdown__featured-card" style="background:linear-gradient(145deg, #3b332a 0%, #262019 100%);">
+                  <div>
+                    <span class="mega-dropdown__card-tag" style="background:rgba(255,255,255,0.15);color:#F4EBD9;">GENTLE COMFORT</span>
+                    <h4 class="mega-dropdown__card-heading" style="color:#FAF8F4;">Ultra-Soft Fleece &amp; Cotton</h4>
+                    <p class="mega-dropdown__card-desc" style="color:rgba(255,255,255,0.72);">Hypoallergenic, breathable fabrics made for everyday play and baby comfort.</p>
+                  </div>
+                  <a href="{{ routes.collections_url }}/kidswear" class="mega-dropdown__card-btn">Shop Kidswear &rarr;</a>
+                </div>
+              </div>
+            </div>
           </li>
 
           <li><a href="{{ routes.all_products_collection_url }}">All Creations</a></li>
