@@ -163,25 +163,36 @@
             {%- for product in col.products limit: section.settings.limit -%}
               {%- assign v = product.selected_or_first_available_variant -%}
               {%- assign p_cat = product.type | handleize | default: 'all' -%}
-              {%- assign title_l = product.title | downcase -%}
-              {%- assign type_l = product.type | downcase -%}
-              {%- assign tags_l = product.tags | join: ' ' | downcase -%}
-              
-              {%- assign p_gender = 'women' -%}
-              {%- if type_l contains 'kid' or type_l contains 'baby' or title_l contains 'baby' or title_l contains 'kid' or title_l contains 'panda' or title_l contains 'romper' or tags_l contains 'kid' or tags_l contains 'baby' -%}
+              {%- assign title_clean = product.title | downcase | replace: 'women’s', 'womens' | replace: "women's", 'womens' | replace: 'men’s', 'mens' | replace: "men's", 'mens' -%}
+              {%- assign type_clean = product.type | downcase | replace: 'women’s', 'womens' | replace: "women's", 'womens' | replace: 'men’s', 'mens' | replace: "men's", 'mens' -%}
+              {%- assign tags_clean = product.tags | join: ' ' | downcase | replace: 'women’s', 'womens' | replace: "women's", 'womens' | replace: 'men’s', 'mens' | replace: "men's", 'mens' -%}
+
+              {%- assign is_kid = false -%}
+              {%- if type_clean contains 'kid' or type_clean contains 'baby' or title_clean contains 'baby' or title_clean contains 'kid' or title_clean contains 'panda' or title_clean contains 'romper' -%}
+                {%- assign is_kid = true -%}
+              {%- endif -%}
+
+              {%- assign is_women = false -%}
+              {%- if title_clean contains 'women' or type_clean contains 'women' or tags_clean contains 'women' or title_clean contains 'dress' or title_clean contains 'gown' or title_clean contains 'saree' or title_clean contains 'bodycon' or title_clean contains 'skirt' or title_clean contains 'jacquard' -%}
+                {%- assign is_women = true -%}
+              {%- endif -%}
+
+              {%- assign is_men = false -%}
+              {%- assign title_no_women = title_clean | replace: 'womens', '' | replace: 'women', '' -%}
+              {%- assign type_no_women = type_clean | replace: 'womens', '' | replace: 'women', '' -%}
+              {%- assign tags_no_women = tags_clean | replace: 'womens', '' | replace: 'women', '' -%}
+              {%- if title_no_women contains 'men' or type_no_women contains 'men' or tags_no_women contains 'men' -%}
+                {%- assign is_men = true -%}
+              {%- endif -%}
+
+              {%- if is_kid -%}
                 {%- assign p_gender = 'kids' -%}
-              {%- elsif type_l contains 'men' and type_l contains 'women' == false and tags_l contains 'women' == false -%}
+              {%- elsif is_women and is_men -%}
+                {%- assign p_gender = 'unisex' -%}
+              {%- elsif is_men -%}
                 {%- assign p_gender = 'men' -%}
-              {%- elsif tags_l contains 'men' and tags_l contains 'women' == false -%}
-                {%- assign p_gender = 'men' -%}
-              {%- elsif title_l contains 'dress' or title_l contains 'gown' or title_l contains 'saree' or title_l contains 'bodycon' or title_l contains 'skirt' or title_l contains 'kurti' or title_l contains 'midi' or title_l contains 'maxi' -%}
-                {%- assign p_gender = 'women' -%}
-              {%- elsif title_l contains 't-shirt' or title_l contains 'tee' or title_l contains 'polo' or title_l contains 'jacket' or title_l contains 'sherpa' or title_l contains 'teddy' or title_l contains 'oversized' or title_l contains 'cargo' or title_l contains 'hoodie' -%}
-                {%- assign p_gender = 'women men unisex' -%}
-              {%- elsif type_l contains 'women' or tags_l contains 'women' -%}
-                {%- assign p_gender = 'women' -%}
               {%- else -%}
-                {%- assign p_gender = 'women men unisex' -%}
+                {%- assign p_gender = 'women' -%}
               {%- endif -%}
               {%- assign p_img = product.featured_image | image_url: width: 800 -%}
 
