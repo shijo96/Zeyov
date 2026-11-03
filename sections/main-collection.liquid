@@ -33,6 +33,12 @@
         <a href="{{ routes.collections_url }}/womens-wear" class="cat-pill{% if collection.handle == 'womens-wear' %} is-active{% endif %}">
           Women's Edit
         </a>
+        <a href="{{ routes.collections_url }}/mens-wear" class="cat-pill{% if collection.handle == 'mens-wear' or collection.handle == 'mens-collection' %} is-active{% endif %}">
+          Men's Edit
+        </a>
+        <a href="{{ routes.collections_url }}/accessories" class="cat-pill{% if collection.handle == 'accessories' or collection.handle == 'womens-accessories' or collection.handle == 'mens-accessories' %} is-active{% endif %}">
+          Accessories
+        </a>
         <a href="{{ routes.collections_url }}/western-wear" class="cat-pill{% if collection.handle == 'western-wear' %} is-active{% endif %}">
           Western Wear
         </a>
