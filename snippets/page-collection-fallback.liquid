@@ -25,12 +25,14 @@
 
       <!-- Dynamic Department Navigation Pills -->
       <div class="collection-nav-pills" id="FallbackColPills" role="navigation" aria-label="Collection Categories">
-        <a href="{{ routes.collections_url }}/kidswear" class="cat-pill">Kidswear</a>
-        <a href="{{ routes.collections_url }}/womens-wear" class="cat-pill">Women's Wear</a>
-        <a href="{{ routes.collections_url }}/mens-wear" class="cat-pill">Men's Wear</a>
-        <a href="{{ routes.collections_url }}/festive-collection" class="cat-pill">Festive Edit</a>
         <a href="{{ routes.collections_url }}/new-arrivals" class="cat-pill">New Arrivals</a>
-        <a href="{{ routes.collections_url }}/sale" class="cat-pill">Sale &bull; Save Extra</a>
+        <a href="{{ routes.collections_url }}/womens-wear" class="cat-pill">Women's Wear</a>
+        <a href="{{ routes.collections_url }}/western-wear" class="cat-pill">Western Wear</a>
+        <a href="{{ routes.collections_url }}/womens-dresses" class="cat-pill">Dresses &amp; Gowns</a>
+        <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="cat-pill">Tops &amp; Tees</a>
+        <a href="{{ routes.collections_url }}/womens-bottomwear" class="cat-pill">Bottomwear</a>
+        <a href="{{ routes.collections_url }}/kidswear" class="cat-pill">Kidswear</a>
+        <a href="{{ routes.all_products_collection_url }}" class="cat-pill">All Creations</a>
       </div>
     </header>
 
@@ -71,77 +73,25 @@
       </div>
       <div class="active-filters" style="border:none;margin:0;padding-top:14px">
         <span class="active-filter-chip" style="background:var(--gold-dark);color:#fff" id="FallbackActiveChip">
-          All Sizes
+          All Pieces
         </span>
-        <a href="{{ routes.collections_url }}/womens-wear" class="active-filter-chip">Women</a>
-        <a href="{{ routes.collections_url }}/mens-wear" class="active-filter-chip">Men</a>
-        <a href="{{ routes.collections_url }}/kidswear" class="active-filter-chip">Kids</a>
-        <a href="{{ routes.collections_url }}/festive-collection" class="active-filter-chip">Festive</a>
-        <a href="{{ routes.collections_url }}/sale" class="active-filter-chip" style="color:var(--sale)">Sale Offers</a>
+        <a href="{{ routes.collections_url }}/new-arrivals" class="active-filter-chip">New Arrivals</a>
+        <a href="{{ routes.collections_url }}/womens-wear" class="active-filter-chip">Women's Wear</a>
+        <a href="{{ routes.collections_url }}/western-wear" class="active-filter-chip">Western Wear</a>
+        <a href="{{ routes.collections_url }}/womens-dresses" class="active-filter-chip">Dresses</a>
+        <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="active-filter-chip">Tops &amp; Tees</a>
+        <a href="{{ routes.collections_url }}/kidswear" class="active-filter-chip">Kidswear</a>
       </div>
     </div>
 
-    <!-- Product Grid (Uniform 5-Cards Desktop / 2-Cards Mobile) -->
+    <!-- Product Grid (Uniform 4-Cards Desktop / 2-Cards Mobile) -->
     <div class="grid grid--products grid--fashion-catalog" id="FallbackProductGrid">
       {%- assign all_prods = collections.all.products -%}
       {%- if all_prods.size > 0 -%}
-        {%- for prod in all_prods limit: 5 -%}
+        {%- for prod in all_prods limit: 8 -%}
           {% render 'product-card', product: prod %}
         {%- endfor -%}
       {%- endif -%}
-
-      <!-- Luxury Atelier Showroom Pieces (Guarantees exactly 5 cards across desktop) -->
-      <article class="card">
-        <div class="card__media-wrap">
-          <a class="card__media" href="{{ routes.all_products_collection_url }}" aria-label="ZEYOV Wireless Portable Citrus Juicer Blender">
-            <img src="{{ 'product-juicer-1.jpg' | asset_url }}" alt="ZEYOV Wireless Portable Citrus Juicer Blender" width="400" height="400" loading="lazy">
-          </a>
-          <span class="card__badge card__badge--sale">30% OFF</span>
-          <button type="button" class="card__wishlist-btn" aria-label="Save to Wishlist">
-            <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-          </button>
-        </div>
-        <div class="card__body">
-          <div class="card__meta-top">
-            <span class="card__type">LIFESTYLE &bull; WELLNESS</span>
-          </div>
-          <h3 class="card__title"><a href="{{ routes.all_products_collection_url }}">ZEYOV Wireless Portable USB-C Juicer Blender</a></h3>
-          <div class="price">
-            <span class="price__now">Rs. 899.00</span>
-            <s class="price__was">Rs. 1,299.00</s>
-            <span class="price__save">30% OFF</span>
-          </div>
-          <div class="card__action">
-            <a href="{{ routes.all_products_collection_url }}" class="btn btn--small btn--luxury btn--block">Explore Details</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card__media-wrap">
-          <a class="card__media" href="{{ routes.all_products_collection_url }}" aria-label="Handcrafted Italian Silk Draped Accent Scarf">
-            <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Handcrafted Italian Silk Draped Accent Scarf" width="400" height="400" loading="lazy">
-          </a>
-          <span class="card__badge card__badge--sale">35% OFF</span>
-          <button type="button" class="card__wishlist-btn" aria-label="Save to Wishlist">
-            <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-          </button>
-        </div>
-        <div class="card__body">
-          <div class="card__meta-top">
-            <span class="card__type">ATELIER ACCESSORIES</span>
-          </div>
-          <h3 class="card__title"><a href="{{ routes.all_products_collection_url }}">Handcrafted Italian Silk Draped Accent Scarf</a></h3>
-          <div class="price">
-            <span class="price__now">Rs. 1,499.00</span>
-            <s class="price__was">Rs. 2,299.00</s>
-            <span class="price__save">35% OFF</span>
-          </div>
-          <div class="card__action">
-            <a href="{{ routes.all_products_collection_url }}" class="btn btn--small btn--luxury btn--block">Explore Details</a>
-          </div>
-        </div>
-      </article>
     </div>
 
     <!-- WhatsApp Concierge Support Box -->
