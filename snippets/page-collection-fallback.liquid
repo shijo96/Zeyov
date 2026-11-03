@@ -15,15 +15,89 @@
       <span class="cur" id="FallbackColCrumb" aria-current="page">Curated Collection</span>
     </nav>
 
-    <!-- Collection Editorial Header -->
-    <header class="section__head collection-head center">
-      <span class="eyebrow" id="FallbackColDept">ZEYOV ATELIER &bull; READY-TO-WEAR</span>
-      <h1 class="collection-title" id="FallbackColTitle">Luxury Fashion Collection</h1>
-      <div class="collection-desc rte muted">
+    <!-- Myntra-Style Department Tab Switcher (ALL | WOMEN | MEN | KIDS) -->
+    <div class="myntra-dept-tabs" role="tablist" aria-label="Department Selection">
+      <a href="{{ routes.all_products_collection_url }}" class="dept-tab is-active" id="FallbackTabAll" role="tab">
+        <span>ALL</span>
+      </a>
+      <a href="{{ routes.collections_url }}/womens-wear" class="dept-tab" id="FallbackTabWomen" role="tab">
+        <span>WOMEN</span>
+      </a>
+      <a href="{{ routes.collections_url }}/mens-wear" class="dept-tab" id="FallbackTabMen" role="tab">
+        <span>MEN</span>
+      </a>
+      <a href="{{ routes.collections_url }}/kidswear" class="dept-tab" id="FallbackTabKids" role="tab">
+        <span>KIDS</span>
+      </a>
+    </div>
+
+    <!-- Myntra-Style Visual Micro-Categories Horizontal Track (Thumbnails + Names) -->
+    <div class="myntra-circle-rail-wrap">
+      <div class="myntra-circle-rail" id="FallbackCircleRail">
+        <a href="{{ routes.collections_url }}/womens-wear" class="circle-item">
+          <div class="circle-item__bubble">
+            <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="All Women" width="68" height="68" loading="eager">
+          </div>
+          <span class="circle-item__label">All Women</span>
+        </a>
+        <a href="{{ routes.collections_url }}/womens-dresses" class="circle-item">
+          <div class="circle-item__bubble">
+            <img src="{{ 'cat-coords.jpg' | asset_url }}" alt="Dresses" width="68" height="68" loading="eager">
+          </div>
+          <span class="circle-item__label">Dresses</span>
+        </a>
+        <a href="{{ routes.collections_url }}/western-wear" class="circle-item">
+          <div class="circle-item__bubble">
+            <img src="{{ 'collection-runway.jpg' | asset_url }}" alt="Western" width="68" height="68" loading="eager">
+          </div>
+          <span class="circle-item__label">Western</span>
+        </a>
+        <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="circle-item">
+          <div class="circle-item__bubble">
+            <img src="{{ 'cat-festive.jpg' | asset_url }}" alt="Tops & Tees" width="68" height="68" loading="eager">
+          </div>
+          <span class="circle-item__label">Tops &amp; Tees</span>
+        </a>
+        <a href="{{ routes.collections_url }}/womens-bottomwear" class="circle-item">
+          <div class="circle-item__bubble">
+            <img src="{{ 'fashion-wool-coat.jpg' | asset_url }}" alt="Bottomwear" width="68" height="68" loading="eager">
+          </div>
+          <span class="circle-item__label">Bottomwear</span>
+        </a>
+        <a href="{{ routes.collections_url }}/womens-winter-wear" class="circle-item">
+          <div class="circle-item__bubble">
+            <img src="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}" alt="Winter Wear" width="68" height="68" loading="eager">
+          </div>
+          <span class="circle-item__label">Winter Wear</span>
+        </a>
+        <a href="{{ routes.collections_url }}/accessories" class="circle-item">
+          <div class="circle-item__bubble">
+            <img src="{{ 'cat-accessories.jpg' | asset_url }}" alt="Accessories" width="68" height="68" loading="eager">
+          </div>
+          <span class="circle-item__label">Accessories</span>
+        </a>
+        <a href="{{ routes.collections_url }}/new-arrivals" class="circle-item">
+          <div class="circle-item__bubble">
+            <img src="{{ 'fashion-model-dress.jpg' | asset_url }}" alt="New In" width="68" height="68" loading="eager">
+          </div>
+          <span class="circle-item__label">New In</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Collection Editorial Header (Clean & Compact on Mobile) -->
+    <header class="section__head collection-head">
+      <div class="collection-title-row">
+        <h1 class="collection-title">
+          <span id="FallbackColTitle">Luxury Fashion Collection</span>
+          <span class="title-count">(Curated pieces)</span>
+        </h1>
+      </div>
+      <div class="collection-desc rte muted desktop-only">
         <p id="FallbackColDesc">Discover precision-tailored garments, sculpted silhouettes, and handcrafted luxury accessories designed for modern distinction.</p>
       </div>
 
-      <!-- Dynamic Department Navigation Pills -->
+      <!-- Horizontal Scrollable Category Capsule Pills (Never Wraps on Mobile) -->
       <div class="collection-nav-pills" id="FallbackColPills" role="navigation" aria-label="Collection Categories">
         <a href="{{ routes.collections_url }}/new-arrivals" class="cat-pill">New Arrivals</a>
         <a href="{{ routes.collections_url }}/womens-wear" class="cat-pill">Women's Wear</a>
