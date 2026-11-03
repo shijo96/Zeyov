@@ -70,6 +70,32 @@
             </div>
           </li>
 
+          <!-- MEN'S WEAR DROPDOWN -->
+          <li class="has-sub">
+            <a href="{{ routes.collections_url }}/mens-wear">
+              Men's Wear {% render 'icon', name: 'chevron' %}
+            </a>
+            <ul class="sub" role="list">
+              <li><a href="{{ routes.collections_url }}/mens-wear">All Men's Pieces</a></li>
+              <li><a href="{{ routes.collections_url }}/mens-tshirts">T-Shirts &amp; Polos</a></li>
+              <li><a href="{{ routes.collections_url }}/mens-shirts">Casual &amp; Formal Shirts</a></li>
+              <li><a href="{{ routes.collections_url }}/mens-trousers">Trousers &amp; Bottomwear</a></li>
+              <li><a href="{{ routes.collections_url }}/mens-accessories">Belts &amp; Accessories</a></li>
+            </ul>
+          </li>
+
+          <!-- ACCESSORIES DROPDOWN -->
+          <li class="has-sub">
+            <a href="{{ routes.collections_url }}/accessories">
+              Accessories {% render 'icon', name: 'chevron' %}
+            </a>
+            <ul class="sub" role="list">
+              <li><a href="{{ routes.collections_url }}/accessories">All Accessories</a></li>
+              <li><a href="{{ routes.collections_url }}/womens-accessories">Women's Accents &amp; Scarves</a></li>
+              <li><a href="{{ routes.collections_url }}/mens-accessories">Men's Belts &amp; Essentials</a></li>
+            </ul>
+          </li>
+
           <!-- KIDSWEAR DROPDOWN -->
           <li class="has-sub">
             <a href="{{ routes.collections_url }}/kidswear">
@@ -157,6 +183,38 @@
           <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-tops-tshirts">Tops &amp; T-Shirts</a>
           <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-bottomwear">Bottomwear &amp; Trousers</a>
           <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-winter-wear">Winter Wear</a>
+        </div>
+      </details>
+    </li>
+
+    <!-- Men's Collection Accordion -->
+    <li>
+      <details class="drawer__accordion">
+        <summary class="drawer__accordion-summary">
+          <span>Men's Collection</span>
+          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer__accordion-sublist">
+          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/mens-wear">All Men's Pieces &rarr;</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-tshirts">T-Shirts &amp; Polos</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-shirts">Casual &amp; Formal Shirts</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-trousers">Trousers &amp; Bottomwear</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-accessories">Belts &amp; Accessories</a>
+        </div>
+      </details>
+    </li>
+
+    <!-- Accessories Accordion -->
+    <li>
+      <details class="drawer__accordion">
+        <summary class="drawer__accordion-summary">
+          <span>Accessories</span>
+          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer__accordion-sublist">
+          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/accessories">All Accessories &rarr;</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-accessories">Women's Accents &amp; Scarves</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-accessories">Men's Belts &amp; Essentials</a>
         </div>
       </details>
     </li>
