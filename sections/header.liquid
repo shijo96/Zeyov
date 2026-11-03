@@ -3,11 +3,12 @@
   <div class="container header__inner">
     <button class="icon-btn header__burger" type="button" data-open="NavDrawer" aria-label="Open menu">{% render 'icon', name: 'menu' %}</button>
 
-    <a class="header__logo" href="{{ routes.root_url }}" aria-label="ZEYOV">
-      {%- if settings.logo != blank -%}
-        {{ settings.logo | image_url: width: 500 | image_tag: alt: 'ZEYOV', loading: 'eager', class: 'logo-img' }}
+    {%- assign header_logo = section.settings.logo | default: settings.logo -%}
+    <a class="header__logo" href="{{ routes.root_url }}" aria-label="ZEYOV" style="display:inline-flex;align-items:center;min-width:130px;flex-shrink:0;">
+      {%- if header_logo != blank -%}
+        {{ header_logo | image_url: width: 500 | image_tag: alt: 'ZEYOV', loading: 'eager', class: 'logo-img', style: 'display:block;width:150px;max-width:165px;height:auto;object-fit:contain;' }}
       {%- else -%}
-        <img class="logo-img" src="{{ 'zeyov-logo.png' | asset_url }}" alt="ZEYOV" width="300" height="120">
+        <img class="logo-img" src="{{ 'zeyov-logo.png' | asset_url }}" alt="ZEYOV" width="300" height="120" loading="eager" style="display:block;width:150px;max-width:165px;height:auto;object-fit:contain;">
       {%- endif -%}
     </a>
 
