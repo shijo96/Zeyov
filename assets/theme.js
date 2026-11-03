@@ -2213,9 +2213,9 @@
 
   /* 4. Mobile Bottom Sheet Filters */
   function initMobileFilters() {
-    var openBtn = $('[data-open-filters]');
+    var openBtns = $$('[data-open-filters]');
     var closeBackdrop = $('[data-close-filters]');
-    var facetsWrap = $('#CollectionFacets');
+    var facetsWrap = $('#CollectionFacets') || $('#CollectionTagFilters');
     if (!facetsWrap) return;
 
     function openFilters() {
@@ -2230,11 +2230,54 @@
       document.body.style.overflow = '';
     }
 
-    if (openBtn) openBtn.addEventListener('click', openFilters);
+    openBtns.forEach(function (btn) {
+      btn.addEventListener('click', openFilters);
+    });
+
     if (closeBackdrop) closeBackdrop.addEventListener('click', closeFilters);
 
     $$('[data-close-filters]').forEach(function (el) {
       el.addEventListener('click', closeFilters);
+    });
+  }
+
+  /* 5. Mobile Sort Bottom Sheet Modal (Myntra App Architecture) */
+  function initSortBottomSheet() {
+    var openBtns = $$('[data-open-sort-sheet]');
+    var sheet = $('#SortBottomSheet') || $('#SortBottomSheetFallback');
+    var backdrop = $('#SortSheetBackdrop') || $('#SortSheetBackdropFallback');
+    if (!sheet) return;
+
+    function openSheet() {
+      sheet.classList.add('is-open');
+      if (backdrop) backdrop.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSheet() {
+      sheet.classList.remove('is-open');
+      if (backdrop) backdrop.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    openBtns.forEach(function (btn) {
+      btn.addEventListener('click', openSheet);
+    });
+
+    if (backdrop) backdrop.addEventListener('click', closeSheet);
+    $$('[data-close-sort-sheet]').forEach(function (el) {
+      el.addEventListener('click', closeSheet);
+    });
+
+    $$('.sort-sheet__item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var sortVal = item.getAttribute('data-sort');
+        if (sortVal) {
+          var url = new URL(window.location.href);
+          url.searchParams.set('sort_by', sortVal);
+          window.location.href = url.toString();
+        }
+      });
     });
   }
 
