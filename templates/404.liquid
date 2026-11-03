@@ -576,9 +576,25 @@
             a.className = 'cat-pill';
             a.href = activePills[i].u;
             a.textContent = activePills[i].t;
+            if (activePills[i].u === ('/collections/' + rawHandle)) {
+              a.classList.add('is-active');
+            }
             pillsWrap.appendChild(a);
           }
         }
+
+        var isMen = rawHandle.indexOf('men') > -1 && rawHandle.indexOf('women') === -1;
+        var isKids = rawHandle.indexOf('kid') > -1 || rawHandle.indexOf('baby') > -1;
+        var isWomen = rawHandle.indexOf('women') > -1 || rawHandle === 'western-wear' || rawHandle.indexOf('dress') > -1;
+
+        var tabAll = document.getElementById('FallbackTabAll');
+        var tabWomen = document.getElementById('FallbackTabWomen');
+        var tabMen = document.getElementById('FallbackTabMen');
+        var tabKids = document.getElementById('FallbackTabKids');
+        if (tabAll) tabAll.classList.toggle('is-active', !isMen && !isKids && !isWomen);
+        if (tabWomen) tabWomen.classList.toggle('is-active', isWomen);
+        if (tabMen) tabMen.classList.toggle('is-active', isMen);
+        if (tabKids) tabKids.classList.toggle('is-active', isKids);
 
         var waBtn = document.getElementById('FallbackWaBtn');
         if (waBtn) {
