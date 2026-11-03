@@ -7,17 +7,29 @@
   4. Graceful luxury demo fallback if catalog is brand new
 {%- endcomment -%}
 
-{%- assign runway_mode = 'demo' -%}
+{%- assign orbit_col = section.settings.collection -%}
+{%- if orbit_col == blank or orbit_col.products.size == 0 -%}
+  {%- assign orbit_col = collections['new-arrivals'] -%}
+{%- endif -%}
+{%- if orbit_col == blank or orbit_col.products.size == 0 -%}
+  {%- assign orbit_col = collections.all -%}
+{%- endif -%}
+
+{%- assign sorted_products = orbit_col.products | sort: 'created_at' | reverse -%}
+{%- if sorted_products == blank or sorted_products.size == 0 -%}
+  {%- assign sorted_products = orbit_col.products -%}
+{%- endif -%}
+
+{%- assign runway_mode = 'collection' -%}
 {%- if section.blocks.size > 0 -%}
   {%- assign runway_mode = 'blocks' -%}
 {%- elsif section.settings.product_1 != blank or section.settings.product_2 != blank or section.settings.product_3 != blank or section.settings.product_4 != blank -%}
   {%- assign runway_mode = 'products' -%}
-{%- else -%}
-  {%- assign orbit_col = section.settings.collection | default: collections.all -%}
-  {%- if orbit_col.products.size > 0 -%}
-    {%- assign runway_mode = 'collection' -%}
-  {%- endif -%}
+{%- elsif sorted_products.size == 0 -%}
+  {%- assign runway_mode = 'demo' -%}
 {%- endif -%}
+
+{%- assign first_orbit_item = sorted_products | first -%}
 
 <section class="runway-orbit-section runway-orbit-section--{{ section.settings.color_scheme | default: 'ivory' }}" id="RunwayOrbit" data-runway-orbit>
   <!-- Background Rolling Serif Watermark (Video 1 signature) -->
