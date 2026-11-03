@@ -279,6 +279,18 @@
               { t: "All Women's", u: "/collections/womens-wear" }
             ]
           },
+          'accessories': {
+            title: "Fashion Accessories",
+            dept: "ZEYOV ATELIER • ACCENTS & LUXURY",
+            desc: "Italian silk scarves, handcrafted leather belts, jewelry accents, and curated styling pieces to complete every look.",
+            pills: [
+              { t: "All Accessories", u: "/collections/accessories" },
+              { t: "Women's Accessories", u: "/collections/womens-accessories" },
+              { t: "Men's Accessories", u: "/collections/mens-accessories" },
+              { t: "New Arrivals", u: "/collections/new-arrivals" },
+              { t: "All Creations", u: "/collections/all" }
+            ]
+          },
           'womens-accessories': {
             title: "Women's Accessories",
             dept: "WOMEN'S ATELIER • ACCENTS",
@@ -524,8 +536,9 @@
           'cotton-dresses': 'Cotton Dresses & Wear',
           'designer-gowns': 'Designer Gowns & Dresses',
           'plus-size-dresses': 'Plus Size Dresses',
-          'mens-clothing': "Men's Collection (Coming Soon)",
-          'mens-wear': "Men's Collection (Coming Soon)"
+          'mens-clothing': "Men's Collection",
+          'mens-wear': "Men's Collection",
+          'accessories': "Fashion Accessories"
         };
         if (aliasMap[rawHandle]) {
           item.title = aliasMap[rawHandle];
@@ -547,6 +560,8 @@
         var activePills = [
           { t: "New Arrivals", u: "/collections/new-arrivals" },
           { t: "Women's Wear", u: "/collections/womens-wear" },
+          { t: "Men's Wear", u: "/collections/mens-wear" },
+          { t: "Accessories", u: "/collections/accessories" },
           { t: "Western Wear", u: "/collections/western-wear" },
           { t: "Dresses & Gowns", u: "/collections/womens-dresses" },
           { t: "Tops & Tees", u: "/collections/womens-tops-tshirts" },
