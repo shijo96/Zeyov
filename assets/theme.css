@@ -4061,33 +4061,119 @@ p{margin:0 0 1em}
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .orbit__quick-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 12px 28px;
+  min-height: 48px;
   border-radius: 999px;
   font-size: 0.88rem;
+  font-weight: 600;
   letter-spacing: 0.04em;
-  box-shadow: 0 10px 25px rgba(198, 161, 91, 0.25);
+  background: linear-gradient(135deg, #c5a059 0%, #b38b42 100%);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 25px rgba(198, 161, 91, 0.28);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.orbit__quick-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(198, 161, 91, 0.42);
+  color: #ffffff !important;
+}
+
+.orbit__quick-btn:active {
+  transform: scale(0.98);
 }
 
 .orbit__pdp-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  min-height: 48px;
+  border-radius: 999px;
   font-size: 0.88rem;
   font-weight: 600;
-  color: var(--gold);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: color 0.2s ease;
-  padding: 8px 12px;
+  letter-spacing: 0.03em;
+  color: #181716 !important;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid #181716;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+.orbit__pdp-link svg {
+  flex-shrink: 0;
+  stroke: currentColor;
+  transition: transform 0.25s ease;
 }
 
 .orbit__pdp-link:hover {
-  color: #ffffff;
+  background: #181716;
+  color: #ffffff !important;
+  border-color: #181716;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(24, 23, 22, 0.16);
+}
+
+.orbit__pdp-link:hover svg {
+  transform: scale(1.18);
+}
+
+.orbit__pdp-link:active {
+  transform: scale(0.98);
+}
+
+/* Dark and Espresso color schemes */
+.runway-orbit-section--dark .orbit__pdp-link,
+.runway-orbit-section--espresso .orbit__pdp-link {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.runway-orbit-section--dark .orbit__pdp-link:hover,
+.runway-orbit-section--espresso .orbit__pdp-link:hover {
+  background: #ffffff;
+  color: #111111 !important;
+  border-color: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .orbit__actions-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0 4px;
+  }
+  .orbit__quick-btn,
+  .orbit__pdp-link {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 14px;
+    min-height: 44px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    justify-content: center;
+  }
 }
 
 /* Quick View / Runway Modal (Video 1 Frame 4) */
