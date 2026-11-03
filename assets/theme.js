@@ -2366,6 +2366,7 @@
   initQuickView();
   initStickyPdpBar();
   initMobileFilters();
+  initSortBottomSheet();
 
   trackCurrentProductView();
   renderPersonalizedRecs();
