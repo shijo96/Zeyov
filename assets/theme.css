@@ -3712,14 +3712,14 @@ p{margin:0 0 1em}
   font-weight: 400;
 }
 
-/* Centered Runway Showcase Layout */
+/* Centered Luxury Runway Orbit Showcase */
 .orbit__stage-grid {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -3731,104 +3731,18 @@ p{margin:0 0 1em}
   justify-content: center;
   position: relative;
   margin: 0 auto;
-}
-
-/* Left Garment Index Tracklist */
-.orbit__index {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 20px 16px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.orbit__index-title {
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-  color: var(--gold);
-  margin: 0 0 16px;
-  font-weight: 600;
-}
-
-.orbit__tracklist {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.orbit__track-item {
-  display: grid;
-  grid-template-columns: 28px 1fr auto;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: transparent;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.orbit__track-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.orbit__track-item.is-active {
-  background: rgba(198, 161, 91, 0.12);
-  border-color: rgba(198, 161, 91, 0.4);
-}
-
-.track-num {
-  font-size: 0.78rem;
-  font-family: monospace;
-  color: var(--gold);
-}
-
-.track-name {
-  font-size: 0.88rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: #f0ede6;
-}
-
-.orbit__track-item.is-active .track-name {
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.track-price {
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-variant-numeric: tabular-nums;
-}
-
-.orbit__track-item.is-active .track-price {
-  color: var(--gold);
-}
-
-/* Center 3D Orbit Carousel */
-.orbit__carousel-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  width: 100%;
 }
 
 .orbit__carousel {
   position: relative;
   width: 100%;
-  max-width: 520px;
-  height: clamp(340px, 48vw, 480px);
+  max-width: 860px;
+  height: clamp(340px, 44vw, 440px);
   perspective: 1200px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0 auto;
 }
 
 .orbit__item {
@@ -3836,7 +3750,7 @@ p{margin:0 0 1em}
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(240px, 34vw, 360px);
+  width: clamp(260px, 30vw, 360px);
   transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease, filter 0.5s ease;
   cursor: pointer;
   pointer-events: none;
@@ -3844,6 +3758,7 @@ p{margin:0 0 1em}
   z-index: 1;
 }
 
+/* Center Active Card: Exactly dead-center on screen */
 .orbit__item.is-active {
   transform: translate(-50%, -50%) scale(1) translateZ(0);
   opacity: 1;
@@ -3851,18 +3766,20 @@ p{margin:0 0 1em}
   pointer-events: auto;
 }
 
+/* Left Preview Card: Symmetrically positioned on the left */
 .orbit__item.is-prev {
-  transform: translate(-120%, -50%) scale(0.74) rotateY(24deg);
+  transform: translate(-150%, -50%) scale(0.78) rotateY(18deg);
   opacity: 0.45;
-  filter: blur(1px) brightness(0.7);
+  filter: blur(1.5px) brightness(0.7);
   pointer-events: auto;
   z-index: 5;
 }
 
+/* Right Preview Card: Symmetrically positioned on the right */
 .orbit__item.is-next {
-  transform: translate(20%, -50%) scale(0.74) rotateY(-24deg);
+  transform: translate(50%, -50%) scale(0.78) rotateY(-18deg);
   opacity: 0.45;
-  filter: blur(1px) brightness(0.7);
+  filter: blur(1.5px) brightness(0.7);
   pointer-events: auto;
   z-index: 5;
 }
@@ -3876,12 +3793,12 @@ p{margin:0 0 1em}
     width: clamp(200px, 60vw, 270px);
   }
   .orbit__item.is-prev {
-    transform: translate(-94%, -50%) scale(0.70) rotateY(16deg);
-    opacity: 0.28;
+    transform: translate(-120%, -50%) scale(0.72) rotateY(14deg);
+    opacity: 0.25;
   }
   .orbit__item.is-next {
-    transform: translate(-6%, -50%) scale(0.70) rotateY(-16deg);
-    opacity: 0.28;
+    transform: translate(20%, -50%) scale(0.72) rotateY(-14deg);
+    opacity: 0.25;
   }
   .orbit__watermark-text {
     font-size: clamp(2.5rem, 11vw, 4.6rem);
