@@ -136,99 +136,52 @@
   </div>
   <ul class="drawer__list" role="list">
     <li><a href="{{ routes.root_url }}">Home</a></li>
+    <li>
+      <a href="{{ routes.collections_url }}/new-arrivals" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>New Arrivals</span>
+        <span class="nav-badge--sale" style="background:var(--gold-dark);margin:0;">Fresh Drop</span>
+      </a>
+    </li>
+
+    <!-- Women's Wear Accordion -->
+    <li>
+      <details class="drawer__accordion" open>
+        <summary class="drawer__accordion-summary">
+          <span>Women's Collection</span>
+          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer__accordion-sublist">
+          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/womens-wear">All Women's Pieces &rarr;</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/western-wear">Western Wear</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-dresses">Dresses &amp; Gowns</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-tops-tshirts">Tops &amp; T-Shirts</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-bottomwear">Bottomwear &amp; Trousers</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-winter-wear">Winter Wear</a>
+        </div>
+      </details>
+    </li>
 
     <!-- Kidswear Accordion -->
     <li>
       <details class="drawer__accordion">
         <summary class="drawer__accordion-summary">
-          <span>Kidswear</span>
+          <span>Kidswear &amp; Baby</span>
           <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="drawer__accordion-sublist">
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/baby-clothing">Baby Clothing</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/baby-rompers">Baby Rompers &amp; Onesies</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/boys-clothing">Boys Clothing</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/girls-clothing">Girls Clothing</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/kids-dresses">Kids Dresses</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/kids-tops-bottoms">Kids Tops &amp; Bottoms</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/kids-accessories">Kids Accessories</a>
-          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/kidswear">View All Kidswear &rarr;</a>
+          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/kidswear">All Kidswear &rarr;</a>
+          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/baby-winterwear">Baby Winterwear</a>
         </div>
       </details>
     </li>
 
-    <!-- Women's Wear Accordion -->
-    <li>
-      <details class="drawer__accordion">
-        <summary class="drawer__accordion-summary">
-          <span>Women's Wear</span>
-          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </summary>
-        <div class="drawer__accordion-sublist">
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-maxi-dresses">Maxi Dresses</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/cotton-dresses">Cotton Dresses</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/plus-size-dresses">Plus Size Dresses</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/designer-gowns">Designer Gowns</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-dresses">All Dresses &amp; Gowns</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/ethnic-wear">Kurtis &amp; Ethnic Wear</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/coord-sets">Co-ord Sets</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/western-wear">Western Wear</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/womens-accessories">Women's Accessories</a>
-          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/womens-wear">View All Women's Wear &rarr;</a>
-        </div>
-      </details>
-    </li>
-
-    <!-- Men's Wear Accordion -->
-    <li>
-      <details class="drawer__accordion">
-        <summary class="drawer__accordion-summary">
-          <span>Men's Wear</span>
-          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </summary>
-        <div class="drawer__accordion-sublist">
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-tshirts">T-Shirts &amp; Polos</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-shirts">Shirts</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-trousers">Trousers &amp; Chinos</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-jeans">Jeans</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-casual-wear">Casual Wear</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-ethnic-wear">Ethnic Wear</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/mens-accessories">Men's Accessories</a>
-          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/mens-wear">View All Men's Wear &rarr;</a>
-        </div>
-      </details>
-    </li>
-
-    <!-- Festive Collection Accordion -->
-    <li>
-      <details class="drawer__accordion">
-        <summary class="drawer__accordion-summary">
-          <span style="color:var(--gold-dark)">Festive Collection</span>
-          <svg class="drawer__accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </summary>
-        <div class="drawer__accordion-sublist">
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/christmas-collection">Christmas Collection</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/onam-collection">Onam Collection</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/vishu-collection">Vishu Collection</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/eid-collection">Eid Collection</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/diwali-collection">Diwali Collection</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/new-year-collection">New Year Collection</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/valentines-collection">Valentine's Collection</a>
-          <a class="drawer__accordion-sublink" href="{{ routes.collections_url }}/festival-specials">Festival Specials</a>
-          <a class="drawer__view-all-link" href="{{ routes.collections_url }}/festive-collection">View All Festive &rarr;</a>
-        </div>
-      </details>
-    </li>
-
-    <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
-    {% comment %} <li><a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a></li> {% endcomment %}
-    {% comment %} <li><a href="{{ routes.collections_url }}/sale" style="color:var(--sale);">Sale <span class="nav-badge--sale">Save Extra</span></a></li> {% endcomment %}
+    <li><a href="{{ routes.all_products_collection_url }}">All Creations</a></li>
 
     {%- assign track_link = pages['track-order'].url | default: pages['track-your-order'].url | default: pages['order-tracking'].url | default: '/pages/track-order' -%}
     {%- assign about_link = pages['about-us'].url | default: pages['about'].url | default: pages['about-zeyov'].url | default: '/pages/about-us' -%}
     {%- assign contact_link = pages['contact-us'].url | default: pages['contact'].url | default: '/pages/contact-us' -%}
     {%- assign faq_link = pages['faq'].url | default: pages['faqs'].url | default: pages['frequently-asked-questions'].url | default: '/pages/faq' -%}
-    <li><a href="{{ track_link }}">Track Your Order</a></li>
+    <li style="border-top:1px solid rgba(229,222,213,0.5);margin-top:12px;padding-top:10px;"><a href="{{ track_link }}">Track Your Order</a></li>
     <li><a href="{{ about_link }}">About Zeyov</a></li>
     <li><a href="{{ contact_link }}">Contact Us</a></li>
     <li><a href="{{ faq_link }}">FAQs</a></li>
