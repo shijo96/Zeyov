@@ -12,7 +12,9 @@
     "quick_categories": {
       "type": "quick-categories",
       "settings": {
-        "heading": ""
+        "heading": "",
+        "view_all_link": "",
+        "view_all_text": "Explore All"
       }
     },
     "runway_orbit": {
@@ -21,7 +23,7 @@
         "color_scheme": "ivory",
         "eyebrow": "ZEYOV RUNWAY EDIT • SS25",
         "heading": "NOT A STORE. A RUNWAY.",
-        "collection": "",
+        "collection": "new-arrivals",
         "product_1": "",
         "tag_1": "AUTUMN / WINTER 24",
         "product_2": "",
