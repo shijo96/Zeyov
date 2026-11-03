@@ -308,18 +308,18 @@
 
       <div class="orbit-modal__grid">
         <div class="orbit-modal__visual">
-          <img src="{{ 'fashion-puffer-jacket.jpg' | asset_url }}" alt="Zeyov Fashion Runway" class="orbit-modal__img" data-modal-img width="600" height="600">
+          <img src="{% if first_orbit_item and first_orbit_item.featured_image %}{{ first_orbit_item.featured_image | image_url: width: 600 }}{% else %}{{ 'fashion-puffer-jacket.jpg' | asset_url }}{% endif %}" alt="{{ first_orbit_item.title | default: 'Zeyov Fashion Runway' | escape }}" class="orbit-modal__img" data-modal-img width="600" height="600">
         </div>
 
         <div class="orbit-modal__details">
-          <span class="badge badge--gold orbit-modal__tag" data-modal-tag>AUTUMN / WINTER 24</span>
-          <h2 class="orbit-modal__title" data-modal-title>Amber Puffer Vest</h2>
+          <span class="badge badge--gold orbit-modal__tag" data-modal-tag>{{ first_orbit_item.type | default: 'NEW ARRIVALS' | upcase }}</span>
+          <h2 class="orbit-modal__title" data-modal-title>{{ first_orbit_item.title | default: 'Runway Piece' }}</h2>
           <div class="orbit-modal__price-row">
-            <span class="orbit-modal__price" data-modal-price>Rs. 2,499.00</span>
+            <span class="orbit-modal__price" data-modal-price>{{ first_orbit_item.price | money | default: 'Rs. 2,499.00' }}</span>
             <span class="badge badge--sale">Free Prepaid Delivery</span>
           </div>
 
-          <p class="orbit-modal__desc" data-modal-desc>Engineered with thermal air-loft insulation and water-resistant nylon shell. Minimalist obsidian black contrast detailing.</p>
+          <p class="orbit-modal__desc" data-modal-desc>{{ first_orbit_item.description | strip_html | truncate: 160 | default: 'Engineered with premium fabric and precision tailoring.' }}</p>
 
           <!-- Options (only shown if configured) -->
           <div class="orbit-modal__option" id="OrbitModalSwatchesWrap" style="display: none;">
