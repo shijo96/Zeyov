@@ -3712,35 +3712,25 @@ p{margin:0 0 1em}
   font-weight: 400;
 }
 
-/* 2-Column Runway Layout */
+/* Centered Runway Showcase Layout */
 .orbit__stage-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-@media (max-width: 899px) {
-  .orbit__carousel-wrap {
-    order: 1;
-    width: 100%;
-  }
-  .orbit__index {
-    display: none;
-  }
-}
-
-@media (min-width: 900px) {
-  .orbit__stage-grid {
-    grid-template-columns: 320px 1fr;
-    gap: 50px;
-  }
-  .orbit__index {
-    order: 1;
-  }
-  .orbit__carousel-wrap {
-    order: 2;
-  }
+.orbit__carousel-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto;
 }
 
 /* Left Garment Index Tracklist */
