@@ -188,10 +188,10 @@
             {%- endfor -%}
 
           {%- elsif runway_mode == 'collection' -%}
-            {%- for p in orbit_col.products limit: 4 -%}
+            {%- for p in sorted_products limit: 4 -%}
               {%- assign t = p.title -%}
               {%- assign pr = p.price | money -%}
-              {%- assign tg = p.type | default: 'RUNWAY EDIT' | upcase -%}
+              {%- assign tg = p.type | default: 'NEW ARRIVALS' | upcase -%}
               {%- assign ds = p.description | strip_html | truncate: 160 -%}
               {%- assign url = p.url -%}
               {%- assign vid = p.selected_or_first_available_variant.id -%}
@@ -265,8 +265,8 @@
         <!-- Center Bottom Interactive Controller -->
         <div class="orbit__controller">
           <div class="orbit__meta">
-            <h3 class="orbit__active-title" data-orbit-title>Amber Puffer Vest</h3>
-            <p class="orbit__active-price" data-orbit-price>Rs. 2,499.00</p>
+            <h3 class="orbit__active-title" data-orbit-title>{{ first_orbit_item.title | default: 'Amber Puffer Vest' }}</h3>
+            <p class="orbit__active-price" data-orbit-price>{{ first_orbit_item.price | money | default: 'Rs. 2,499.00' }}</p>
           </div>
 
           <div class="orbit__nav-bar">
@@ -278,7 +278,7 @@
               <div class="orbit__progress-line">
                 <div class="orbit__progress-fill" data-orbit-progress style="width: 25%;"></div>
               </div>
-              <span class="orbit__nav-tot" data-orbit-total-num>04</span>
+              <span class="orbit__nav-tot" data-orbit-total-num>{{ sorted_products.size | at_most: 4 | prepend: '0' | slice: -2, 2 | default: '04' }}</span>
             </div>
             <button class="orbit__nav-arrow next" type="button" aria-label="Next Outfit" data-orbit-next>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -286,11 +286,13 @@
           </div>
 
           <div class="orbit__actions-row">
-            <a href="{{ routes.all_products_collection_url }}" class="btn btn--gold orbit__quick-btn" data-orbit-pdp-btn>
-              Shop Look &bull; View Product &rarr;
+            <a href="{{ first_orbit_item.url | default: routes.all_products_collection_url }}" class="orbit__quick-btn" data-orbit-pdp-btn>
+              <span>Shop Look &bull; View Product</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
-            <button class="orbit__pdp-link" type="button" data-open-orbit-modal>
-              Quick Details
+            <button class="orbit__pdp-link" type="button" data-open-orbit-modal aria-label="Open Quick Details">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/></svg>
+              <span>Quick Details</span>
             </button>
           </div>
         </div>
