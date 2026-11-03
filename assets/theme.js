@@ -970,26 +970,38 @@
       }
     }
 
-    // Auto-advance timer (Every 4.5 seconds automatic animation)
+    // Auto-advance timer (Smooth continuous 3-second automatic rotation)
     var orbitTimer = null;
+    var isHovered = false;
+
     function startOrbitTimer() {
       if (orbitTimer) clearInterval(orbitTimer);
+      if (totalCount <= 1) return;
       orbitTimer = setInterval(function () {
-        updateOrbit(activeIdx + 1);
-      }, 4500);
+        if (!isHovered) {
+          updateOrbit(activeIdx + 1);
+        }
+      }, 3000);
     }
+
     function resetOrbitTimer() {
       startOrbitTimer();
     }
+
     startOrbitTimer();
 
-    // Pause on hover
-    orbitSection.addEventListener('mouseenter', function () {
-      if (orbitTimer) clearInterval(orbitTimer);
-    });
-    orbitSection.addEventListener('mouseleave', function () {
-      startOrbitTimer();
-    });
+    // Pause only when mouse is directly hovering the center carousel or controller buttons
+    var carouselEl = $('[data-orbit-carousel]', orbitSection);
+    var controllerEl = $('.orbit__controller', orbitSection);
+
+    if (carouselEl) {
+      carouselEl.addEventListener('mouseenter', function () { isHovered = true; });
+      carouselEl.addEventListener('mouseleave', function () { isHovered = false; });
+    }
+    if (controllerEl) {
+      controllerEl.addEventListener('mouseenter', function () { isHovered = true; });
+      controllerEl.addEventListener('mouseleave', function () { isHovered = false; });
+    }
 
     if (prevBtn) prevBtn.addEventListener('click', function () { updateOrbit(activeIdx - 1); resetOrbitTimer(); });
     if (nextBtn) nextBtn.addEventListener('click', function () { updateOrbit(activeIdx + 1); resetOrbitTimer(); });
