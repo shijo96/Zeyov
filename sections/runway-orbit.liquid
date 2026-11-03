@@ -77,7 +77,7 @@
             {%- endfor -%}
 
           {%- elsif runway_mode == 'collection' -%}
-            {%- for p in orbit_col.products limit: 4 -%}
+            {%- for p in sorted_products limit: 4 -%}
               <li class="orbit__track-item{% if forloop.first %} is-active{% endif %}" data-orbit-index="{{ forloop.index0 }}">
                 <span class="track-num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
                 <span class="track-name">{{ p.title | upcase }}</span>
