@@ -512,6 +512,25 @@
           };
         }
 
+        var aliasMap = {
+          'baby-clothing': 'Kidswear & Baby Essentials',
+          'baby-rompers': 'Kidswear & Baby Rompers',
+          'baby-winterwear': 'Baby Winterwear',
+          'girls-clothing': 'Girls & Kidswear',
+          'boys-clothing': 'Boys & Kidswear',
+          'kids-dresses': 'Kids Dresses & Frocks',
+          'womens-clothing': "Women's Collection",
+          'womens-maxi-dresses': 'Maxi Dresses & Gowns',
+          'cotton-dresses': 'Cotton Dresses & Wear',
+          'designer-gowns': 'Designer Gowns & Dresses',
+          'plus-size-dresses': 'Plus Size Dresses',
+          'mens-clothing': "Men's Collection (Coming Soon)",
+          'mens-wear': "Men's Collection (Coming Soon)"
+        };
+        if (aliasMap[rawHandle]) {
+          item.title = aliasMap[rawHandle];
+        }
+
         document.title = item.title + ' – ZEYOV Runway Atelier';
         var t = document.getElementById('FallbackColTitle');
         if (t) t.textContent = item.title;
@@ -525,13 +544,23 @@
         if (ac) ac.textContent = item.title;
 
         var pillsWrap = document.getElementById('FallbackColPills');
-        if (pillsWrap && item.pills && item.pills.length) {
+        var activePills = [
+          { t: "New Arrivals", u: "/collections/new-arrivals" },
+          { t: "Women's Wear", u: "/collections/womens-wear" },
+          { t: "Western Wear", u: "/collections/western-wear" },
+          { t: "Dresses & Gowns", u: "/collections/womens-dresses" },
+          { t: "Tops & Tees", u: "/collections/womens-tops-tshirts" },
+          { t: "Bottomwear", u: "/collections/womens-bottomwear" },
+          { t: "Kidswear", u: "/collections/kidswear" },
+          { t: "All Creations", u: "/collections/all" }
+        ];
+        if (pillsWrap) {
           pillsWrap.innerHTML = '';
-          for (var i = 0; i < item.pills.length; i++) {
+          for (var i = 0; i < activePills.length; i++) {
             var a = document.createElement('a');
             a.className = 'cat-pill';
-            a.href = item.pills[i].u;
-            a.textContent = item.pills[i].t;
+            a.href = activePills[i].u;
+            a.textContent = activePills[i].t;
             pillsWrap.appendChild(a);
           }
         }
