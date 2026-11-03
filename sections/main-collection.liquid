@@ -22,22 +22,31 @@
         {%- endif -%}
       </div>
 
-      <!-- Quick Category Navigation Pills -->
+      <!-- Quick Category Navigation Pills (Active Collections) -->
       <div class="collection-nav-pills" role="navigation" aria-label="Collection Categories">
         <a href="{{ routes.all_products_collection_url }}" class="cat-pill{% if collection.handle == 'all' or collection.handle == blank %} is-active{% endif %}">
           All Creations
         </a>
-        <a href="{{ routes.root_url }}#FashionShowcase" class="cat-pill">
+        <a href="{{ routes.collections_url }}/new-arrivals" class="cat-pill{% if collection.handle == 'new-arrivals' %} is-active{% endif %}">
+          New Arrivals
+        </a>
+        <a href="{{ routes.collections_url }}/womens-wear" class="cat-pill{% if collection.handle == 'womens-wear' %} is-active{% endif %}">
+          Women's Edit
+        </a>
+        <a href="{{ routes.collections_url }}/western-wear" class="cat-pill{% if collection.handle == 'western-wear' %} is-active{% endif %}">
+          Western Wear
+        </a>
+        <a href="{{ routes.collections_url }}/womens-dresses" class="cat-pill{% if collection.handle == 'womens-dresses' %} is-active{% endif %}">
           Dresses &amp; Gowns
         </a>
-        <a href="{{ routes.root_url }}#FashionShowcase" class="cat-pill">
-          Outerwear &amp; Jackets
+        <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="cat-pill{% if collection.handle == 'womens-tops-tshirts' %} is-active{% endif %}">
+          Tops &amp; Tees
         </a>
-        <a href="{{ routes.collections_url }}/accessories" class="cat-pill{% if collection.handle == 'accessories' %} is-active{% endif %}">
-          Fashion Accessories
+        <a href="{{ routes.collections_url }}/womens-bottomwear" class="cat-pill{% if collection.handle == 'womens-bottomwear' %} is-active{% endif %}">
+          Bottomwear
         </a>
-        <a href="{{ routes.root_url }}#RunwayOrbit" class="cat-pill">
-          The Runway Edit
+        <a href="{{ routes.collections_url }}/kidswear" class="cat-pill{% if collection.handle == 'kidswear' %} is-active{% endif %}">
+          Kidswear
         </a>
       </div>
     </header>
