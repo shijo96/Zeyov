@@ -1183,7 +1183,7 @@
 
     var activeGenderBtn = $('.segment-btn.is-active', showcase);
     var currentCat = 'all';
-    var currentGender = activeGenderBtn ? (activeGenderBtn.getAttribute('data-gender-filter') || 'all') : 'all';
+    var currentGender = activeGenderBtn ? (activeGenderBtn.getAttribute('data-gender-filter') || 'women') : 'women';
     var modelWomen = showcase.getAttribute('data-model-women');
     var modelMen = showcase.getAttribute('data-model-men');
 
@@ -1217,9 +1217,9 @@
           countEl.textContent = (count < 10 ? '0' : '') + count;
         }
         if (count === 0 && cat !== 'all') {
-          pill.style.opacity = '0.4';
+          pill.style.display = 'none';
         } else {
-          pill.style.opacity = '';
+          pill.style.display = '';
         }
       });
     }
@@ -1268,7 +1268,7 @@
       btn.addEventListener('click', function () {
         genderBtns.forEach(function (b) { b.classList.remove('is-active'); });
         btn.classList.add('is-active');
-        currentGender = btn.getAttribute('data-gender-filter') || 'all';
+        currentGender = btn.getAttribute('data-gender-filter') || 'women';
 
         // Switch editorial model photo
         var targetModel = (currentGender === 'men') ? modelMen : modelWomen;
@@ -1285,6 +1285,10 @@
         catPills.forEach(function (p) {
           p.classList.toggle('is-active', (p.getAttribute('data-cat') || 'all') === 'all');
         });
+
+        if (railTrack) {
+          railTrack.scrollTo({ left: 0, behavior: 'smooth' });
+        }
 
         filterCards();
       });
@@ -1466,11 +1470,8 @@
       });
     });
 
-    // Auto-sync initial active card with showcase model image and floating bar
-    var initialActiveCard = $('.rail-card.is-active', showcase) || railCards[0];
-    if (initialActiveCard) {
-      activateCard(initialActiveCard);
-    }
+    // Auto-sync initial active card with showcase model image, category pills, and floating bar
+    filterCards();
 
     // Quick add buttons on rail cards with real Shopify Cart API
     $$('.rail-card__quick-add', showcase).forEach(function (btn) {
