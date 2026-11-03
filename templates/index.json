@@ -39,7 +39,7 @@
       "settings": {
         "eyebrow": "ZEYOV ATELIER • SS25 RUNWAY",
         "heading": "PRODUCTS SHOWCASE",
-        "collection": "",
+        "collection": "frontpage",
         "limit": 8,
         "quote": "Draped to sculpt, engineered to move effortlessly.",
         "signature": "ZEYOV RUNWAY ATELIER"
@@ -51,7 +51,7 @@
         "eyebrow": "THE RUNWAY LOOKBOOK",
         "heading": "CURATED SILHOUETTES",
         "subheading": "Every piece is precision-tailored in limited batches with luxury fabrics designed for lasting distinction.",
-        "collection": "",
+        "collection": "women-s-clothing",
         "product_1": "",
         "tag_1": "EVENING & OCCASION",
         "fabric_1": "100% Grade-6A Mulberry Silk • Hand-stitched drape",
@@ -92,7 +92,7 @@
         "eyebrow": "ATELIER ACCESSORIES",
         "heading": "Luxury Accessories & Runway Accents",
         "text": "Handcrafted Italian silk scarves, gold-buckle leather belts, and couture accessories designed to complete every silhouette.",
-        "collection": "",
+        "collection": "frontpage",
         "limit": 10,
         "show_all": true
       }
