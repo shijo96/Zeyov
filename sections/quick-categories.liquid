@@ -32,64 +32,65 @@
             </a>
           {%- endfor -%}
         {%- else -%}
-          <!-- Default Preset Luxury Fashion Categories (Women, Kurtas, Dresses, Kidswear, etc.) -->
+          <!-- Curated Active Fashion Categories (Zero 0-Product Links & Zero Duplicate Rompers) -->
+          <a href="{{ routes.collections_url }}/new-arrivals" class="quick-cat-item is-featured">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'fashion-model-dress.jpg' | asset_url }}" alt="New Arrivals" width="180" height="180" loading="eager" class="quick-cat-item__img">
+              <span class="quick-cat-item__badge quick-cat-item__badge--gold">New</span>
+            </div>
+            <span class="quick-cat-item__label">New Arrivals</span>
+          </a>
+
           <a href="{{ routes.collections_url }}/womens-wear" class="quick-cat-item is-featured">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'fashion-model-dress.jpg' | asset_url }}" alt="Women's Edit" width="180" height="180" loading="eager" class="quick-cat-item__img">
-              <span class="quick-cat-item__badge">Trending</span>
+              <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Women's Edit" width="180" height="180" loading="eager" class="quick-cat-item__img">
+              <span class="quick-cat-item__badge">Popular</span>
             </div>
             <span class="quick-cat-item__label">Women's Edit</span>
           </a>
 
-          <a href="{{ routes.collections_url }}/womens-maxi-dresses" class="quick-cat-item">
+          <a href="{{ routes.collections_url }}/western-wear" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="Maxi Dresses" width="180" height="180" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'fashion-model-editorial.jpg' | asset_url }}" alt="Western Wear" width="180" height="180" loading="eager" class="quick-cat-item__img">
+              <span class="quick-cat-item__badge">Trending</span>
             </div>
-            <span class="quick-cat-item__label">Maxi Dresses</span>
+            <span class="quick-cat-item__label">Western Wear</span>
           </a>
 
-          <a href="{{ routes.collections_url }}/cotton-dresses" class="quick-cat-item">
+          <a href="{{ routes.collections_url }}/womens-dresses" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'fashion-model-editorial.jpg' | asset_url }}" alt="Cotton Wear" width="180" height="180" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'cat-coords.jpg' | asset_url }}" alt="Dresses & Gowns" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
-            <span class="quick-cat-item__label">Cotton Wear</span>
+            <span class="quick-cat-item__label">Dresses</span>
           </a>
 
-          <a href="{{ routes.collections_url }}/coord-sets" class="quick-cat-item">
+          <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'cat-coords.jpg' | asset_url }}" alt="Co-ords" width="180" height="180" loading="eager" class="quick-cat-item__img">
-              <span class="quick-cat-item__badge">Hot</span>
+              <img src="{{ 'cat-festive.jpg' | asset_url }}" alt="Tops & Tees" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
-            <span class="quick-cat-item__label">Co-ords</span>
+            <span class="quick-cat-item__label">Tops &amp; Tees</span>
           </a>
 
-          <a href="{{ routes.collections_url }}/festive-collection" class="quick-cat-item is-featured">
+          <a href="{{ routes.collections_url }}/womens-bottomwear" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'cat-festive.jpg' | asset_url }}" alt="Festive Atelier" width="180" height="180" loading="eager" class="quick-cat-item__img">
-              <span class="quick-cat-item__badge quick-cat-item__badge--gold">New</span>
+              <img src="{{ 'cat-accessories.jpg' | asset_url }}" alt="Bottomwear" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
-            <span class="quick-cat-item__label">Festive Atelier</span>
+            <span class="quick-cat-item__label">Bottomwear</span>
+          </a>
+
+          <a href="{{ routes.collections_url }}/womens-winter-wear" class="quick-cat-item">
+            <div class="quick-cat-item__bubble">
+              <img src="{{ 'cat-kidswear.jpg' | asset_url }}" alt="Winter Wear" width="180" height="180" loading="eager" class="quick-cat-item__img">
+              <span class="quick-cat-item__badge">Cozy</span>
+            </div>
+            <span class="quick-cat-item__label">Winter Wear</span>
           </a>
 
           <a href="{{ routes.collections_url }}/kidswear" class="quick-cat-item">
             <div class="quick-cat-item__bubble">
-              <img src="{{ 'cat-kidswear.jpg' | asset_url }}" alt="Kidswear" width="180" height="180" loading="eager" class="quick-cat-item__img">
+              <img src="{{ 'cat-baby.jpg' | asset_url }}" alt="Kidswear" width="180" height="180" loading="eager" class="quick-cat-item__img">
             </div>
             <span class="quick-cat-item__label">Kidswear</span>
-          </a>
-
-          <a href="{{ routes.collections_url }}/baby-rompers" class="quick-cat-item">
-            <div class="quick-cat-item__bubble">
-              <img src="{{ 'cat-baby.jpg' | asset_url }}" alt="Baby Rompers" width="180" height="180" loading="eager" class="quick-cat-item__img">
-            </div>
-            <span class="quick-cat-item__label">Baby Rompers</span>
-          </a>
-
-          <a href="{{ routes.collections_url }}/accessories" class="quick-cat-item">
-            <div class="quick-cat-item__bubble">
-              <img src="{{ 'cat-accessories.jpg' | asset_url }}" alt="Accessories" width="180" height="180" loading="eager" class="quick-cat-item__img">
-            </div>
-            <span class="quick-cat-item__label">Accessories</span>
           </a>
 
           <a href="{{ routes.all_products_collection_url }}" class="quick-cat-item">
@@ -98,7 +99,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
               </div>
             </div>
-            <span class="quick-cat-item__label">All Pieces</span>
+            <span class="quick-cat-item__label">All Styles</span>
           </a>
         {%- endif -%}
       </div>
