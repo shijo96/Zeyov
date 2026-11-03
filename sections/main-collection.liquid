@@ -10,11 +10,154 @@
       <span class="cur" aria-current="page">{{ collection.title }}</span>
     </nav>
 
-    <!-- Collection Editorial Header -->
-    <header class="section__head collection-head center">
-      <span class="eyebrow">ZEYOV ATELIER &bull; READY-TO-WEAR</span>
-      <h1 class="collection-title">{{ collection.title }}</h1>
-      <div class="collection-desc rte muted">
+    {%- comment -%} Determine Active Department for Tab Highlighting (Myntra App Architecture) {%- endcomment -%}
+    {%- assign col_h = collection.handle | default: '' -%}
+    {%- assign active_dept = 'all' -%}
+    {%- if col_h contains 'men' and col_h contains 'women' == false -%}
+      {%- assign active_dept = 'men' -%}
+    {%- elsif col_h contains 'kid' or col_h contains 'baby' -%}
+      {%- assign active_dept = 'kids' -%}
+    {%- elsif col_h contains 'women' or col_h == 'western-wear' or col_h contains 'dress' or col_h contains 'coord' -%}
+      {%- assign active_dept = 'women' -%}
+    {%- endif -%}
+
+    <!-- Myntra-Style Department Tab Switcher (ALL | WOMEN | MEN | KIDS) -->
+    <div class="myntra-dept-tabs" role="tablist" aria-label="Department Selection">
+      <a href="{{ routes.all_products_collection_url }}" class="dept-tab{% if active_dept == 'all' %} is-active{% endif %}" role="tab" aria-selected="{% if active_dept == 'all' %}true{% else %}false{% endif %}">
+        <span>ALL</span>
+      </a>
+      <a href="{{ routes.collections_url }}/womens-wear" class="dept-tab{% if active_dept == 'women' %} is-active{% endif %}" role="tab" aria-selected="{% if active_dept == 'women' %}true{% else %}false{% endif %}">
+        <span>WOMEN</span>
+      </a>
+      <a href="{{ routes.collections_url }}/mens-wear" class="dept-tab{% if active_dept == 'men' %} is-active{% endif %}" role="tab" aria-selected="{% if active_dept == 'men' %}true{% else %}false{% endif %}">
+        <span>MEN</span>
+      </a>
+      <a href="{{ routes.collections_url }}/kidswear" class="dept-tab{% if active_dept == 'kids' %} is-active{% endif %}" role="tab" aria-selected="{% if active_dept == 'kids' %}true{% else %}false{% endif %}">
+        <span>KIDS</span>
+      </a>
+    </div>
+
+    <!-- Myntra-Style Visual Micro-Categories Horizontal Track (Thumbnails + Names) -->
+    <div class="myntra-circle-rail-wrap">
+      <div class="myntra-circle-rail">
+        {%- if active_dept == 'men' -%}
+          <a href="{{ routes.collections_url }}/mens-wear" class="circle-item{% if col_h == 'mens-wear' or col_h == 'mens-collection' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'fashion-model-editorial.jpg' | asset_url }}" alt="All Men" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">All Men</span>
+          </a>
+          <a href="{{ routes.collections_url }}/mens-tshirts" class="circle-item{% if col_h == 'mens-tshirts' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'cat-festive.jpg' | asset_url }}" alt="T-Shirts" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">T-Shirts</span>
+          </a>
+          <a href="{{ routes.collections_url }}/mens-shirts" class="circle-item{% if col_h == 'mens-shirts' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'collection-runway.jpg' | asset_url }}" alt="Shirts" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Shirts</span>
+          </a>
+          <a href="{{ routes.collections_url }}/mens-trousers" class="circle-item{% if col_h == 'mens-trousers' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'fashion-wool-coat.jpg' | asset_url }}" alt="Trousers" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Trousers</span>
+          </a>
+          <a href="{{ routes.collections_url }}/mens-casual-wear" class="circle-item{% if col_h == 'mens-casual-wear' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}" alt="Jackets" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Jackets</span>
+          </a>
+          <a href="{{ routes.collections_url }}/mens-accessories" class="circle-item{% if col_h == 'mens-accessories' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'cat-accessories.jpg' | asset_url }}" alt="Accessories" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Accessories</span>
+          </a>
+        {%- elsif active_dept == 'kids' -%}
+          <a href="{{ routes.collections_url }}/kidswear" class="circle-item{% if col_h == 'kidswear' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'cat-kidswear.jpg' | asset_url }}" alt="All Kids" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">All Kids</span>
+          </a>
+          <a href="{{ routes.collections_url }}/baby-winterwear" class="circle-item{% if col_h == 'baby-winterwear' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'cat-baby.jpg' | asset_url }}" alt="Baby Wear" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Baby Wear</span>
+          </a>
+          <a href="{{ routes.collections_url }}/new-arrivals" class="circle-item">
+            <div class="circle-item__bubble">
+              <img src="{{ 'cat-coords.jpg' | asset_url }}" alt="New Drops" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">New Drops</span>
+          </a>
+        {%- else -%}
+          <a href="{{ routes.collections_url }}/womens-wear" class="circle-item{% if col_h == 'womens-wear' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'fashion-silk-dress.jpg' | asset_url }}" alt="All Women" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">All Women</span>
+          </a>
+          <a href="{{ routes.collections_url }}/womens-dresses" class="circle-item{% if col_h == 'womens-dresses' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'cat-coords.jpg' | asset_url }}" alt="Dresses" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Dresses</span>
+          </a>
+          <a href="{{ routes.collections_url }}/western-wear" class="circle-item{% if col_h == 'western-wear' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'collection-runway.jpg' | asset_url }}" alt="Western" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Western</span>
+          </a>
+          <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="circle-item{% if col_h == 'womens-tops-tshirts' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'cat-festive.jpg' | asset_url }}" alt="Tops & Tees" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Tops &amp; Tees</span>
+          </a>
+          <a href="{{ routes.collections_url }}/womens-bottomwear" class="circle-item{% if col_h == 'womens-bottomwear' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'fashion-wool-coat.jpg' | asset_url }}" alt="Bottomwear" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Bottomwear</span>
+          </a>
+          <a href="{{ routes.collections_url }}/womens-winter-wear" class="circle-item{% if col_h == 'womens-winter-wear' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'fashion-sherpa-jacket.jpg' | asset_url }}" alt="Winter Wear" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Winter Wear</span>
+          </a>
+          <a href="{{ routes.collections_url }}/accessories" class="circle-item{% if col_h == 'accessories' or col_h == 'womens-accessories' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'cat-accessories.jpg' | asset_url }}" alt="Accessories" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">Accessories</span>
+          </a>
+          <a href="{{ routes.collections_url }}/new-arrivals" class="circle-item{% if col_h == 'new-arrivals' %} is-active{% endif %}">
+            <div class="circle-item__bubble">
+              <img src="{{ 'fashion-model-dress.jpg' | asset_url }}" alt="New In" width="68" height="68" loading="eager">
+            </div>
+            <span class="circle-item__label">New In</span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Collection Editorial Header (Clean & Compact on Mobile) -->
+    <header class="section__head collection-head">
+      <div class="collection-title-row">
+        <h1 class="collection-title">
+          <span>{{ collection.title }}</span>
+          <span class="title-count">({{ collection.products_count | default: 0 }} pieces)</span>
+        </h1>
+      </div>
+      <div class="collection-desc rte muted desktop-only">
         {%- if collection.description != blank -%}
           {{ collection.description }}
         {%- else -%}
@@ -22,38 +165,63 @@
         {%- endif -%}
       </div>
 
-      <!-- Quick Category Navigation Pills (Active Collections) -->
+      <!-- Horizontal Scrollable Category Capsule Pills (Never Wraps on Mobile) -->
       <div class="collection-nav-pills" role="navigation" aria-label="Collection Categories">
         <a href="{{ routes.all_products_collection_url }}" class="cat-pill{% if collection.handle == 'all' or collection.handle == blank %} is-active{% endif %}">
-          All Creations
+          All Pieces
         </a>
         <a href="{{ routes.collections_url }}/new-arrivals" class="cat-pill{% if collection.handle == 'new-arrivals' %} is-active{% endif %}">
           New Arrivals
         </a>
-        <a href="{{ routes.collections_url }}/womens-wear" class="cat-pill{% if collection.handle == 'womens-wear' %} is-active{% endif %}">
-          Women's Edit
-        </a>
-        <a href="{{ routes.collections_url }}/mens-wear" class="cat-pill{% if collection.handle == 'mens-wear' or collection.handle == 'mens-collection' %} is-active{% endif %}">
-          Men's Edit
-        </a>
-        <a href="{{ routes.collections_url }}/accessories" class="cat-pill{% if collection.handle == 'accessories' or collection.handle == 'womens-accessories' or collection.handle == 'mens-accessories' %} is-active{% endif %}">
-          Accessories
-        </a>
-        <a href="{{ routes.collections_url }}/western-wear" class="cat-pill{% if collection.handle == 'western-wear' %} is-active{% endif %}">
-          Western Wear
-        </a>
-        <a href="{{ routes.collections_url }}/womens-dresses" class="cat-pill{% if collection.handle == 'womens-dresses' %} is-active{% endif %}">
-          Dresses &amp; Gowns
-        </a>
-        <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="cat-pill{% if collection.handle == 'womens-tops-tshirts' %} is-active{% endif %}">
-          Tops &amp; Tees
-        </a>
-        <a href="{{ routes.collections_url }}/womens-bottomwear" class="cat-pill{% if collection.handle == 'womens-bottomwear' %} is-active{% endif %}">
-          Bottomwear
-        </a>
-        <a href="{{ routes.collections_url }}/kidswear" class="cat-pill{% if collection.handle == 'kidswear' %} is-active{% endif %}">
-          Kidswear
-        </a>
+        {%- if active_dept == 'men' -%}
+          <a href="{{ routes.collections_url }}/mens-wear" class="cat-pill{% if collection.handle == 'mens-wear' or collection.handle == 'mens-collection' %} is-active{% endif %}">
+            All Men's
+          </a>
+          <a href="{{ routes.collections_url }}/mens-tshirts" class="cat-pill{% if collection.handle == 'mens-tshirts' %} is-active{% endif %}">
+            T-Shirts &amp; Polos
+          </a>
+          <a href="{{ routes.collections_url }}/mens-shirts" class="cat-pill{% if collection.handle == 'mens-shirts' %} is-active{% endif %}">
+            Shirts
+          </a>
+          <a href="{{ routes.collections_url }}/mens-trousers" class="cat-pill{% if collection.handle == 'mens-trousers' %} is-active{% endif %}">
+            Trousers &amp; Chinos
+          </a>
+          <a href="{{ routes.collections_url }}/mens-casual-wear" class="cat-pill{% if collection.handle == 'mens-casual-wear' %} is-active{% endif %}">
+            Jackets &amp; Vests
+          </a>
+          <a href="{{ routes.collections_url }}/mens-accessories" class="cat-pill{% if collection.handle == 'mens-accessories' %} is-active{% endif %}">
+            Accessories
+          </a>
+        {%- elsif active_dept == 'kids' -%}
+          <a href="{{ routes.collections_url }}/kidswear" class="cat-pill{% if collection.handle == 'kidswear' %} is-active{% endif %}">
+            All Kidswear
+          </a>
+          <a href="{{ routes.collections_url }}/baby-winterwear" class="cat-pill{% if collection.handle == 'baby-winterwear' %} is-active{% endif %}">
+            Baby Winterwear
+          </a>
+        {%- else -%}
+          <a href="{{ routes.collections_url }}/womens-wear" class="cat-pill{% if collection.handle == 'womens-wear' %} is-active{% endif %}">
+            Women's Edit
+          </a>
+          <a href="{{ routes.collections_url }}/western-wear" class="cat-pill{% if collection.handle == 'western-wear' %} is-active{% endif %}">
+            Western Wear
+          </a>
+          <a href="{{ routes.collections_url }}/womens-dresses" class="cat-pill{% if collection.handle == 'womens-dresses' %} is-active{% endif %}">
+            Dresses &amp; Gowns
+          </a>
+          <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="cat-pill{% if collection.handle == 'womens-tops-tshirts' %} is-active{% endif %}">
+            Tops &amp; Tees
+          </a>
+          <a href="{{ routes.collections_url }}/womens-bottomwear" class="cat-pill{% if collection.handle == 'womens-bottomwear' %} is-active{% endif %}">
+            Bottomwear
+          </a>
+          <a href="{{ routes.collections_url }}/womens-winter-wear" class="cat-pill{% if collection.handle == 'womens-winter-wear' %} is-active{% endif %}">
+            Winter Wear
+          </a>
+          <a href="{{ routes.collections_url }}/accessories" class="cat-pill{% if collection.handle == 'accessories' or collection.handle == 'womens-accessories' %} is-active{% endif %}">
+            Accessories
+          </a>
+        {%- endif -%}
       </div>
     </header>
 
