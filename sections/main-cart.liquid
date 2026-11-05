@@ -180,7 +180,7 @@
 
               <div class="summary-row summary-row--shipping">
                 <span>Pan-India Delivery</span>
-                <span class="badge badge--gold">FREE (PREPAID)</span>
+                <span class="badge badge--gold">FREE PAN-INDIA</span>
               </div>
 
               <div class="summary-row summary-row--total" style="border-top:1.5px solid var(--border);padding-top:14px;margin-top:10px;">
@@ -193,7 +193,7 @@
 
               <p class="summary-tax-note">All taxes included. Free insured delivery across 28,000+ Indian PIN codes.</p>
 
-              <!-- Delivery Contact Phone Numbers (Phone 1 Mandatory, Phone 2 Optional) -->
+              <!-- Delivery Contact Phone Numbers (Optional for courier updates, non-blocking) -->
               <div class="cart-contact-card">
                 <div class="cart-contact-card__head">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -202,13 +202,13 @@
                 
                 <div class="cart-field-group">
                   <label for="PrimaryPhone" class="cart-field-label">
-                    Primary Mobile Number <span class="req-star">* (Mandatory)</span>
+                    Primary Mobile Number <span class="opt-tag" style="color:var(--text-muted);font-weight:400;font-size:0.8rem;">(Recommended for Courier Updates)</span>
                   </label>
                   <div class="phone-input-wrap">
                     <span class="phone-prefix">+91</span>
-                    <input type="tel" name="attributes[Primary Phone]" id="PrimaryPhone" value="{{ cart.attributes['Primary Phone'] | default: customer.phone | escape }}" placeholder="10-digit mobile number" maxlength="10" pattern="[6-9][0-9]{9}" required autocomplete="tel">
+                    <input type="tel" name="attributes[Primary Phone]" id="PrimaryPhone" value="{{ cart.attributes['Primary Phone'] | default: customer.phone | escape }}" placeholder="10-digit mobile number (optional)" maxlength="10" autocomplete="tel">
                   </div>
-                  <small class="cart-field-hint">Courier partner will call this number for dispatch &amp; delivery updates.</small>
+                  <small class="cart-field-hint">Courier partner will send dispatch &amp; delivery tracking alerts.</small>
                 </div>
 
                 <div class="cart-field-group">
@@ -217,7 +217,7 @@
                   </label>
                   <div class="phone-input-wrap">
                     <span class="phone-prefix">+91</span>
-                    <input type="tel" name="attributes[Alternate Phone]" id="AltPhone" value="{{ cart.attributes['Alternate Phone'] | escape }}" placeholder="Backup 10-digit number" maxlength="10" pattern="[0-9]{10}" autocomplete="tel">
+                    <input type="tel" name="attributes[Alternate Phone]" id="AltPhone" value="{{ cart.attributes['Alternate Phone'] | escape }}" placeholder="Backup 10-digit number" maxlength="10" autocomplete="tel">
                   </div>
                   <small class="cart-field-hint">Backup contact if your primary phone is busy or unreachable.</small>
                 </div>
@@ -241,7 +241,7 @@
                 <li>{% render 'icon', name: 'truck' %} <span><b>Free Pan-India Delivery</b> &bull; Tracked express courier</span></li>
                 <li>{% render 'icon', name: 'shield' %} <span><b>100% Secure Checkout</b> &bull; 256-Bit SSL protection</span></li>
                 <li>{% render 'icon', name: 'return' %} <span><b>7-Day Easy Return</b> &bull; Hassle-free exchanges</span></li>
-                <li>{% render 'icon', name: 'headset' %} <span><b>Prepaid UPI &amp; Cards</b> &bull; COD coming soon</span></li>
+                <li>{% render 'icon', name: 'headset' %} <span><b>UPI, Cards &amp; NetBanking</b> &bull; Express Checkout</span></li>
               </ul>
 
               <div class="cart-payment-icons center">
