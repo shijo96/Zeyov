@@ -1,0 +1,253 @@
+{%- comment -%}
+  ZEYOV Luxury Size Chart & Measurement Guide Modal
+  Indian Apparel Standards with Inches / Centimeters Toggle
+{%- endcomment -%}
+
+<div class="size-modal" id="SizeChartModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="SizeModalTitle">
+  <div class="size-modal__backdrop" data-close-size-chart></div>
+  <div class="size-modal__dialog">
+    <header class="size-modal__header">
+      <div class="size-modal__title-group">
+        <span class="size-modal__eyebrow">ZEYOV Atelier Sizing</span>
+        <h3 class="size-modal__title" id="SizeModalTitle">Size &amp; Fit Guide</h3>
+      </div>
+      <button type="button" class="size-modal__close-btn" data-close-size-chart aria-label="Close size guide">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </header>
+
+    <div class="size-modal__controls">
+      <!-- Gender / Category Tabs -->
+      <nav class="size-modal__tabs" role="tablist" aria-label="Size Chart Departments">
+        <button type="button" role="tab" class="size-tab is-active" data-size-tab="women" id="tab-women" aria-selected="true" aria-controls="panel-women">Women</button>
+        <button type="button" role="tab" class="size-tab" data-size-tab="men" id="tab-men" aria-selected="false" aria-controls="panel-men">Men</button>
+        <button type="button" role="tab" class="size-tab" data-size-tab="kids" id="tab-kids" aria-selected="false" aria-controls="panel-kids">Kids &amp; Baby</button>
+      </nav>
+
+      <!-- Unit Switcher (Inches / CM) -->
+      <div class="size-unit-toggle" role="group" aria-label="Measurement Units">
+        <button type="button" class="unit-btn is-active" data-unit="in">Inches</button>
+        <button type="button" class="unit-btn" data-unit="cm">CM</button>
+      </div>
+    </div>
+
+    <div class="size-modal__body">
+      <!-- Women's Size Panel -->
+      <div class="size-panel is-active" id="panel-women" role="tabpanel" aria-labelledby="tab-women" data-size-panel="women">
+        <div class="size-table-scroll">
+          <table class="size-table">
+            <thead>
+              <tr>
+                <th>Standard</th>
+                <th>Brand Size</th>
+                <th>Bust (<span class="unit-label">in</span>)</th>
+                <th>Waist (<span class="unit-label">in</span>)</th>
+                <th>Hips (<span class="unit-label">in</span>)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>XS</strong></td>
+                <td>India 32</td>
+                <td data-in="32 - 33" data-cm="81 - 84">32 - 33</td>
+                <td data-in="25 - 26" data-cm="63 - 66">25 - 26</td>
+                <td data-in="35 - 36" data-cm="89 - 91">35 - 36</td>
+              </tr>
+              <tr>
+                <td><strong>S</strong></td>
+                <td>India 34</td>
+                <td data-in="34 - 35" data-cm="86 - 89">34 - 35</td>
+                <td data-in="27 - 28" data-cm="68 - 71">27 - 28</td>
+                <td data-in="37 - 38" data-cm="94 - 96">37 - 38</td>
+              </tr>
+              <tr>
+                <td><strong>M</strong></td>
+                <td>India 36</td>
+                <td data-in="36 - 37" data-cm="91 - 94">36 - 37</td>
+                <td data-in="29 - 30" data-cm="74 - 76">29 - 30</td>
+                <td data-in="39 - 40" data-cm="99 - 102">39 - 40</td>
+              </tr>
+              <tr>
+                <td><strong>L</strong></td>
+                <td>India 38</td>
+                <td data-in="38 - 40" data-cm="96 - 102">38 - 40</td>
+                <td data-in="31 - 33" data-cm="79 - 84">31 - 33</td>
+                <td data-in="41 - 43" data-cm="104 - 109">41 - 43</td>
+              </tr>
+              <tr>
+                <td><strong>XL</strong></td>
+                <td>India 40</td>
+                <td data-in="41 - 43" data-cm="104 - 109">41 - 43</td>
+                <td data-in="34 - 36" data-cm="86 - 91">34 - 36</td>
+                <td data-in="44 - 46" data-cm="112 - 117">44 - 46</td>
+              </tr>
+              <tr>
+                <td><strong>XXL</strong></td>
+                <td>India 42</td>
+                <td data-in="44 - 46" data-cm="112 - 117">44 - 46</td>
+                <td data-in="37 - 39" data-cm="94 - 99">37 - 39</td>
+                <td data-in="47 - 49" data-cm="119 - 124">47 - 49</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Men's Size Panel -->
+      <div class="size-panel" id="panel-men" role="tabpanel" aria-labelledby="tab-men" data-size-panel="men">
+        <div class="size-table-scroll">
+          <table class="size-table">
+            <thead>
+              <tr>
+                <th>Standard</th>
+                <th>Collar / Chest</th>
+                <th>Chest (<span class="unit-label">in</span>)</th>
+                <th>Waist (<span class="unit-label">in</span>)</th>
+                <th>Shoulder (<span class="unit-label">in</span>)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>S</strong></td>
+                <td>38 (38cm)</td>
+                <td data-in="37 - 39" data-cm="94 - 99">37 - 39</td>
+                <td data-in="30 - 32" data-cm="76 - 81">30 - 32</td>
+                <td data-in="17.0" data-cm="43.2">17.0</td>
+              </tr>
+              <tr>
+                <td><strong>M</strong></td>
+                <td>40 (40cm)</td>
+                <td data-in="40 - 41" data-cm="101 - 104">40 - 41</td>
+                <td data-in="33 - 34" data-cm="84 - 86">33 - 34</td>
+                <td data-in="17.7" data-cm="45.0">17.7</td>
+              </tr>
+              <tr>
+                <td><strong>L</strong></td>
+                <td>42 (42cm)</td>
+                <td data-in="42 - 44" data-cm="107 - 112">42 - 44</td>
+                <td data-in="35 - 37" data-cm="89 - 94">35 - 37</td>
+                <td data-in="18.5" data-cm="47.0">18.5</td>
+              </tr>
+              <tr>
+                <td><strong>XL</strong></td>
+                <td>44 (44cm)</td>
+                <td data-in="45 - 47" data-cm="114 - 119">45 - 47</td>
+                <td data-in="38 - 40" data-cm="96 - 102">38 - 40</td>
+                <td data-in="19.3" data-cm="49.0">19.3</td>
+              </tr>
+              <tr>
+                <td><strong>XXL</strong></td>
+                <td>46 (46cm)</td>
+                <td data-in="48 - 50" data-cm="122 - 127">48 - 50</td>
+                <td data-in="41 - 43" data-cm="104 - 109">41 - 43</td>
+                <td data-in="20.0" data-cm="51.0">20.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Kids & Baby Size Panel -->
+      <div class="size-panel" id="panel-kids" role="tabpanel" aria-labelledby="tab-kids" data-size-panel="kids">
+        <div class="size-table-scroll">
+          <table class="size-table">
+            <thead>
+              <tr>
+                <th>Age Group</th>
+                <th>Height (<span class="unit-label">in</span>)</th>
+                <th>Chest (<span class="unit-label">in</span>)</th>
+                <th>Waist (<span class="unit-label">in</span>)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>0 - 6 Months</strong></td>
+                <td data-in="23 - 26" data-cm="58 - 66">23 - 26</td>
+                <td data-in="17 - 18" data-cm="43 - 46">17 - 18</td>
+                <td data-in="17 - 18" data-cm="43 - 46">17 - 18</td>
+              </tr>
+              <tr>
+                <td><strong>6 - 12 Months</strong></td>
+                <td data-in="27 - 30" data-cm="68 - 76">27 - 30</td>
+                <td data-in="18 - 19" data-cm="46 - 48">18 - 19</td>
+                <td data-in="18 - 19" data-cm="46 - 48">18 - 19</td>
+              </tr>
+              <tr>
+                <td><strong>1 - 2 Years</strong></td>
+                <td data-in="31 - 34" data-cm="78 - 86">31 - 34</td>
+                <td data-in="20 - 21" data-cm="51 - 53">20 - 21</td>
+                <td data-in="19 - 20" data-cm="48 - 51">19 - 20</td>
+              </tr>
+              <tr>
+                <td><strong>3 - 4 Years</strong></td>
+                <td data-in="37 - 40" data-cm="94 - 102">37 - 40</td>
+                <td data-in="22 - 23" data-cm="56 - 58">22 - 23</td>
+                <td data-in="21 - 22" data-cm="53 - 56">21 - 22</td>
+              </tr>
+              <tr>
+                <td><strong>5 - 6 Years</strong></td>
+                <td data-in="43 - 45" data-cm="109 - 114">43 - 45</td>
+                <td data-in="24 - 25" data-cm="61 - 64">24 - 25</td>
+                <td data-in="22 - 23" data-cm="56 - 58">22 - 23</td>
+              </tr>
+              <tr>
+                <td><strong>7 - 8 Years</strong></td>
+                <td data-in="48 - 50" data-cm="122 - 127">48 - 50</td>
+                <td data-in="26 - 27" data-cm="66 - 69">26 - 27</td>
+                <td data-in="23 - 24" data-cm="58 - 61">23 - 24</td>
+              </tr>
+              <tr>
+                <td><strong>9 - 10 Years</strong></td>
+                <td data-in="53 - 55" data-cm="134 - 140">53 - 55</td>
+                <td data-in="28 - 29" data-cm="71 - 74">28 - 29</td>
+                <td data-in="25 - 26" data-cm="63 - 66">25 - 26</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- How to Measure Helper Box -->
+      <div class="size-modal__measure-guide">
+        <h4 class="size-modal__guide-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          How to Measure Accurately
+        </h4>
+        <div class="size-modal__guide-grid">
+          <div class="size-guide-step">
+            <span class="step-num">01</span>
+            <div class="step-text">
+              <b>Bust / Chest</b>
+              <p>Measure under your arms around the fullest part of your bust or chest with a flexible tape.</p>
+            </div>
+          </div>
+          <div class="size-guide-step">
+            <span class="step-num">02</span>
+            <div class="step-text">
+              <b>Waist</b>
+              <p>Measure around your natural waistline, keeping the measuring tape comfortably loose.</p>
+            </div>
+          </div>
+          <div class="size-guide-step">
+            <span class="step-num">03</span>
+            <div class="step-text">
+              <b>Hips</b>
+              <p>Stand with feet together and measure around the fullest point of your hips and rear.</p>
+            </div>
+          </div>
+        </div>
+        <p class="size-modal__fit-note">
+          <strong>Fitting Advice:</strong> If your measurements fall between two sizes, we recommend selecting the larger size for a relaxed drape, or the smaller size for a sculpted, fitted look.
+        </p>
+      </div>
+    </div>
+
+    <footer class="size-modal__footer">
+      <span class="size-modal__reassure">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        Need personalized sizing help? WhatsApp our Stylist Concierge for guidance.
+      </span>
+      <button type="button" class="btn btn--outline btn--sm" data-close-size-chart>Got It</button>
+    </footer>
+  </div>
+</div>
