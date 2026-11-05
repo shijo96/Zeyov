@@ -250,6 +250,8 @@
 
   <script type="application/json" data-variants>{{ product.variants | json }}</script>
   <script type="application/json" data-money>{ "format": {{ shop.money_format | json }} }</script>
+
+  {% render 'size-chart-modal' %}
 </section>
 
 {% render 'personalized-recommendations' %}
