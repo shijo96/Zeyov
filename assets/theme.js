@@ -835,16 +835,13 @@
     cartForm.addEventListener('submit', function (e) {
       if (e.submitter && e.submitter.name === 'checkout') {
         var pPhone = $('#PrimaryPhone', cartForm);
-        if (pPhone) {
+        if (pPhone && pPhone.value.trim()) {
           var val = pPhone.value.trim().replace(/\D/g, '');
-          if (val.length !== 10) {
-            e.preventDefault();
-            pPhone.focus();
-            pPhone.classList.add('is-error');
-            toast('Please enter a valid 10-digit primary mobile number for delivery.');
-            return false;
+          if (val.length > 0 && val.length < 10) {
+            pPhone.classList.add('is-warning');
           } else {
             pPhone.classList.remove('is-error');
+            pPhone.classList.remove('is-warning');
           }
         }
         var discInput = $('#CartDiscountCode', cartForm);
