@@ -818,6 +818,89 @@
     applyReviewVisibility();
   }
 
+  /* ---------- ZEYOV Size Chart Modal Controller ---------- */
+  (function initSizeChartModal() {
+    var modal = $('#SizeChartModal');
+    if (!modal) return;
+
+    function openSizeModal() {
+      var bodyText = (document.title + ' ' + (document.querySelector('.pdp__title') ? document.querySelector('.pdp__title').textContent : '')).toLowerCase();
+      var dept = 'women';
+      if (/\b(men|man|mens|gentleman|gents)\b/.test(bodyText) && !/\b(women|womens|lady|ladies)\b/.test(bodyText)) {
+        dept = 'men';
+      } else if (/\b(kid|kids|baby|boy|girl|toddler)\b/.test(bodyText)) {
+        dept = 'kids';
+      }
+      switchTab(dept);
+
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSizeModal() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function switchTab(dept) {
+      $$('[data-size-tab]', modal).forEach(function (tab) {
+        var isTarget = tab.getAttribute('data-size-tab') === dept;
+        tab.classList.toggle('is-active', isTarget);
+        tab.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+      });
+      $$('[data-size-panel]', modal).forEach(function (panel) {
+        panel.classList.toggle('is-active', panel.getAttribute('data-size-panel') === dept);
+      });
+    }
+
+    function setUnit(unit) {
+      $$('[data-unit]', modal).forEach(function (btn) {
+        btn.classList.toggle('is-active', btn.getAttribute('data-unit') === unit);
+      });
+      $$('.unit-label', modal).forEach(function (lbl) {
+        lbl.textContent = unit;
+      });
+      $$('td[data-in]', modal).forEach(function (td) {
+        td.textContent = (unit === 'cm') ? td.getAttribute('data-cm') : td.getAttribute('data-in');
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-open-size-chart]');
+      if (trigger) {
+        e.preventDefault();
+        openSizeModal();
+        return;
+      }
+      var closeBtn = e.target.closest('[data-close-size-chart]');
+      if (closeBtn) {
+        e.preventDefault();
+        closeSizeModal();
+        return;
+      }
+      var tabBtn = e.target.closest('[data-size-tab]');
+      if (tabBtn && modal.contains(tabBtn)) {
+        e.preventDefault();
+        switchTab(tabBtn.getAttribute('data-size-tab'));
+        return;
+      }
+      var unitBtn = e.target.closest('[data-unit]');
+      if (unitBtn && modal.contains(unitBtn)) {
+        e.preventDefault();
+        setUnit(unitBtn.getAttribute('data-unit'));
+        return;
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+        closeSizeModal();
+      }
+    });
+  })();
+
   /* ---------- cart page ---------- */
   var cartForm = $('#CartForm');
   if (cartForm) {
