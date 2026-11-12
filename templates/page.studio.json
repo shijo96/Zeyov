@@ -6,172 +6,202 @@
     "p-oversized-tee-250--black": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 Black",
+      "title": "Oversized 250 GSM · Black",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "Black",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_6.png",
+      "back": "shopify://shop_images/download_7.png"
      }
     },
     "p-oversized-tee-250--white": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 White",
+      "title": "Oversized 250 GSM · White",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "White",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_8.png",
+      "back": "shopify://shop_images/download_9.png"
      }
     },
     "p-oversized-tee-250--beige": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 Beige",
+      "title": "Oversized 250 GSM · Beige",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "Beige",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_10.png",
+      "back": "shopify://shop_images/download_11.png"
      }
     },
     "p-oversized-tee-250--navy-blue": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 Navy Blue",
+      "title": "Oversized 250 GSM · Navy Blue",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "Navy Blue",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_14.png",
+      "back": "shopify://shop_images/download_15.png"
      }
     },
     "p-oversized-tee-250--royal-blue": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 Royal Blue",
+      "title": "Oversized 250 GSM · Royal Blue",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "Royal Blue",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_16.png",
+      "back": "shopify://shop_images/download_17.png"
      }
     },
     "p-oversized-tee-250--lavender": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 Lavender",
+      "title": "Oversized 250 GSM · Lavender",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "Lavender",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_18.png",
+      "back": "shopify://shop_images/download_19.png"
      }
     },
     "p-oversized-tee-250--red": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 Red",
+      "title": "Oversized 250 GSM · Red",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "Red",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_20.png",
+      "back": "shopify://shop_images/download_21.png"
      }
     },
     "p-oversized-tee-250--green": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 Green",
+      "title": "Oversized 250 GSM · Green",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "Green",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_22.png",
+      "back": "shopify://shop_images/download_23.png"
      }
     },
     "p-acid-wash-oversize-black": {
      "type": "photo",
      "settings": {
-      "title": "Acid Wash 250 GSM \u00b7 Black",
+      "title": "Acid Wash 250 GSM · Black",
       "style": "acid-wash-oversized-tee-250-gsm",
       "color": "Black",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_24.png",
+      "back": "shopify://shop_images/download_25.png"
      }
     },
     "p-acid-wash-oversize-green": {
      "type": "photo",
      "settings": {
-      "title": "Acid Wash 250 GSM \u00b7 Green",
+      "title": "Acid Wash 250 GSM · Green",
       "style": "acid-wash-oversized-tee-250-gsm",
       "color": "Green",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_26.png",
+      "back": "shopify://shop_images/download_27.png"
      }
     },
     "p-acid-wash-oversize-royal-blue": {
      "type": "photo",
      "settings": {
-      "title": "Acid Wash 250 GSM \u00b7 Royal Blue",
+      "title": "Acid Wash 250 GSM · Royal Blue",
       "style": "acid-wash-oversized-tee-250-gsm",
       "color": "Royal Blue",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_28.png",
+      "back": "shopify://shop_images/download_29.png"
      }
     },
     "p-full-sleeve-oversi-black": {
      "type": "photo",
      "settings": {
-      "title": "Full Sleeve 250 GSM \u00b7 Black",
+      "title": "Full Sleeve 250 GSM · Black",
       "style": "full-sleeve-oversized-tee-250-gsm",
       "color": "Black",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_30.png",
+      "back": "shopify://shop_images/download_31.png"
      }
     },
     "p-oversized-tee-230--black": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 230 GSM \u00b7 Black",
+      "title": "Oversized 230 GSM · Black",
       "style": "oversized-tee-230-gsm-single-jersey",
       "color": "Black",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_40.png",
+      "back": "shopify://shop_images/download_41.png"
      }
     },
     "p-oversized-tee-230--white": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 230 GSM \u00b7 White",
+      "title": "Oversized 230 GSM · White",
       "style": "oversized-tee-230-gsm-single-jersey",
       "color": "White",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_38.png",
+      "back": "shopify://shop_images/download_39.png"
      }
     },
     "p-oversized-tee-190--black": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 190 GSM \u00b7 Black",
+      "title": "Oversized 190 GSM · Black",
       "style": "oversized-tee-190-gsm-single-jersey",
       "color": "Black",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_36.png",
+      "back": "shopify://shop_images/download_37.png"
      }
     },
     "p-regular-fit-tee-19-black": {
      "type": "photo",
      "settings": {
-      "title": "Regular Fit 190 GSM \u00b7 Black",
+      "title": "Regular Fit 190 GSM · Black",
       "style": "regular-fit-tee-190-gsm-single-jersey",
       "color": "Black",
       "zoom": 92,
@@ -184,7 +214,7 @@
     "p-regular-fit-tee-19-white": {
      "type": "photo",
      "settings": {
-      "title": "Regular Fit 190 GSM \u00b7 White",
+      "title": "Regular Fit 190 GSM · White",
       "style": "regular-fit-tee-190-gsm-single-jersey",
       "color": "White",
       "zoom": 92,
@@ -197,7 +227,7 @@
     "p-regular-fit-tee-19-red": {
      "type": "photo",
      "settings": {
-      "title": "Regular Fit 190 GSM \u00b7 Red",
+      "title": "Regular Fit 190 GSM · Red",
       "style": "regular-fit-tee-190-gsm-single-jersey",
       "color": "Red",
       "zoom": 92,
@@ -210,20 +240,38 @@
     "p-os250-brown": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 250 GSM \u00b7 Brown",
+      "title": "Oversized 250 GSM · Brown",
       "style": "oversized-tee-250-gsm-french-terry",
       "color": "Brown",
       "zoom": 100,
       "move_x": 0,
-      "move_y": 0
+      "move_y": 0,
+      "front": "shopify://shop_images/download_12.png",
+      "back": "shopify://shop_images/download_13.png"
      }
     },
     "p-os190-white": {
      "type": "photo",
      "settings": {
-      "title": "Oversized 190 GSM \u00b7 White",
+      "title": "Oversized 190 GSM · White",
       "style": "oversized-tee-190-gsm-single-jersey",
       "color": "White",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0,
+      "front": "shopify://shop_images/download_34.png",
+      "back": "shopify://shop_images/download_35.png"
+     }
+    },
+    "photo_j4rwGk": {
+     "type": "photo",
+     "disabled": true,
+     "settings": {
+      "title": "T-shirt photo",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Black",
+      "front": "shopify://shop_images/download_32.png",
+      "back": "shopify://shop_images/download_33.png",
       "zoom": 100,
       "move_x": 0,
       "move_y": 0
@@ -244,6 +292,7 @@
     "p-acid-wash-oversize-green",
     "p-acid-wash-oversize-royal-blue",
     "p-full-sleeve-oversi-black",
+    "photo_j4rwGk",
     "p-oversized-tee-230--black",
     "p-oversized-tee-230--white",
     "p-oversized-tee-190--black",
