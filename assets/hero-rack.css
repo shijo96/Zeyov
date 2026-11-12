@@ -19,7 +19,7 @@
 .rack__bracket { width: 16px; height: 26px; margin-top: 10px; border-radius: 3px 3px 6px 6px; background: linear-gradient(90deg, #8d8a84, #d9d7d2 45%, #8d8a84); box-shadow: 0 4px 8px rgba(40,30,20,.25); }
 
 .rack__viewport { position: relative; display: flex; align-items: stretch; min-height: 0; }
-.rack__items { position: relative; z-index: 3; flex: 1; display: flex; justify-content: center; align-items: flex-start; margin-top: -8px; padding: 0 max(70px, 6vw); height: calc(var(--gw) * 1.06); }
+.rack__items { position: relative; z-index: 3; flex: 1; display: flex; justify-content: center; align-items: flex-start; margin-top: -8px; padding: 0 max(70px, 6vw); height: calc(var(--gw) * 1.22); }
 .rack__slot { position: relative; z-index: 1; flex: 0 0 auto; width: var(--idle); height: 100%; transition: width .7s var(--ease); }
 .rack__slot.is-near { width: calc(var(--idle) * 1.7); z-index: 2; }
 .rack__slot.is-active { width: var(--gw); z-index: 3; }
@@ -32,7 +32,7 @@
 .rack__slot.is-near .rack__garment { transform: scale(.72); filter: none; }
 .rack__slot.is-active .rack__garment { transform: scale(1); filter: none; }
 .rack__slot.is-active .rack__hanger { transform: translateY(-2px); }
-.rack__img { display: block; width: 100%; max-width: none; height: auto; aspect-ratio: 1200 / 1360; object-fit: contain; object-position: 50% 0; margin-top: calc(var(--gw) * -.12);
+.rack__img { display: block; width: 100%; max-width: none; height: auto; object-fit: contain; object-position: 50% 0; margin-top: calc(var(--gw) * var(--t, .12) * -1 + 8px);
   filter: drop-shadow(0 18px 18px rgba(40,28,15,.16)) drop-shadow(0 3px 4px rgba(40,28,15,.12)); opacity: 0; transition: opacity .5s; user-select: none; -webkit-user-drag: none; }
 .rack__img.is-cut, .rack__img--ph { opacity: 1; }
 .rack__img--ph { fill: #c9bba6; background: #f3ece2; }
@@ -57,7 +57,7 @@
 .rack__btn--ghost:hover { background: var(--rack-text); color: var(--rack-a, #fff); }
 
 /* product photos that keep their background hang as framed cards */
-.rack__slot.is-photo .rack__img, .rack__big img.is-photo { aspect-ratio: 1 / 1; object-fit: cover; margin-top: 18px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 6px #fff, 0 22px 40px -14px rgba(40,28,15,.35); filter: none; }
+.rack__slot.is-photo .rack__img, .rack__big img.is-photo { object-fit: contain; margin-top: 18px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 6px #fff, 0 22px 40px -14px rgba(40,28,15,.35); filter: none; }
 .rack__slot.is-photo .rack__garment::before { content: ""; position: absolute; top: 4px; left: 50%; width: 2px; height: 18px; margin-left: -1px; background: #6b5a48; z-index: 1; }
 .rack__big:has(img.is-photo)::before { content: ""; position: absolute; top: 30px; left: 50%; width: 2px; height: 28px; margin-left: -1px; background: #6b5a48; z-index: 1; }
 .rack__big:has(img.is-photo) .rack__hanger--big { margin-bottom: 4px; }
@@ -72,7 +72,7 @@
 .rack__show { position: relative; display: flex; justify-content: center; align-items: flex-start; min-width: 0; }
 .rack__big { position: relative; margin: 0; display: flex; flex-direction: column; align-items: center; }
 .rack__hanger--big { position: relative; left: auto; margin: 0 0 -10px; width: 64px; height: 36px; color: #6b5a48; }
-.rack__big img { display: block; width: min(460px, 40vw); height: auto; aspect-ratio: 1200 / 1360; object-fit: contain; margin-top: calc(min(460px, 40vw) * -.11); filter: drop-shadow(0 30px 30px rgba(40,28,15,.22)) drop-shadow(0 4px 6px rgba(40,28,15,.12)); transition: opacity .3s, transform .5s var(--ease); }
+.rack__big img { display: block; width: min(460px, 40vw); max-height: 62vh; height: auto; object-fit: contain; margin-top: calc(min(460px, 40vw) * var(--t, .11) * -1 + 10px); filter: drop-shadow(0 30px 30px rgba(40,28,15,.22)) drop-shadow(0 4px 6px rgba(40,28,15,.12)); transition: opacity .3s, transform .5s var(--ease); }
 .rack__big img.is-swap { opacity: 0; transform: translateY(6px); }
 .rack__spot { position: absolute; left: 10%; right: 10%; bottom: -22px; height: 40px; border-radius: 50%; background: radial-gradient(closest-side, rgba(60,40,20,.18), transparent); z-index: -1; }
 .rack__tags { position: relative; flex: 0 0 auto; display: flex; gap: 7px; margin-left: -18px; z-index: 1; }
@@ -132,7 +132,7 @@
   .rack__stage { min-height: 0; justify-content: flex-start; padding: 18px 0 24px; }
   .rack__top { padding: 0 18px; margin-bottom: 12px; }
   .rack__rail { margin: 0 8px; }
-  .rack__items { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; height: 290px; padding: 0 calc(50% - 75px); margin-top: -6px; }
+  .rack__items { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; height: calc(var(--gw) * 1.3); padding: 0 calc(50% - 75px); margin-top: -6px; }
   .rack__items::-webkit-scrollbar { display: none; }
   .rack__slot, .rack__slot.is-near, .rack__slot.is-active { width: 150px; scroll-snap-align: center; transition: none; }
   .rack__garment { transform: scale(.62); }
@@ -146,7 +146,7 @@
   .rack__btn { height: 44px; padding: 0 20px; font-size: 10.5px; }
   .rack__detail { position: fixed; inset: 0; z-index: 2147483000; display: flex; flex-direction: column; justify-content: safe center; gap: 10px; padding: max(64px, env(safe-area-inset-top, 0px)) 20px max(24px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; background: color-mix(in srgb, var(--rack-a, #fffdf9) 86%, transparent); backdrop-filter: blur(18px) saturate(1.1); -webkit-backdrop-filter: blur(18px) saturate(1.1); }
   .rack__close { position: fixed; top: max(16px, env(safe-area-inset-top, 0px)); right: 16px; }
-  .rack__big img { width: min(270px, 64vw); margin-top: calc(min(270px, 64vw) * -.11); }
+  .rack__big img { width: min(270px, 64vw); max-height: 46vh; margin-top: calc(min(270px, 64vw) * var(--t, .11) * -1 + 10px); }
   .rack__hanger--big { width: 52px; height: 30px; }
   .rack__tags { display: none; }
   .rack__panel { justify-items: center; text-align: center; gap: 8px; }

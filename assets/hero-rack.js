@@ -6,6 +6,7 @@
 
   /* ---- remove plain white photo backgrounds so garments look like real cut-outs ---- */
   const cache = new Map(); const photos = new Set(); // photos whose background could not be removed
+  const tops = new Map(); // where the garment starts (as a share of the image width) so it hangs right under the hook
   function cutout(url, maxW = 1000) {
     if (!url) return Promise.resolve('');
     const key = url + '|' + maxW; if (cache.has(key)) return cache.get(key);
@@ -17,6 +18,12 @@
           const c = document.createElement('canvas'); c.width = w; c.height = h;
           const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
           const id = g.getImageData(0, 0, w, h), d = id.data;
+          const topRow = () => { for (let y = 0; y < h; y++) { let n = 0; for (let x = 0; x < w; x += 2) if (d[(y * w + x) * 4 + 3] > 60) n++; if (n > 3) return y; } return 0; };
+          // already a transparent PNG? keep it as it is
+          let clear = 0, edge = 0;
+          for (let x = 0; x < w; x += 3) { edge += 2; if (d[x * 4 + 3] < 20) clear++; if (d[((h - 1) * w + x) * 4 + 3] < 20) clear++; }
+          for (let y = 0; y < h; y += 3) { edge += 2; if (d[(y * w) * 4 + 3] < 20) clear++; if (d[(y * w + w - 1) * 4 + 3] < 20) clear++; }
+          if (clear > edge * .4) { tops.set(url, topRow() / w); resolve(url); return; }
           const bgLike = (i) => d[i] > 244 && d[i + 1] > 244 && d[i + 2] > 244 && Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]) < 10;
           const seen = new Uint8Array(w * h), stack = [];
           const push = (x, y) => { const p = y * w + x; if (!seen[p] && bgLike(p * 4)) { seen[p] = 1; stack.push(p); } };
@@ -29,7 +36,7 @@
             const p = y * w + x; if (seen[p]) continue;
             if (seen[p - 1] || seen[p + 1] || seen[p - w] || seen[p + w]) { const i = p * 4, l = (d[i] + d[i + 1] + d[i + 2]) / 3; if (l > 205) d[i + 3] = Math.max(40, 255 - (l - 205) * 4.2); }
           }
-          g.putImageData(id, 0, 0);
+          g.putImageData(id, 0, 0); tops.set(url, topRow() / w);
           c.toBlob((b) => resolve(b ? URL.createObjectURL(b) : url), 'image/png');
         } catch (e) { resolve(url); }
       };
@@ -58,7 +65,7 @@
 
     // cut-out every thumbnail (lazy-ish: visible first)
     const thumbs = items.map((it) => it.querySelector('img.rack__img'));
-    const cutThumb = (k) => { const im = thumbs[k]; if (!im || im.dataset.cut) return; im.dataset.cut = '1'; const src = items[k].dataset.thumb || im.src; cutout(src, 440).then((u) => { if (u) im.src = u; if (photos.has(src)) slots[k].classList.add('is-photo'); im.classList.add('is-cut'); }); };
+    const cutThumb = (k) => { const im = thumbs[k]; if (!im || im.dataset.cut) return; im.dataset.cut = '1'; const src = items[k].dataset.thumb || im.src; cutout(src, 440).then((u) => { if (u) im.src = u; if (photos.has(src)) slots[k].classList.add('is-photo'); if (tops.has(src)) im.style.setProperty('--t', tops.get(src).toFixed(3)); im.classList.add('is-cut'); }); };
     const mid0 = Math.floor(items.length / 2); [mid0, mid0 - 1, mid0 + 1].filter((k) => k >= 0 && k < items.length).forEach(cutThumb);
     if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { cutThumb(slots.indexOf(e.target)); io.unobserve(e.target); } }), { root: null, rootMargin: '200px' }); slots.forEach((s) => io.observe(s)); }
     else items.forEach((_, k) => cutThumb(k));
@@ -128,7 +135,7 @@
       const front = vsel >= 0 && vl[vsel] ? vl[vsel].i : x.front;
       const src = view === 'back' && x.back ? x.back : front;
       big.classList.add('is-swap');
-      cutout(src).then((u) => { big.src = u || src || ''; big.classList.toggle('is-photo', photos.has(src)); big.alt = `${x.name} ${x.sub || ''} — ${view}`; requestAnimationFrame(() => big.classList.remove('is-swap')); });
+      cutout(src).then((u) => { big.src = u || src || ''; big.classList.toggle('is-photo', photos.has(src)); if (tops.has(src)) big.style.setProperty('--t', tops.get(src).toFixed(3)); else big.style.removeProperty('--t'); big.alt = `${x.name} ${x.sub || ''} — ${view}`; requestAnimationFrame(() => big.classList.remove('is-swap')); });
       title.textContent = x.name; dSub.textContent = vsel >= 0 && vl[vsel] ? vl[vsel].n : x.sub || ''; dPrice.textContent = x.price || ''; dPrice.hidden = !x.price; link.href = x.url;
       views.forEach((b) => { const on = b.dataset.view === view; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', on); b.disabled = b.dataset.view === 'back' && !x.back; });
       const col = (it) => { const t = it.dataset.tag; return t && t.toLowerCase() !== '#1b1510' ? t : SW[(it.dataset.sub || '').toLowerCase()] || t || '#1b1510'; };
