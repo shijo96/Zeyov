@@ -396,7 +396,13 @@
     "g-os250-red",
     "g-os250-green"
    ],
-   "settings": {}
+   "settings": {
+    "source": "collection",
+    "collection": "new-arrivals",
+    "limit": 12,
+    "top_up": true,
+    "min_items": 10
+   }
   }
  },
  "order": [

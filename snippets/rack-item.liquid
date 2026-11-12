@@ -1,0 +1,22 @@
+{%- comment -%}
+  One garment on the clothing rack.
+  Params: idx, title, sub, price, url, group, tag, front, back (image objects), hanger (svg), attrs, variants (json string)
+{%- endcomment -%}
+<div class="rack__slot" role="listitem" {{ attrs }}>
+  <button type="button" class="rack__item" data-item="{{ idx }}"
+    data-name="{{ title | escape }}" data-sub="{{ sub | escape }}" data-price="{{ price | escape }}"
+    data-group="{{ group | escape }}" data-url="{{ url }}" data-tag="{{ tag }}"
+    {% if front != blank %}data-front="{{ front | image_url: width: 1000 }}" data-thumb="{{ front | image_url: width: 600 }}"{% endif %}
+    {% if back != blank %}data-back="{{ back | image_url: width: 1000 }}"{% endif %}
+    {% if variants != blank %}data-variants="{{ variants | escape }}"{% endif %}
+    aria-label="{{ title | escape }}{% if sub != blank %}, {{ sub | escape }}{% endif %}">
+    <span class="rack__hanger" aria-hidden="true">{{ hanger }}</span>
+    <span class="rack__garment">
+      {%- if front != blank -%}
+        <img class="rack__img" src="{{ front | image_url: width: 600 }}" alt="" width="600" height="680" {% if idx > 5 %}loading="lazy"{% endif %} draggable="false">
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'rack__img rack__img--ph' }}
+      {%- endif -%}
+    </span>
+  </button>
+</div>

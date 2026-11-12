@@ -56,6 +56,12 @@
 .rack__btn--ghost { background: transparent; color: var(--rack-text); box-shadow: none; }
 .rack__btn--ghost:hover { background: var(--rack-text); color: var(--rack-a, #fff); }
 
+/* product photos that keep their background hang as framed cards */
+.rack__slot.is-photo .rack__img, .rack__big img.is-photo { aspect-ratio: 1 / 1; object-fit: cover; margin-top: 18px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 6px #fff, 0 22px 40px -14px rgba(40,28,15,.35); filter: none; }
+.rack__slot.is-photo .rack__garment::before { content: ""; position: absolute; top: 4px; left: 50%; width: 2px; height: 18px; margin-left: -1px; background: #6b5a48; z-index: 1; }
+.rack__big:has(img.is-photo)::before { content: ""; position: absolute; top: 30px; left: 50%; width: 2px; height: 28px; margin-left: -1px; background: #6b5a48; z-index: 1; }
+.rack__big:has(img.is-photo) .rack__hanger--big { margin-bottom: 4px; }
+
 /* ===== detail ===== */
 .rack__detail { position: absolute; inset: 0 0 48px; z-index: 10; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); align-items: center; gap: clamp(20px, 4vw, 70px); padding: 30px max(28px, 6vw); animation: rack-in .55s var(--ease) both; }
 .rack__detail[hidden] { display: none; }

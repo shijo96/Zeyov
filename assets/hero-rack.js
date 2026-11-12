@@ -5,7 +5,7 @@
   const pad = (n) => String(n).padStart(2, '0');
 
   /* ---- remove plain white photo backgrounds so garments look like real cut-outs ---- */
-  const cache = new Map();
+  const cache = new Map(); const photos = new Set(); // photos whose background could not be removed
   function cutout(url, maxW = 1000) {
     if (!url) return Promise.resolve('');
     const key = url + '|' + maxW; if (cache.has(key)) return cache.get(key);
@@ -22,7 +22,7 @@
           const push = (x, y) => { const p = y * w + x; if (!seen[p] && bgLike(p * 4)) { seen[p] = 1; stack.push(p); } };
           for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
           for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
-          if (stack.length < (w + h)) { resolve(url); return; } // not a white-background photo
+          if (stack.length < (w + h)) { photos.add(url); resolve(url); return; } // not a white-background photo
           while (stack.length) { const p = stack.pop(), x = p % w, y = (p - x) / w; d[p * 4 + 3] = 0; if (x > 0) push(x - 1, y); if (x < w - 1) push(x + 1, y); if (y > 0) push(x, y - 1); if (y < h - 1) push(x, y + 1); }
           // soften the edge: partially fade very light pixels that touch the removed background
           for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
@@ -49,6 +49,7 @@
     const detail = $('[data-detail]'), big = $('[data-big]'), title = $('[data-title]'), link = $('[data-link]');
     const tags = $('[data-tags]'), chips = $('[data-chips]'), dSub = $('[data-d-sub]'), dPrice = $('[data-d-price]');
     const views = [...root.querySelectorAll('[data-view]')];
+    const total = root.querySelector('[data-total]'); if (total) total.textContent = pad(items.length);
     const mobile = () => matchMedia('(max-width: 899px)').matches;
     const hint = nameOut.textContent;
     let active = -1, open = -1, view = 'front', lastActive = 0;
@@ -56,7 +57,7 @@
 
     // cut-out every thumbnail (lazy-ish: visible first)
     const thumbs = items.map((it) => it.querySelector('img.rack__img'));
-    const cutThumb = (k) => { const im = thumbs[k]; if (!im || im.dataset.cut) return; im.dataset.cut = '1'; cutout(items[k].dataset.thumb || im.src, 440).then((u) => { if (u) im.src = u; im.classList.add('is-cut'); }); };
+    const cutThumb = (k) => { const im = thumbs[k]; if (!im || im.dataset.cut) return; im.dataset.cut = '1'; const src = items[k].dataset.thumb || im.src; cutout(src, 440).then((u) => { if (u) im.src = u; if (photos.has(src)) slots[k].classList.add('is-photo'); im.classList.add('is-cut'); }); };
     const mid0 = Math.floor(items.length / 2); [mid0, mid0 - 1, mid0 + 1].filter((k) => k >= 0 && k < items.length).forEach(cutThumb);
     if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { cutThumb(slots.indexOf(e.target)); io.unobserve(e.target); } }), { root: null, rootMargin: '200px' }); slots.forEach((s) => io.observe(s)); }
     else items.forEach((_, k) => cutThumb(k));
@@ -75,18 +76,27 @@
     }
 
     // detail view
-    function show(i) {
-      open = i; const x = d(i);
-      const src = view === 'back' && x.back ? x.back : x.front;
+    let vsel = -1; // chosen colour of a collection product
+    const vars = (x) => { try { return x.variants ? JSON.parse(x.variants) : []; } catch (e) { return []; } };
+    function show(i, keepVar) {
+      if (open !== i || !keepVar) vsel = -1;
+      open = i; const x = d(i), vl = vars(x);
+      const front = vsel >= 0 && vl[vsel] ? vl[vsel].i : x.front;
+      const src = view === 'back' && x.back ? x.back : front;
       big.classList.add('is-swap');
-      cutout(src).then((u) => { big.src = u || src || ''; big.alt = `${x.name} ${x.sub || ''} — ${view}`; requestAnimationFrame(() => big.classList.remove('is-swap')); });
-      title.textContent = x.name; dSub.textContent = x.sub || ''; dPrice.textContent = x.price || ''; dPrice.hidden = !x.price; link.href = x.url;
+      cutout(src).then((u) => { big.src = u || src || ''; big.classList.toggle('is-photo', photos.has(src)); big.alt = `${x.name} ${x.sub || ''} — ${view}`; requestAnimationFrame(() => big.classList.remove('is-swap')); });
+      title.textContent = x.name; dSub.textContent = vsel >= 0 && vl[vsel] ? vl[vsel].n : x.sub || ''; dPrice.textContent = x.price || ''; dPrice.hidden = !x.price; link.href = x.url;
       views.forEach((b) => { const on = b.dataset.view === view; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', on); b.disabled = b.dataset.view === 'back' && !x.back; });
-      const grp = x.group ? items.map((it, k) => [it, k]).filter(([it]) => it.dataset.group === x.group) : [[items[i], i]];
       const col = (it) => { const t = it.dataset.tag; return t && t.toLowerCase() !== '#1b1510' ? t : SW[(it.dataset.sub || '').toLowerCase()] || t || '#1b1510'; };
-      const useTags = grp.length > 1 && grp.length <= 5 && !mobile();
-      tags.innerHTML = useTags ? grp.map(([it, k], n) => { const c = col(it); return `<button type="button" class="rack__tag ${k === i ? 'is-on' : ''} ${isLight(c) ? 'is-light' : ''}" style="--tc:${c};--drop:${26 + (n % 3) * 16}px" data-goto="${k}" aria-label="${esc(it.dataset.sub)}"><span>${esc(it.dataset.sub)}</span></button>`; }).join('') : '';
-      chips.innerHTML = grp.length > 1 && !useTags ? grp.map(([it, k]) => `<button type="button" class="rack__chip ${k === i ? 'is-on' : ''}" style="--tc:${col(it)}" data-goto="${k}" aria-label="${esc(it.dataset.sub)}" title="${esc(it.dataset.sub)}"></button>`).join('') : '';
+      if (vl.length > 1) { // a product's own colours
+        tags.innerHTML = '';
+        chips.innerHTML = vl.map((v, j) => `<button type="button" class="rack__chip ${j === Math.max(0, vsel) ? 'is-on' : ''}" style="--tc:${SW[(v.n || '').toLowerCase()] || '#cbbfae'}" data-var="${j}" aria-label="${esc(v.n)}" title="${esc(v.n)}"></button>`).join('');
+      } else {
+        const grp = x.group ? items.map((it, k) => [it, k]).filter(([it]) => it.dataset.group === x.group) : [[items[i], i]];
+        const useTags = grp.length > 1 && grp.length <= 5 && !mobile();
+        tags.innerHTML = useTags ? grp.map(([it, k], n) => { const c = col(it); return `<button type="button" class="rack__tag ${k === i ? 'is-on' : ''} ${isLight(c) ? 'is-light' : ''}" style="--tc:${c};--drop:${26 + (n % 3) * 16}px" data-goto="${k}" aria-label="${esc(it.dataset.sub)}"><span>${esc(it.dataset.sub)}</span></button>`; }).join('') : '';
+        chips.innerHTML = grp.length > 1 && !useTags ? grp.map(([it, k]) => `<button type="button" class="rack__chip ${k === i ? 'is-on' : ''}" style="--tc:${col(it)}" data-goto="${k}" aria-label="${esc(it.dataset.sub)}" title="${esc(it.dataset.sub)}"></button>`).join('') : '';
+      }
       if (x.back) cutout(x.back); // warm up the back view
     }
     function openDetail(i) { view = 'front'; show(i); detail.hidden = false; root.classList.add('is-open'); $('[data-close]').focus({ preventScroll: true }); }
@@ -120,7 +130,8 @@
 
     detail.addEventListener('click', (e) => {
       const t = e.target.closest('[data-goto]'); if (t) { show(+t.dataset.goto); setActive(+t.dataset.goto); return; }
-      const v = e.target.closest('[data-view]'); if (v && !v.disabled) { view = v.dataset.view; show(open); return; }
+      const vr = e.target.closest('[data-var]'); if (vr) { vsel = +vr.dataset.var; view = 'front'; show(open, true); return; }
+      const v = e.target.closest('[data-view]'); if (v && !v.disabled) { view = v.dataset.view; show(open, true); return; }
       if (e.target.closest('[data-close]') || e.target === detail) closeDetail();
     });
     root.addEventListener('keydown', (e) => { if (e.key === 'Escape' && open >= 0) closeDetail(); });
