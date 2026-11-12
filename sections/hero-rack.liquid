@@ -1,0 +1,135 @@
+{%- comment -%}
+  Clothing-rack hero: garments hang on a rail, the hovered one opens up,
+  clicking shows it large with Front/Back, colour tags and a link.
+{%- endcomment -%}
+{{ 'hero-rack.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign items = section.blocks
+-%}
+<section class="rack" data-rack id="rack-{{ section.id }}"
+  style="--rack-bg: {{ section.settings.bg }}; --rack-text: {{ section.settings.text }}; --strip-bg: {{ section.settings.strip_bg }}; --strip-fg: {{ section.settings.strip_fg }}; --rack-h: {{ section.settings.height }}vh;">
+  <h2 class="visually-hidden">{{ section.settings.heading | default: shop.name }}</h2>
+
+  <div class="rack__stage" data-stage>
+    <div class="rack__rail" aria-hidden="true"><i></i><i></i></div>
+    <div class="rack__items" data-items role="list">
+      {%- for block in items -%}
+        {%- liquid
+          assign p = block.settings.product
+          assign title = block.settings.title
+          if title == blank and p != blank
+            assign title = p.title
+          endif
+          assign url = block.settings.link
+          if url == blank and p != blank
+            assign url = p.url
+          endif
+          if url == blank
+            assign url = routes.all_products_collection_url
+          endif
+          assign front = block.settings.front
+          if front == blank and p != blank
+            assign front = p.featured_image
+          endif
+          assign back = block.settings.back
+          if back == blank and p != blank and p.images.size > 1
+            assign back = p.images[1]
+          endif
+        -%}
+        <div class="rack__slot" role="listitem" {{ block.shopify_attributes }}>
+          <button type="button" class="rack__item" data-item="{{ forloop.index0 }}"
+            data-name="{{ title | escape }}" data-sub="{{ block.settings.subtitle | escape }}" data-group="{{ block.settings.group | escape }}"
+            data-url="{{ url }}" data-tag="{{ block.settings.tag_color }}"
+            {% if front != blank %}data-front="{{ front | image_url: width: 1100 }}"{% endif %}
+            {% if back != blank %}data-back="{{ back | image_url: width: 1100 }}"{% endif %}
+            aria-label="{{ title | escape }}{% if block.settings.subtitle != blank %} — {{ block.settings.subtitle | escape }}{% endif %}">
+            <span class="rack__hanger" aria-hidden="true"><svg viewBox="0 0 60 34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M30 13V9a5 5 0 1 0-5-5"/><path d="M30 13 4 30h52Z"/></svg></span>
+            {%- if front != blank -%}
+              {{ front | image_url: width: 600 | image_tag: loading: 'eager', class: 'rack__img', alt: '', sizes: '(min-width: 990px) 260px, 180px', widths: '300, 600' }}
+            {%- else -%}
+              <span class="rack__img rack__img--ph">{{ 'product-1' | placeholder_svg_tag }}</span>
+            {%- endif -%}
+          </button>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="rack__info">
+      <p class="rack__caption" data-caption aria-live="polite">{{ section.settings.hint }}</p>
+      <a class="rack__pill" href="{{ items.first.settings.link | default: routes.all_products_collection_url }}" data-pill>{{ section.settings.cta }}</a>
+    </div>
+  </div>
+
+  <div class="rack__detail" data-detail hidden>
+    <div class="rack__ghosts" data-ghosts aria-hidden="true"></div>
+    <button type="button" class="rack__close" data-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <div class="rack__focus">
+      <figure class="rack__big">
+        <span class="rack__hanger rack__hanger--big" aria-hidden="true"><svg viewBox="0 0 60 34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M30 13V9a5 5 0 1 0-5-5"/><path d="M30 13 4 30h52Z"/></svg></span>
+        <img data-big alt="">
+      </figure>
+      <div class="rack__tags" data-tags></div>
+    </div>
+    <h3 class="rack__title" data-title></h3>
+    <div class="rack__toggle" role="tablist" aria-label="View">
+      <button type="button" role="tab" class="is-on" aria-selected="true" data-view="front">{{ section.settings.front_label }}</button>
+      <button type="button" role="tab" aria-selected="false" data-view="back">{{ section.settings.back_label }}</button>
+    </div>
+    <a class="rack__link" href="#" data-link>{{ section.settings.cta }} <span aria-hidden="true">↗</span></a>
+  </div>
+
+  {%- if section.settings.strip_text != blank -%}
+    {%- assign words = section.settings.strip_text | split: ',' -%}
+    <div class="rack__strip" aria-hidden="true">
+      <div class="rack__track">
+        {%- for n in (1..2) -%}
+          <span>{%- for w in words -%}{%- for k in (1..3) -%}<b>{{ w | strip }}</b><i>•</i>{%- endfor -%}{%- endfor -%}</span>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+<script src="{{ 'hero-rack.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Clothing rack hero",
+  "tag": "div",
+  "class": "rack-section",
+  "max_blocks": 16,
+  "settings": [
+    { "type": "paragraph", "content": "Garments hang on a rail. Hover opens one up; click shows it large with Front / Back and colour tags. Best with transparent or white-background PNG photos, portrait shape." },
+    { "type": "text", "id": "heading", "label": "Hidden heading (for SEO)", "default": "Zeyov — premium oversized tees" },
+    { "type": "text", "id": "hint", "label": "Caption before hover", "default": "Hover a piece to take a closer look" },
+    { "type": "text", "id": "cta", "label": "Button text", "default": "See availability" },
+    { "type": "text", "id": "front_label", "label": "Front label", "default": "Front" },
+    { "type": "text", "id": "back_label", "label": "Back label", "default": "Back" },
+    { "type": "range", "id": "height", "label": "Height (desktop)", "min": 60, "max": 100, "step": 2, "unit": "vh", "default": 86 },
+    { "type": "color", "id": "bg", "label": "Background", "default": "#EDEDED" },
+    { "type": "color", "id": "text", "label": "Text", "default": "#1C1C1C" },
+    { "type": "header", "content": "Bottom strip" },
+    { "type": "text", "id": "strip_text", "label": "Strip words", "info": "Comma separated. Leave empty to hide the strip.", "default": "It's us, never them, New drops, Kerala" },
+    { "type": "color", "id": "strip_bg", "label": "Strip background", "default": "#3DFF14" },
+    { "type": "color", "id": "strip_fg", "label": "Strip text", "default": "#0F5A00" }
+  ],
+  "blocks": [
+    {
+      "type": "garment",
+      "name": "Garment",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Name", "info": "Leave empty to use the product name" },
+        { "type": "text", "id": "subtitle", "label": "Colour / detail", "default": "Black" },
+        { "type": "image_picker", "id": "front", "label": "Front photo", "info": "Transparent or white background works best" },
+        { "type": "image_picker", "id": "back", "label": "Back photo" },
+        { "type": "product", "id": "product", "label": "Product (optional)", "info": "Used for the link and photos when those are empty" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "text", "id": "group", "label": "Colour group", "info": "Garments with the same group show as colour tags of each other (e.g. os250)" },
+        { "type": "color", "id": "tag_color", "label": "Tag colour", "default": "#1C1C1C" }
+      ]
+    }
+  ],
+  "presets": [ { "name": "Clothing rack hero" } ]
+}
+{% endschema %}

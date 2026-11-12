@@ -1,207 +1,399 @@
 {
-  "sections": {
-    "hero": {
-      "type": "hero",
-      "blocks": {
-        "s1": {
-          "type": "slide",
-          "settings": {
-            "heading": "Premium\nT-Shirt\nCollection",
-            "text": "Style for a Brighter You",
-            "cta": "Shop Now",
-            "fallback": "z-hero-model"
-          }
-        },
-        "s2": {
-          "type": "slide",
-          "settings": {
-            "heading": "Heavyweight\n250 GSM\nOversized",
-            "text": "French Terry that holds its shape",
-            "cta": "Shop Oversized",
-            "fallback": "z-p-premium"
-          }
-        },
-        "s3": {
-          "type": "slide",
-          "settings": {
-            "heading": "Zeyov\nStudio",
-            "text": "Design your own tee: DTF, Puff, HD, Embroidery",
-            "cta": "Start Designing",
-            "link": "/pages/studio",
-            "fallback": "z-p-maroon"
-          }
-        }
-      },
-      "block_order": [
-        "s1",
-        "s2",
-        "s3"
-      ],
-      "settings": {
-        "autoplay": 5
-      }
+ "sections": {
+  "hero": {
+   "type": "hero",
+   "blocks": {
+    "s1": {
+     "type": "slide",
+     "settings": {
+      "heading": "Premium\nT-Shirt\nCollection",
+      "text": "Style for a Brighter You",
+      "cta": "Shop Now",
+      "fallback": "z-hero-model"
+     }
     },
-    "cats": {
-      "type": "category-grid",
-      "blocks": {
-        "c1": {
-          "type": "cat",
-          "settings": {
-            "title": "T-Shirts",
-            "fallback": "z-cat-tshirts"
-          }
-        },
-        "c2": {
-          "type": "cat",
-          "settings": {
-            "title": "Oversized",
-            "fallback": "z-cat-oversized"
-          }
-        },
-        "c3": {
-          "type": "cat",
-          "settings": {
-            "title": "Polos",
-            "fallback": "z-cat-polos"
-          }
-        },
-        "c4": {
-          "type": "cat",
-          "settings": {
-            "title": "Hoodies & Sweatshirts",
-            "fallback": "z-cat-hoodies"
-          }
-        },
-        "c5": {
-          "type": "cat",
-          "settings": {
-            "title": "Bottomwear",
-            "fallback": "z-cat-bottomwear"
-          }
-        },
-        "c6": {
-          "type": "cat",
-          "settings": {
-            "title": "Accessories",
-            "fallback": "z-cat-accessories"
-          }
-        }
-      },
-      "block_order": [
-        "c1",
-        "c2",
-        "c3",
-        "c4",
-        "c5",
-        "c6"
-      ],
-      "settings": {}
+    "s2": {
+     "type": "slide",
+     "settings": {
+      "heading": "Heavyweight\n250 GSM\nOversized",
+      "text": "French Terry that holds its shape",
+      "cta": "Shop Oversized",
+      "fallback": "z-p-premium"
+     }
     },
-    "featured": {
-      "type": "featured-products",
-      "settings": {
-        "eyebrow": "Bestsellers",
-        "heading": "Trending Now",
-        "limit": 8
-      }
-    },
-    "studio": {
-      "type": "studio-promo",
-      "settings": {}
-    },
-    "gsm": {
-      "type": "gsm-guide",
-      "blocks": {
-        "g1": {
-          "type": "row",
-          "settings": {
-            "gsm": 250,
-            "title": "French Terry & Acid Wash",
-            "text": "Heavyweight, loopback inside. Structured oversized drape that keeps its shape."
-          }
-        },
-        "g2": {
-          "type": "row",
-          "settings": {
-            "gsm": 230,
-            "title": "Premium Single Jersey",
-            "text": "Mid-weight with a smooth face. Oversized look for every season."
-          }
-        },
-        "g3": {
-          "type": "row",
-          "settings": {
-            "gsm": 190,
-            "title": "Everyday Single Jersey",
-            "text": "Light and breathable. Made for Kerala summers, daily wear and layering."
-          }
-        }
-      },
-      "block_order": [
-        "g1",
-        "g2",
-        "g3"
-      ],
-      "settings": {}
-    },
-    "quotes": {
-      "type": "testimonials",
-      "blocks": {
-        "q1": {
-          "type": "quote",
-          "settings": {
-            "quote": "The 250 GSM black is thick, the drop shoulder sits right, and the collar is still tight after ten washes.",
-            "name": "Arjun M., Kochi",
-            "product": "Oversized 250 GSM",
-            "rating": 5
-          }
-        },
-        "q2": {
-          "type": "quote",
-          "settings": {
-            "quote": "Bought three colours to get the bundle price. True to the photos.",
-            "name": "Fathima R., Calicut",
-            "product": "Oversized 250 GSM",
-            "rating": 5
-          }
-        },
-        "q3": {
-          "type": "quote",
-          "settings": {
-            "quote": "Designed my team tees in Zeyov Studio. Puff print came out perfect.",
-            "name": "Nikhil S., Bengaluru",
-            "product": "Zeyov Studio",
-            "rating": 5
-          }
-        }
-      },
-      "block_order": [
-        "q1",
-        "q2",
-        "q3"
-      ],
-      "settings": {}
-    },
-    "news": {
-      "type": "newsletter",
-      "settings": {}
-    },
-    "arrivals": {
-      "type": "new-arrivals",
-      "settings": {
-        "heading": "New Arrivals",
-        "limit": 8
-      }
+    "s3": {
+     "type": "slide",
+     "settings": {
+      "heading": "Zeyov\nStudio",
+      "text": "Design your own tee: DTF, Puff, HD, Embroidery",
+      "cta": "Start Designing",
+      "link": "/pages/studio",
+      "fallback": "z-p-maroon"
+     }
     }
+   },
+   "block_order": [
+    "s1",
+    "s2",
+    "s3"
+   ],
+   "settings": {
+    "autoplay": 5
+   },
+   "disabled": true
   },
-  "order": [
-    "hero",
-    "arrivals",
-    "cats",
-    "featured",
-    "studio",
-    "gsm",
-    "quotes",
-    "news"
-  ]
+  "cats": {
+   "type": "category-grid",
+   "blocks": {
+    "c1": {
+     "type": "cat",
+     "settings": {
+      "title": "T-Shirts",
+      "fallback": "z-cat-tshirts"
+     }
+    },
+    "c2": {
+     "type": "cat",
+     "settings": {
+      "title": "Oversized",
+      "fallback": "z-cat-oversized"
+     }
+    },
+    "c3": {
+     "type": "cat",
+     "settings": {
+      "title": "Polos",
+      "fallback": "z-cat-polos"
+     }
+    },
+    "c4": {
+     "type": "cat",
+     "settings": {
+      "title": "Hoodies & Sweatshirts",
+      "fallback": "z-cat-hoodies"
+     }
+    },
+    "c5": {
+     "type": "cat",
+     "settings": {
+      "title": "Bottomwear",
+      "fallback": "z-cat-bottomwear"
+     }
+    },
+    "c6": {
+     "type": "cat",
+     "settings": {
+      "title": "Accessories",
+      "fallback": "z-cat-accessories"
+     }
+    }
+   },
+   "block_order": [
+    "c1",
+    "c2",
+    "c3",
+    "c4",
+    "c5",
+    "c6"
+   ],
+   "settings": {}
+  },
+  "featured": {
+   "type": "featured-products",
+   "settings": {
+    "eyebrow": "Bestsellers",
+    "heading": "Trending Now",
+    "limit": 8
+   }
+  },
+  "studio": {
+   "type": "studio-promo",
+   "settings": {}
+  },
+  "gsm": {
+   "type": "gsm-guide",
+   "blocks": {
+    "g1": {
+     "type": "row",
+     "settings": {
+      "gsm": 250,
+      "title": "French Terry & Acid Wash",
+      "text": "Heavyweight, loopback inside. Structured oversized drape that keeps its shape."
+     }
+    },
+    "g2": {
+     "type": "row",
+     "settings": {
+      "gsm": 230,
+      "title": "Premium Single Jersey",
+      "text": "Mid-weight with a smooth face. Oversized look for every season."
+     }
+    },
+    "g3": {
+     "type": "row",
+     "settings": {
+      "gsm": 190,
+      "title": "Everyday Single Jersey",
+      "text": "Light and breathable. Made for Kerala summers, daily wear and layering."
+     }
+    }
+   },
+   "block_order": [
+    "g1",
+    "g2",
+    "g3"
+   ],
+   "settings": {}
+  },
+  "quotes": {
+   "type": "testimonials",
+   "blocks": {
+    "q1": {
+     "type": "quote",
+     "settings": {
+      "quote": "The 250 GSM black is thick, the drop shoulder sits right, and the collar is still tight after ten washes.",
+      "name": "Arjun M., Kochi",
+      "product": "Oversized 250 GSM",
+      "rating": 5
+     }
+    },
+    "q2": {
+     "type": "quote",
+     "settings": {
+      "quote": "Bought three colours to get the bundle price. True to the photos.",
+      "name": "Fathima R., Calicut",
+      "product": "Oversized 250 GSM",
+      "rating": 5
+     }
+    },
+    "q3": {
+     "type": "quote",
+     "settings": {
+      "quote": "Designed my team tees in Zeyov Studio. Puff print came out perfect.",
+      "name": "Nikhil S., Bengaluru",
+      "product": "Zeyov Studio",
+      "rating": 5
+     }
+    }
+   },
+   "block_order": [
+    "q1",
+    "q2",
+    "q3"
+   ],
+   "settings": {}
+  },
+  "news": {
+   "type": "newsletter",
+   "settings": {}
+  },
+  "arrivals": {
+   "type": "new-arrivals",
+   "settings": {
+    "heading": "New Arrivals",
+    "limit": 8
+   }
+  },
+  "rack": {
+   "type": "hero-rack",
+   "blocks": {
+    "g-os250-black": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "Black",
+      "front": "shopify://shop_images/download_6.png",
+      "back": "shopify://shop_images/download_7.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#17171A"
+     }
+    },
+    "g-os250-white": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "White",
+      "front": "shopify://shop_images/download_8.png",
+      "back": "shopify://shop_images/download_9.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#F4F3F0"
+     }
+    },
+    "g-os250-beige": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "Beige",
+      "front": "shopify://shop_images/download_10.png",
+      "back": "shopify://shop_images/download_11.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#DECBAC"
+     }
+    },
+    "g-os250-brown": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "Brown",
+      "front": "shopify://shop_images/download_12.png",
+      "back": "shopify://shop_images/download_13.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#5E3B26"
+     }
+    },
+    "g-os250-navy-blue": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "Navy Blue",
+      "front": "shopify://shop_images/download_14.png",
+      "back": "shopify://shop_images/download_15.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#1E2846"
+     }
+    },
+    "g-os250-royal-blue": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "Royal Blue",
+      "front": "shopify://shop_images/download_16.png",
+      "back": "shopify://shop_images/download_17.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#2248A8"
+     }
+    },
+    "g-os250-lavender": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "Lavender",
+      "front": "shopify://shop_images/download_18.png",
+      "back": "shopify://shop_images/download_19.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#BAAAD6"
+     }
+    },
+    "g-os250-red": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "Red",
+      "front": "shopify://shop_images/download_20.png",
+      "back": "shopify://shop_images/download_21.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#B22228"
+     }
+    },
+    "g-os250-green": {
+     "type": "garment",
+     "settings": {
+      "title": "Oversized Tee · 250 GSM French Terry",
+      "subtitle": "Green",
+      "front": "shopify://shop_images/download_22.png",
+      "back": "shopify://shop_images/download_23.png",
+      "link": "/pages/studio",
+      "group": "os250",
+      "tag_color": "#34563C"
+     }
+    },
+    "g-aw250-black": {
+     "type": "garment",
+     "settings": {
+      "title": "Acid Wash Oversized Tee · 250 GSM",
+      "subtitle": "Black",
+      "front": "shopify://shop_images/download_24.png",
+      "back": "shopify://shop_images/download_25.png",
+      "link": "/pages/studio",
+      "group": "aw250",
+      "tag_color": "#17171A"
+     }
+    },
+    "g-aw250-green": {
+     "type": "garment",
+     "settings": {
+      "title": "Acid Wash Oversized Tee · 250 GSM",
+      "subtitle": "Green",
+      "front": "shopify://shop_images/download_26.png",
+      "back": "shopify://shop_images/download_27.png",
+      "link": "/pages/studio",
+      "group": "aw250",
+      "tag_color": "#34563C"
+     }
+    },
+    "g-aw250-royal-blue": {
+     "type": "garment",
+     "settings": {
+      "title": "Acid Wash Oversized Tee · 250 GSM",
+      "subtitle": "Royal Blue",
+      "front": "shopify://shop_images/download_28.png",
+      "back": "shopify://shop_images/download_29.png",
+      "link": "/pages/studio",
+      "group": "aw250",
+      "tag_color": "#2248A8"
+     }
+    },
+    "g-fs250-black": {
+     "type": "garment",
+     "settings": {
+      "title": "Full Sleeve Oversized Tee · 250 GSM",
+      "subtitle": "Black",
+      "front": "shopify://shop_images/download_30.png",
+      "back": "shopify://shop_images/download_31.png",
+      "link": "/pages/studio",
+      "group": "fs250",
+      "tag_color": "#17171A"
+     }
+    },
+    "g-rf190-red": {
+     "type": "garment",
+     "settings": {
+      "title": "Regular Fit Tee · 190 GSM",
+      "subtitle": "Red",
+      "front": "shopify://shop_images/download_4.png",
+      "back": "shopify://shop_images/download_5.png",
+      "link": "/pages/studio",
+      "group": "rf190",
+      "tag_color": "#B22228"
+     }
+    }
+   },
+   "block_order": [
+    "g-os250-black",
+    "g-aw250-black",
+    "g-fs250-black",
+    "g-rf190-red",
+    "g-os250-white",
+    "g-aw250-green",
+    "g-os250-beige",
+    "g-aw250-royal-blue",
+    "g-os250-brown",
+    "g-os250-navy-blue",
+    "g-os250-royal-blue",
+    "g-os250-lavender",
+    "g-os250-red",
+    "g-os250-green"
+   ],
+   "settings": {}
+  }
+ },
+ "order": [
+  "rack",
+  "hero",
+  "arrivals",
+  "cats",
+  "featured",
+  "studio",
+  "gsm",
+  "quotes",
+  "news"
+ ]
 }
