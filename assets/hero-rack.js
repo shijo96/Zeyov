@@ -83,8 +83,9 @@
       views.forEach((b) => { const on = b.dataset.view === view; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', on); b.disabled = b.dataset.view === 'back' && !x.back; });
       const grp = x.group ? items.map((it, k) => [it, k]).filter(([it]) => it.dataset.group === x.group) : [[items[i], i]];
       const col = (it) => { const t = it.dataset.tag; return t && t.toLowerCase() !== '#1b1510' ? t : SW[(it.dataset.sub || '').toLowerCase()] || t || '#1b1510'; };
-      tags.innerHTML = grp.length > 1 ? grp.map(([it, k], n) => { const c = col(it); return `<button type="button" class="rack__tag ${k === i ? 'is-on' : ''} ${isLight(c) ? 'is-light' : ''}" style="--tc:${c};--drop:${26 + (n % 3) * 16}px" data-goto="${k}" aria-label="${esc(it.dataset.sub)}"><span>${esc(it.dataset.sub)}</span></button>`; }).join('') : '';
-      chips.innerHTML = grp.length > 1 ? grp.map(([it, k]) => `<button type="button" class="rack__chip ${k === i ? 'is-on' : ''}" style="--tc:${col(it)}" data-goto="${k}" aria-label="${esc(it.dataset.sub)}" title="${esc(it.dataset.sub)}"></button>`).join('') : '';
+      const useTags = grp.length > 1 && grp.length <= 5 && !mobile();
+      tags.innerHTML = useTags ? grp.map(([it, k], n) => { const c = col(it); return `<button type="button" class="rack__tag ${k === i ? 'is-on' : ''} ${isLight(c) ? 'is-light' : ''}" style="--tc:${c};--drop:${26 + (n % 3) * 16}px" data-goto="${k}" aria-label="${esc(it.dataset.sub)}"><span>${esc(it.dataset.sub)}</span></button>`; }).join('') : '';
+      chips.innerHTML = grp.length > 1 && !useTags ? grp.map(([it, k]) => `<button type="button" class="rack__chip ${k === i ? 'is-on' : ''}" style="--tc:${col(it)}" data-goto="${k}" aria-label="${esc(it.dataset.sub)}" title="${esc(it.dataset.sub)}"></button>`).join('') : '';
       if (x.back) cutout(x.back); // warm up the back view
     }
     function openDetail(i) { view = 'front'; show(i); detail.hidden = false; root.classList.add('is-open'); $('[data-close]').focus({ preventScroll: true }); }
