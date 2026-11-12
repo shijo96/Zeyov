@@ -32,9 +32,10 @@
   };
   // Print areas on the 800 x 1000 mockup (px) and their size in inches (size M).
   const PX_PER_IN = 20.3;
+  // print area sized like the reference: ~88% of the torso width, from below the collar to near the hem
   const AREA = {
-    oversized: { front: { x: 248, y: 230, w: 304, h: 406 }, back: { x: 248, y: 200, w: 304, h: 406 } },
-    regular: { front: { x: 272, y: 228, w: 256, h: 366 }, back: { x: 272, y: 196, w: 256, h: 366 } }
+    oversized: { front: { x: 190, y: 225, w: 420, h: 630 }, back: { x: 190, y: 185, w: 420, h: 670 } },
+    regular: { front: { x: 194, y: 220, w: 412, h: 630 }, back: { x: 194, y: 180, w: 412, h: 670 } }
   };
   const PRESETS = [
     ['Left chest', { w: 3.5, x: 0.68, y: 0.12 }], ['Centre chest', { w: 4, x: 0.5, y: 0.12 }],
@@ -553,7 +554,7 @@
     const items = sideLayers(side).map((l) => l.type === 'text'
       ? `Text “${l.text.replace(/\n/g, ' / ')}” (${l.font}${l.bold ? ' bold' : ''}${l.italic ? ' italic' : ''}, colour ${l.fill}${l.gradient ? '→' + l.fill2 : ''}${l.outline ? ', outline ' + l.outline : ''}${l.outlineOnly ? ' hollow' : ''}${l.curve ? ', curve ' + l.curve : ''}, ${fmt(l.w)}×${fmt(l.w * l.aspect)} in, rotate ${Math.round(l.rot)}°)`
       : `Image ${l.name} (${fmt(l.w)}×${fmt(l.w * l.aspect)} in, rotate ${Math.round(l.rot)}°${l.flip ? ', flipped' : ''})`).join(' | ');
-    return { pc, text: `${pc.label} · ${fmt(b.w)} × ${fmt(b.h)} in · top edge ${fmt(b.y0)} in below print-area top (≈${fmt(b.y0 + (side === 'front' ? 3 : 2))} in below collar) · ${pos}`, items };
+    return { pc, text: `${pc.label} · ${fmt(b.w)} × ${fmt(b.h)} in · top edge ${fmt(b.y0)} in below print-area top (≈${fmt(b.y0 + (side === 'front' ? 3 : 3))} in below collar) · ${pos}`, items };
   }
   async function addToCart(btn) {
     if (btn.disabled) return;
