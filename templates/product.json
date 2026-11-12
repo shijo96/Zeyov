@@ -1,74 +1,8 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "main": {
-      "type": "main-product",
-      "blocks": {
-        "t1": {
-          "type": "tier",
-          "settings": {
-            "qty": 1,
-            "label": "Buy 1",
-            "note": "Standard price",
-            "discount_percent": 0
-          }
-        },
-        "t2": {
-          "type": "tier",
-          "settings": {
-            "qty": 2,
-            "label": "Buy 2",
-            "note": "10% Extra OFF",
-            "badge": "Popular (Save 10%)",
-            "discount_percent": 10
-          }
-        },
-        "t3": {
-          "type": "tier",
-          "settings": {
-            "qty": 3,
-            "label": "Buy 3",
-            "note": "13% Extra OFF",
-            "badge": "Best Value (Save 13%)",
-            "discount_percent": 13
-          }
-        }
-      },
-      "block_order": [
-        "t1",
-        "t2",
-        "t3"
-      ],
-      "settings": {
-        "show_tiers": true
-      }
-    },
-    "reviews": {
-      "type": "product-reviews",
-      "settings": {
-        "heading": "Customer Reviews",
-        "subheading": "Real experiences from verified customers across India."
-      }
-    },
-    "related": {
-      "type": "product-recommendations",
-      "settings": {
-        "heading": "You May Also Like",
-        "limit": 5
-      }
-    }
+    "main": { "type": "main-product", "settings": {} },
+    "reviews": { "type": "product-reviews", "settings": {} },
+    "related": { "type": "related-products", "settings": {} }
   },
-  "order": [
-    "main",
-    "reviews",
-    "related"
-  ]
+  "order": ["main", "reviews", "related"]
 }

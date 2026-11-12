@@ -1,1 +1,1 @@
-{ "sections": { "main": { "type": "track-order" } }, "order": ["main"] }
+{ "sections": { "main": { "type": "main-track", "settings": {} } }, "order": ["main"] }

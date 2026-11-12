@@ -1,129 +1,53 @@
-{%- comment -%}
-  ZEYOV High-Conversion Product Card (Amazon / Flipkart / Myntra Architecture)
-  - Desktop: 4-Column Layout, Elevating Hover, Quick View Overlay, Smooth Image Zoom
-  - Mobile: Real Flipkart/Myntra 3:4 Portrait Ratio, Superimposed 4.3★ Rating Pill, Bold Brand, Real-Time Discount & Free Delivery Tag
-{%- endcomment -%}
-
+{%- comment -%} Usage: {% render 'product-card', product: product, lazy: true %} {%- endcomment -%}
 {%- assign v = product.selected_or_first_available_variant -%}
-{%- assign card_rating = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value -%}
-{%- assign card_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count -%}
-
-<article class="card" data-product-handle="{{ product.handle }}" data-product-id="{{ product.id }}">
-  <div class="card__media-wrap">
-    {%- if product.images.size > 1 -%}
-      <!-- Multi-image swipe slider (Myntra / Flipkart swipe architecture) -->
-      <div class="card__slider" data-card-slider>
-        <div class="card__slider-track" data-card-track>
-          {%- for img in product.images limit: 5 -%}
-            <a href="{{ product.url }}" class="card__slider-slide" data-slide-index="{{ forloop.index0 }}" aria-label="{{ product.title | escape }} - View {{ forloop.index }}">
-              <img 
-                src="{{ img | image_url: width: 700 }}" 
-                alt="{{ img.alt | default: product.title | escape }}" 
-                width="600" 
-                height="800" 
-                loading="{% if forloop.first %}lazy{% else %}lazy{% endif %}" 
-                class="card__slider-img"
-              >
-            </a>
-          {%- endfor -%}
-        </div>
-        <div class="card__slider-dots" data-card-dots aria-hidden="true">
-          {%- for img in product.images limit: 5 -%}
-            <span class="card__slider-dot{% if forloop.first %} is-active{% endif %}"></span>
-          {%- endfor -%}
-        </div>
-        <button type="button" class="card__slider-nav prev" data-card-slide-prev aria-label="Previous photo">&lsaquo;</button>
-        <button type="button" class="card__slider-nav next" data-card-slide-next aria-label="Next photo">&rsaquo;</button>
-      </div>
-    {%- else -%}
-      <a class="card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
-        {%- if product.featured_image -%}
-          {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '280, 420, 560, 700', sizes: '(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw', alt: product.featured_image.alt | default: product.title }}
-        {%- else -%}
-          <div class="card__placeholder">{{ product.title | truncate: 1, '' }}</div>
+{%- assign img1 = product.featured_media -%}
+{%- assign img2 = product.media[1] -%}
+{%- assign color_opt = nil -%}
+{%- for o in product.options_with_values -%}
+  {%- assign _on = o.name | downcase -%}
+  {%- if _on contains 'colo' -%}{%- assign color_opt = o -%}{%- endif -%}
+{%- endfor -%}
+<article class="card" data-product-card data-handle="{{ product.handle }}">
+  <div class="card__media">
+    <a href="{{ product.url | within: collection }}" aria-label="{{ product.title | escape }}">
+      {%- if img1 -%}
+        {{ img1 | image_url: width: 720 | image_tag: loading: 'lazy', widths: '360, 540, 720', sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw', alt: product.title }}
+        {%- if settings.show_second_image and img2 -%}
+          {{ img2 | image_url: width: 720 | image_tag: loading: 'lazy', class: 'alt', widths: '360, 540, 720', sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw', alt: '' }}
         {%- endif -%}
-      </a>
-    {%- endif -%}
-
-    <!-- Top Left Badges: % Off / Bestseller / Sold Out -->
-    {%- if v.compare_at_price > v.price -%}
-      {%- assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round -%}
-      <span class="card__badge card__badge--sale">{{ pct }}% OFF</span>
-    {%- elsif product.tags contains 'bestseller' or product.tags contains 'Bestseller' -%}
-      <span class="card__badge card__badge--gold">BESTSELLER</span>
-    {%- elsif product.available == false -%}
-      <span class="card__badge card__badge--soldout">Sold out</span>
-    {%- endif -%}
-
-    <!-- Top Right Wishlist (Heart) Button -->
-    <button type="button" class="card__wishlist-btn" data-wishlist-toggle="{{ product.handle }}" data-product-id="{{ product.id }}" data-title="{{ product.title | escape }}" data-price="{{ v.price | money | escape }}" data-image="{{ product.featured_image | image_url: width: 300 }}" data-url="{{ product.url }}" aria-label="Save to Wishlist">
-      <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-      <svg class="heart-icon heart-filled" viewBox="0 0 24 24" fill="#E23636" stroke="#E23636" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+      {%- else -%}
+        {{ 'product-apparel-1' | placeholder_svg_tag }}
+      {%- endif -%}
+    </a>
+    <div class="card__badges">
+      {%- if product.available == false -%}<span class="badge">Sold out</span>
+      {%- elsif v.compare_at_price > v.price -%}
+        {%- assign off = v.compare_at_price | minus: v.price | times: 100 | divided_by: v.compare_at_price -%}
+        <span class="badge badge--sale">-{{ off }}%</span>
+      {%- endif -%}
+      {%- if product.tags contains 'bestseller' -%}<span class="badge badge--gold">Bestseller</span>{%- endif -%}
+      {%- if product.tags contains 'new' -%}<span class="badge badge--soft">New</span>{%- endif -%}
+    </div>
+    <button type="button" class="heart" data-wish="{{ product.handle }}" aria-label="Add {{ product.title | escape }} to wishlist" aria-pressed="false">
+      <svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.4-7.5-10.1A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.6C19.5 15.6 12 20 12 20z"/></svg>
     </button>
-
-    <!-- Superimposed Rating Pill on Image (Only shown when genuine reviews exist) -->
-    {%- assign card_count_num = card_count | default: 0 | plus: 0 -%}
-    {%- if card_rating != blank and card_count_num > 0 -%}
-      <div class="card__rating-pill">
-        <span class="rating-val">{{ card_rating | round: 1 }}</span>
-        <span class="rating-star">★</span>
-        <span class="rating-divider">|</span>
-        <span class="rating-num">{{ card_count_num }}</span>
+    {%- if product.available -%}
+      <div class="card__quick"><button type="button" class="btn btn--sm" data-quick-add="{{ product.handle }}">Quick add</button></div>
+      <button type="button" class="card__plus" data-quick-add="{{ product.handle }}" aria-label="Quick add {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+    {%- endif -%}
+  </div>
+  <div class="card__info">
+    {%- if product.type != blank -%}<span class="card__meta">{{ product.type }}</span>{%- endif -%}
+    <a href="{{ product.url | within: collection }}" class="card__title">{{ product.title }}</a>
+    {%- if settings.show_rating -%}{% render 'rating', product: product, compact: true %}{%- endif -%}
+    {% render 'price', product: product %}
+    {%- if color_opt and color_opt.values.size > 1 -%}
+      <div class="swatches" aria-label="{{ color_opt.values.size }} colours">
+        {%- for val in color_opt.values limit: 6 -%}
+          <span class="swatch-dot" title="{{ val | escape }}" style="background: {% render 'swatch-hex', name: val %}"></span>
+        {%- endfor -%}
+        {%- if color_opt.values.size > 6 -%}<span class="more">+{{ color_opt.values.size | minus: 6 }}</span>{%- endif -%}
       </div>
     {%- endif -%}
-
-    <!-- Desktop Hover Overlay Action (Quick View) -->
-    <div class="card__hover-bar">
-      <button type="button" class="btn btn--small btn--card-quickview" data-quick-view="{{ product.handle }}" aria-label="Quick view {{ product.title | escape }}">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-        <span>Quick View</span>
-      </button>
-    </div>
-  </div>
-
-  <div class="card__body">
-    <!-- Brand / Collection Line -->
-    <div class="card__brand-row">
-      <span class="card__brand">{{ product.vendor | default: 'ZEYOV' | upcase }}</span>
-      {%- if product.type != blank -%}
-        <span class="card__type-tag">{{ product.type | upcase }}</span>
-      {%- endif -%}
-    </div>
-
-    <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
-
-    <!-- Flipkart / Myntra Style Price Block -->
-    <div class="card__price-row">
-      <span class="price__now">{{ v.price | money }}</span>
-      {%- if v.compare_at_price > v.price -%}
-        <s class="price__was">{{ v.compare_at_price | money }}</s>
-        {%- assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round -%}
-        <span class="price__discount">({{ pct }}% OFF)</span>
-      {%- endif -%}
-    </div>
-
-    <!-- Trust / Free Delivery Micro Tag -->
-    <div class="card__delivery-tag">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      <span>Free Delivery across India</span>
-    </div>
-
-    <div class="card__action">
-      {%- if product.available and product.variants.size == 1 -%}
-        <form method="post" action="{{ routes.cart_add_url }}" class="card__form" data-ajax-add>
-          <input type="hidden" name="id" value="{{ v.id }}">
-          <button type="submit" class="btn btn--small btn--luxury btn--block" data-add-bag-btn>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:5px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
-            <span>Add to Bag</span>
-          </button>
-        </form>
-      {%- elsif product.available -%}
-        <button type="button" class="btn btn--small btn--luxury btn--block" data-quick-view="{{ product.handle }}">
-          <span>Select Size &rarr;</span>
-        </button>
-      {%- else -%}
-        <span class="btn btn--small btn--disabled btn--block">Sold out</span>
-      {%- endif -%}
-    </div>
   </div>
 </article>

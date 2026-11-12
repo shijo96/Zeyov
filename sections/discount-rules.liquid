@@ -1,0 +1,25 @@
+<section class="section" style="padding-top:8px">
+  <div class="wrap">
+    <div class="section-head"><h2>{{ section.settings.heading }}</h2></div>
+    <div class="rules">
+      <div class="rule">
+        <div class="rule__head">{% render 'icon', name: 'cart' %}Cart Discount (All Products)</div>
+        <ul>
+          <li><span>{{ settings.tier1_qty }} or more items</span><b>Extra {{ settings.tier1_pct }}% OFF</b></li>
+          <li><span>{{ settings.tier2_qty }} or more items</span><b>Extra {{ settings.tier2_pct }}% OFF</b></li>
+        </ul>
+      </div>
+      <div class="rule">
+        <div class="rule__head">{% render 'icon', name: 'tag' %}Bundle Offer (Same Product)</div>
+        <ul>
+          <li><span>1 Product</span><span>Actual Price</span></li>
+          <li><span>2 Products</span><b>Extra {{ settings.bundle2_pct }}% OFF</b></li>
+          <li><span>3 Products</span><b>Extra {{ settings.bundle3_pct }}% OFF</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{ "name": "Discount rules", "settings": [{ "type": "text", "id": "heading", "label": "Heading", "default": "Offers that add up" }], "presets": [{ "name": "Discount rules" }] }
+{% endschema %}

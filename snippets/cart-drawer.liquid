@@ -1,0 +1,11 @@
+<aside class="drawer drawer--right" id="CartDrawer" aria-label="Shopping bag" aria-hidden="true" tabindex="-1">
+  <div class="drawer__head">
+    <h2>My Cart <span class="muted tabular" data-cart-count-text>({{ cart.item_count }})</span></h2>
+    <button class="icon-btn" data-close aria-label="Close bag">{% render 'icon', name: 'close' %}</button>
+  </div>
+  <div class="drawer__body" data-cart-body>
+    {%- comment -%} Filled by theme.js from /cart.js {%- endcomment -%}
+    <div class="cart-empty"><p class="muted">Loading your bag…</p></div>
+  </div>
+  <div class="drawer__foot" data-cart-foot hidden></div>
+</aside>

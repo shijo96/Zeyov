@@ -1,15 +1,16 @@
-<section class="section">
-  <div class="container">
-    <header class="section__head"><h1>Collections</h1></header>
-    <div class="grid grid--cols-3">
-      {%- for c in collections -%}
-        <a class="cat-card" href="{{ c.url }}">
-          {%- assign img = c.image | default: c.products.first.featured_image -%}
-          {%- if img -%}{{ img | image_url: width: 700 | image_tag: loading: 'lazy', alt: c.title }}{%- endif -%}
-          <span>{{ c.title }}</span>
-        </a>
-      {%- endfor -%}
-    </div>
+<div class="wrap" style="padding-bottom:60px">
+  <div class="coll-hero"><span class="eyebrow">Browse</span><h1>Collections</h1></div>
+  <div class="grid grid--4">
+    {%- for c in collections -%}
+      {%- unless c.handle == 'frontpage' -%}
+      <a class="tile" href="{{ c.url }}">
+        <div class="tile__img">{%- if c.featured_image -%}{{ c.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: c.title }}{%- else -%}<img src="{{ 'oversized-tee-250-gsm-french-terry-black.webp' | asset_url }}" alt="" loading="lazy">{%- endif -%}</div>
+        <div><h3>{{ c.title }}</h3><span>{{ c.products_count }} products</span></div>
+      </a>
+      {%- endunless -%}
+    {%- endfor -%}
   </div>
-</section>
-{% schema %}{ "name": "Collections list" }{% endschema %}
+</div>
+{% schema %}
+{ "name": "Collections list" }
+{% endschema %}

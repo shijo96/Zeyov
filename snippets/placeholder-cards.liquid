@@ -1,0 +1,18 @@
+{%- comment -%} Shown until real products exist, so the design is visible right after upload. {%- endcomment -%}
+{%- assign items = 'oversized-tee-250-gsm-french-terry-black|Oversized Tee|250 GSM · French Terry|899|1499|8,oversized-tee-250-gsm-french-terry-beige|Oversized Tee — Beige|250 GSM · French Terry|899|1499|8,acid-wash-oversized-tee-250-gsm-green|Acid Wash Oversized Tee|250 GSM · Acid Wash|999|1699|3,full-sleeve-oversized-tee-250-gsm-black|Full Sleeve Oversized Tee|250 GSM · French Terry|1099|1799|1,oversized-tee-230-gsm-single-jersey-white|Oversized Tee|230 GSM · Single Jersey|749|1299|2,oversized-tee-190-gsm-single-jersey-black|Oversized Tee|190 GSM · Single Jersey|599|999|1,regular-fit-tee-190-gsm-single-jersey-red|Regular Fit Tee|190 GSM · Single Jersey|499|899|3,oversized-tee-250-gsm-french-terry-lavender|Oversized Tee — Lavender|250 GSM · French Terry|899|1499|8' | split: ',' -%}
+{%- for it in items limit: limit -%}
+  {%- assign f = it | split: '|' -%}
+  {%- assign off = f[4] | minus: f[3] | times: 100 | divided_by: f[4] -%}
+  <article class="card">
+    <div class="card__media">
+      <img src="{{ f[0] | append: '.webp' | asset_url }}" alt="{{ f[1] }}" loading="lazy" width="500" height="625">
+      <div class="card__badges"><span class="badge badge--sale">-{{ off }}%</span></div>
+    </div>
+    <div class="card__info">
+      <span class="card__meta">{{ f[2] }}</span>
+      <span class="card__title">{{ f[1] }}</span>
+      <div class="price"><span class="price__now">₹{{ f[3] }}</span><s class="price__was">₹{{ f[4] }}</s><span class="price__off">{{ off }}% off</span></div>
+      <span class="muted" style="font-size:11px">{{ f[5] }} colour{% if f[5] != '1' %}s{% endif %}</span>
+    </div>
+  </article>
+{%- endfor -%}

@@ -1,8 +1,1 @@
-{
-  "sections": {
-    "main": {
-      "type": "main-about"
-    }
-  },
-  "order": ["main"]
-}
+{ "sections": { "main": { "type": "main-about", "settings": {} }, "arrivals": { "type": "new-arrivals", "settings": { "heading": "New Arrivals", "limit": 8 } } }, "order": ["main", "arrivals"] }

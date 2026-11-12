@@ -1,53 +1,7 @@
-<section class="section">
-  <div class="container">
-    <header class="section__head">
-      <h1>Order {{ order.name | escape }}</h1>
-      <p class="muted">Placed on {{ order.created_at | date: '%d %b %Y' }}</p>
-      <p><a class="small" href="{{ routes.account_url }}">&larr; Back to account</a></p>
-    </header>
-    <div class="account">
-      <div class="table-wrap">
-        <table class="table">
-          <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
-          <tbody>
-            {%- for line in order.line_items -%}
-              <tr>
-                <td>
-                  <a href="{{ line.product.url }}">{{ line.title | escape }}</a>
-                  {%- if line.fulfillment -%}
-                    <p class="small muted">Shipped {{ line.fulfillment.created_at | date: '%d %b' }}
-                    {%- if line.fulfillment.tracking_url %} &middot; <a href="{{ line.fulfillment.tracking_url }}" target="_blank" rel="noopener noreferrer">Track ({{ line.fulfillment.tracking_company | escape }} {{ line.fulfillment.tracking_number | escape }})</a>{% endif -%}</p>
-                  {%- endif -%}
-                </td>
-                <td>{{ line.final_price | money }}</td>
-                <td>{{ line.quantity }}</td>
-                <td>{{ line.final_line_price | money }}</td>
-              </tr>
-            {%- endfor -%}
-          </tbody>
-          <tfoot>
-            <tr><td colspan="3">Subtotal</td><td>{{ order.line_items_subtotal_price | money }}</td></tr>
-            {%- for sl in order.shipping_methods -%}<tr><td colspan="3">Shipping ({{ sl.title }})</td><td>{{ sl.price | money }}</td></tr>{%- endfor -%}
-            <tr><td colspan="3"><b>Total</b></td><td><b>{{ order.total_price | money }}</b></td></tr>
-          </tfoot>
-        </table>
-      </div>
-      <aside class="card-box">
-        <h2 class="h3">Shipping address</h2>
-        <p>{{ order.shipping_address | format_address }}</p>
-        <p class="small muted">Payment: {{ order.financial_status_label }}<br>Fulfilment: {{ order.fulfillment_status_label }}</p>
-        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;">
-          {%- if settings.whatsapp_number != blank -%}
-            <a class="btn btn--small btn--gold btn--block" target="_blank" rel="noopener noreferrer" href="https://wa.me/{{ settings.whatsapp_number | replace: '+', '' | replace: ' ', '' }}?text=Hi%20Zeyov%2C%20I%20need%20assistance%20with%20my%20Order%20{{ order.name | url_encode }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;">
-              {% render 'icon', name: 'whatsapp' %} <span>WhatsApp Order Support</span>
-            </a>
-          {%- endif -%}
-          {%- assign refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: '/pages/refund-policy' -%}
-          <a class="btn btn--small btn--outline btn--block" href="{{ refund_link }}" style="text-align:center;">
-            Request Return / Exchange
-          </a>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
+<div class="wrap"><div class="page-narrow">
+  <a href="{{ routes.account_url }}" class="remove">← Back to account</a>
+  <h1>Order {{ order.name }}</h1>
+  <p class="muted">{{ order.created_at | date: '%d %b %Y' }} · {{ order.financial_status_label }} · {{ order.fulfillment_status_label }}</p>
+  {% for li in order.line_items %}<div class="line" style="grid-template-columns:1fr auto"><div><b>{{ li.title }}</b><div class="muted" style="font-size:13px">× {{ li.quantity }}</div></div><span>{{ li.final_line_price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span></div>{% endfor %}
+  <div class="totals" style="margin-top:12px"><div><span>Subtotal</span><span>{{ order.line_items_subtotal_price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span></div>{% for d in order.cart_level_discount_applications %}<div class="save"><span>{{ d.title }}</span><span>-{{ d.total_allocated_amount | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span></div>{% endfor %}<div><span>Shipping</span><span>{{ order.shipping_price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span></div><div class="grand"><span>Total</span><span>{{ order.total_price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span></div></div>
+</div></div>

@@ -1,0 +1,60 @@
+{%- comment -%}
+  Filter + sort form shared by collection and search pages.
+  Params: results (collection or search), url (base url), section_id, terms (search only)
+{%- endcomment -%}
+<aside class="filters-side drawer drawer--left" id="FilterDrawer" aria-label="Filters" aria-hidden="true" tabindex="-1">
+  <div class="drawer__head">
+    <h2>Filter</h2>
+    <button type="button" class="icon-btn" data-close aria-label="Close filters">{% render 'icon', name: 'close' %}</button>
+  </div>
+  <form class="drawer__body" id="FacetForm" action="{{ url }}" method="get" data-facet-form data-section="{{ section_id }}">
+    {%- if terms != blank -%}<input type="hidden" name="q" value="{{ terms | escape }}"><input type="hidden" name="type" value="product">{%- endif -%}
+    <input type="hidden" name="sort_by" value="{{ results.sort_by | default: results.default_sort_by }}" data-sort-mirror>
+    {%- for filter in results.filters -%}
+      {%- assign fl = filter.label | downcase -%}
+      <details class="facet" {% if forloop.index <= 3 or filter.active_values.size > 0 %}open{% endif %}>
+        <summary>{{ filter.label }}{% render 'icon', name: 'chev' %}</summary>
+        <div class="facet__body">
+          {%- case filter.type -%}
+            {%- when 'price_range' -%}
+              {%- assign cur = cart.currency.symbol -%}
+              <div class="price-presets">
+                <button type="button" class="pill" data-price-preset="0,600">Under {{ cur }}600</button>
+                <button type="button" class="pill" data-price-preset="600,900">{{ cur }}600–{{ cur }}900</button>
+                <button type="button" class="pill" data-price-preset="900,">{{ cur }}900+</button>
+              </div>
+              <div class="price-range">
+                <label>Min ({{ cur }})<input class="input" type="number" inputmode="numeric" min="0" name="{{ filter.min_value.param_name }}" id="PriceMin-{{ section_id }}" value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | remove: ',' }}{% endif %}" placeholder="0"></label>
+                <label>Max ({{ cur }})<input class="input" type="number" inputmode="numeric" min="0" name="{{ filter.max_value.param_name }}" id="PriceMax-{{ section_id }}" value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | remove: ',' }}{% endif %}" placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}"></label>
+              </div>
+            {%- else -%}
+              {%- if fl contains 'colo' -%}
+                <div class="facet-swatches">
+                  {%- for v in filter.values -%}
+                    <label class="facet-swatch" title="{{ v.label | escape }} ({{ v.count }})">
+                      <input type="checkbox" name="{{ v.param_name }}" value="{{ v.value }}" {% if v.active %}checked{% endif %} {% if v.count == 0 and v.active == false %}disabled{% endif %}>
+                      <i style="background: {% if v.swatch.color %}{{ v.swatch.color }}{% else %}{% render 'swatch-hex', name: v.label %}{% endif %}"></i>
+                      <span>{{ v.label }}</span>
+                    </label>
+                  {%- endfor -%}
+                </div>
+              {%- else -%}
+                {%- for v in filter.values -%}
+                  <label class="check">
+                    <input type="checkbox" name="{{ v.param_name }}" value="{{ v.value }}" {% if v.active %}checked{% endif %} {% if v.count == 0 and v.active == false %}disabled{% endif %}>
+                    {{ v.label }}<span class="n">{{ v.count }}</span>
+                  </label>
+                {%- endfor -%}
+              {%- endif -%}
+          {%- endcase -%}
+        </div>
+      </details>
+    {%- else -%}
+      <p class="muted" style="font-size:13px">Filters appear here once you enable them in Shopify admin → Search &amp; Discovery → Filters (Price, Colour, Size, Product type, Availability).</p>
+    {%- endfor -%}
+  </form>
+  <div class="drawer__foot">
+    <a href="{{ url }}{% if terms != blank %}?q={{ terms | url_encode }}&type=product{% endif %}" class="btn btn--ghost" data-facet-clear>Clear all</a>
+    <button type="button" class="btn" data-close>Show <span data-result-count>{{ results.products_count | default: results.results_count }}</span></button>
+  </div>
+</aside>

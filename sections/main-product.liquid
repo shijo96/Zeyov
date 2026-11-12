@@ -1,279 +1,166 @@
-{%- assign current_variant = product.selected_or_first_available_variant -%}
-{%- assign featured = current_variant.featured_media | default: product.featured_media -%}
-<section class="pdp container" data-product data-section-id="{{ section.id }}">
-  <!-- Breadcrumbs -->
-  <nav class="breadcrumbs pdp__breadcrumbs" aria-label="Breadcrumbs">
-    <a href="{{ routes.root_url }}">Home</a>
-    <span class="sep" aria-hidden="true">/</span>
-    <a href="{{ routes.all_products_collection_url }}">Fashion Atelier</a>
-    {%- if product.collections.size > 0 -%}
-      <span class="sep" aria-hidden="true">/</span>
-      <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
-    {%- endif -%}
-    <span class="sep" aria-hidden="true">/</span>
-    <span class="cur" aria-current="page">{{ product.title }}</span>
-  </nav>
-
-  <div class="pdp__grid">
-
-    <!-- Gallery -->
-    <div class="gallery" data-gallery>
-      <div class="gallery__main">
-        {%- for media in product.media -%}
-          <div class="gallery__slide{% if media.id == featured.id %} is-active{% endif %}" data-media-id="{{ media.id }}" data-slide>
-            {%- if media.media_type == 'image' -%}
-              {%- if forloop.first -%}{%- assign load = 'eager' -%}{%- else -%}{%- assign load = 'lazy' -%}{%- endif -%}
-              {{ media | image_url: width: 1200 | image_tag: loading: load, widths: '400, 600, 800, 1000, 1200', sizes: '(min-width: 900px) 50vw, 100vw', alt: media.alt | default: product.title }}
-            {%- else -%}
-              {{ media | media_tag: image_size: '1200x', controls: true }}
-            {%- endif -%}
-          </div>
+{%- assign v = product.selected_or_first_available_variant -%}
+{%- assign color_index = -1 -%}{%- assign size_index = -1 -%}
+{%- for o in product.options_with_values -%}
+  {%- assign on = o.name | downcase -%}
+  {%- if on contains 'colo' -%}{%- assign color_index = forloop.index0 -%}{%- endif -%}
+  {%- if on contains 'size' -%}{%- assign size_index = forloop.index0 -%}{%- endif -%}
+{%- endfor -%}
+<div class="wrap" data-product data-handle="{{ product.handle }}" data-product-id="{{ product.id }}" data-color-index="{{ color_index }}" data-size-index="{{ size_index }}">
+  <script type="application/json" data-product-json>
+    {"id":{{ product.id }},"title":{{ product.title | json }},"handle":{{ product.handle | json }},"image":{{ product.featured_media | image_url: width: 200 | json }},
+     "options":{{ product.options | json }},
+     "variants":[{%- for x in product.variants -%}{"id":{{ x.id }},"options":{{ x.options | json }},"price":{{ x.price }},"compare":{{ x.compare_at_price | default: 0 }},"available":{{ x.available }},"media":{{ x.featured_media.id | default: 0 }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+  </script>
+  <div class="pdp">
+    <div class="gallery">
+      <div class="gallery__thumbs" data-thumbs>
+        {%- for m in product.media -%}
+          <button type="button" class="{% if forloop.first %}is-active{% endif %}" data-thumb="{{ forloop.index0 }}" data-media-id="{{ m.id }}" aria-label="Show image {{ forloop.index }}">
+            {{ m.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
+          </button>
         {%- endfor -%}
-        {%- if current_variant.compare_at_price > current_variant.price -%}
-          {%- assign pct = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
-          <span class="card__badge card__badge--sale gallery__badge" data-badge>{{ pct }}% OFF</span>
-        {%- endif -%}
-        {%- if product.media.size > 1 -%}
-          <button class="gallery__nav gallery__nav--prev" type="button" data-prev aria-label="Previous image">{% render 'icon', name: 'arrow' %}</button>
-          <button class="gallery__nav gallery__nav--next" type="button" data-next aria-label="Next image">{% render 'icon', name: 'arrow' %}</button>
-        {%- endif -%}
       </div>
-      {%- if product.media.size > 1 -%}
-        <div class="gallery__thumbs">
-          {%- for media in product.media -%}
-            <button type="button" class="gallery__thumb{% if media.id == featured.id %} is-active{% endif %}" data-thumb="{{ media.id }}" aria-label="Show image {{ forloop.index }}">
-              {{ media.preview_image | image_url: width: 160, height: 160, crop: 'center' | image_tag: loading: 'lazy', alt: '' }}
-            </button>
+      <div class="gallery__main">
+        <div class="gallery__track" data-track>
+          {%- for m in product.media -%}
+            <div class="gallery__slide" data-media-id="{{ m.id }}">
+              {%- if m.media_type == 'video' or m.media_type == 'external_video' -%}
+                {{ m | media_tag: image_size: '1200x' }}
+              {%- else -%}
+                {%- if forloop.first -%}{%- assign ld = 'eager' -%}{%- else -%}{%- assign ld = 'lazy' -%}{%- endif -%}
+                {{ m.preview_image | image_url: width: 1400 | image_tag: loading: ld, widths: '500, 800, 1100, 1400', sizes: '(min-width: 990px) 55vw, 100vw', alt: m.alt | default: product.title }}
+              {%- endif -%}
+            </div>
+          {%- else -%}
+            <div class="gallery__slide">{{ 'product-apparel-1' | placeholder_svg_tag }}</div>
           {%- endfor -%}
         </div>
-      {%- endif -%}
+        {%- if product.media.size > 1 -%}<div class="gallery__dots" data-dots>{%- for m in product.media -%}<i class="{% if forloop.first %}is-active{% endif %}"></i>{%- endfor -%}</div>{%- endif -%}
+        <button type="button" class="share" data-share="{{ shop.url }}{{ product.url }}" data-share-title="{{ product.title | escape }}" aria-label="Share">{% render 'icon', name: 'share' %}</button>
+        <button type="button" class="heart" data-wish="{{ product.handle }}" aria-label="Save to wishlist" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.4-7.5-10.1A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.6C19.5 15.6 12 20 12 20z"/></svg></button>
+      </div>
     </div>
 
-    <!-- Info Column -->
-    <div class="pdp__info">
-      <span class="pdp__eyebrow">{{ product.vendor | default: 'ZEYOV' | upcase }}{% if product.type != blank %} &bull; {{ product.type | upcase }}{% endif %}</span>
-      <h1 class="pdp__title">{{ product.title }}</h1>
-
-      <!-- Stock Status & Verified Trust -->
-      <div class="pdp__rating-bar" data-pdp-rating-bar data-product-id="{{ product.id }}">
-        {%- assign rating_val = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value -%}
-        {%- assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0 -%}
-        {%- if rating_val != blank and rating_count > 0 -%}
-          <a href="#Reviews" class="pdp__rating-badge" data-pdp-rating-badge>
-            <span class="pdp__stars">★★★★★</span>
-            <b class="pdp__score">{{ rating_val | round: 1 }}</b>
-            <span class="pdp__count">({{ rating_count }} {% if rating_count == 1 %}Review{% else %}Reviews{% endif %})</span>
-          </a>
-        {%- else -%}
-          <a href="#Reviews" class="pdp__rating-badge pdp__rating-badge--empty" data-pdp-rating-badge data-open-review-modal aria-label="No customer reviews yet. Click to write a review.">
-            <span class="pdp__stars pdp__stars--empty">☆☆☆☆☆</span>
-            <span class="pdp__count">No reviews yet &bull; <span class="pdp__write-text">Write a review</span></span>
-          </a>
-        {%- endif -%}
-        <span class="pdp__stock-pill"><span class="pulse-dot"></span> In Stock &bull; Ready to Ship</span>
+    <div class="info">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a> / {% if collection %}<a href="{{ collection.url }}">{{ collection.title }}</a> / {% endif %}<span>{{ product.title }}</span></nav>
+      <div style="display:grid;gap:8px">
+        {%- if product.type != blank -%}<span class="eyebrow">{{ product.type }}</span>{%- endif -%}
+        <h1>{{ product.title }}</h1>
+        <a href="#Reviews">{% render 'rating', product: product %}</a>
       </div>
-
-      <!-- Luxury Price Card -->
-      <div class="pdp__price-card" data-price-wrap>
-        <div class="pdp__price-row">
-          <span class="pdp__price-now" data-price-now>{{ current_variant.price | money }}</span>
-          {%- if current_variant.compare_at_price > current_variant.price -%}
-            <s class="pdp__price-was" data-price-was>{{ current_variant.compare_at_price | money }}</s>
-            <span class="pdp__save-pill" data-price-off>{{ pct }}% OFF</span>
-          {%- endif -%}
+      <div>
+        <div class="info__price" data-main-price>
+          <span class="price__now">{{ v.price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span>
+          {%- if v.compare_at_price > v.price -%}<s class="price__was">{{ v.compare_at_price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</s><span class="save-badge">-{{ v.compare_at_price | minus: v.price | times: 100 | divided_by: v.compare_at_price }}%</span>{%- endif -%}
         </div>
-        <div class="pdp__reassure-badge">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          <span>Free Pan-India Express Delivery &bull; Inclusive of all taxes</span>
-        </div>
+        <p class="tax-note">Inclusive of all taxes · {{ settings.free_shipping_text }}</p>
       </div>
-
-      {%- if product.description != blank and section.settings.show_short -%}
-        <div class="pdp__short rte">{{ product.description | strip_html | truncatewords: 34 }}</div>
+      {%- if product.metafields.zeyov.fabric != blank or product.tags.size > 0 -%}
+        <div class="spec-chips">
+          {%- if product.metafields.zeyov.fabric != blank -%}<span>{{ product.metafields.zeyov.fabric }}</span>{%- endif -%}
+          {%- for t in product.tags -%}{%- if t contains 'GSM' or t contains 'Fit' or t contains 'fit' -%}<span>{{ t }}</span>{%- endif -%}{%- endfor -%}
+        </div>
       {%- endif -%}
 
-      {%- form 'product', product, id: 'ProductForm', class: 'pdp__form', data-ajax-add: 'true' -%}
-        <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
-
-        {%- unless product.has_only_default_variant -%}
-          {%- for option in product.options_with_values -%}
-            <fieldset class="opt" data-option-index="{{ forloop.index0 }}">
-              <div class="opt__header">
-                <legend>{{ option.name }}: <b data-opt-label>{{ option.selected_value }}</b></legend>
-                {%- assign opt_down = option.name | downcase -%}
-                {%- if opt_down contains 'size' -%}
-                  <button type="button" class="pdp__size-chart-trigger" data-open-size-chart aria-label="Open size guide">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.3 15.3l-6.6 6.6c-.4.4-1 .4-1.4 0l-11-11c-.4-.4-.4-1 0-1.4l6.6-6.6c.4-.4 1-.4 1.4 0l11 11c.4.4.4 1 0 1.4z"/><path d="M7.5 10.5l2 2"/><path d="M10.5 7.5l2 2"/><path d="M13.5 4.5l2 2"/></svg>
-                    <span>Size Guide</span>
-                  </button>
-                {%- endif -%}
-              </div>
-              <div class="opt__values">
-                {%- for value in option.values -%}
-                  <input type="radio" id="opt-{{ section.id }}-{{ option.position }}-{{ forloop.index }}" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}>
-                  <label for="opt-{{ section.id }}-{{ option.position }}-{{ forloop.index }}">{{ value }}</label>
-                {%- endfor -%}
-              </div>
-            </fieldset>
-          {%- endfor -%}
-        {%- endunless -%}
-
-        <!-- Quantity Savings Tiers -->
-        {%- if section.settings.show_tiers and section.blocks.size > 0 -%}
-          <div class="pdp-tiers" data-tiers>
-            <div class="pdp-tiers__head">
-              <span class="pdp-tiers__title">Buy more, save more</span>
-              <span class="pdp-tiers__subtitle">Discounts applied automatically</span>
-            </div>
-            <div class="pdp-tiers__list">
-              {%- for block in section.blocks -%}
-                {%- assign q = block.settings.qty -%}
-                {%- assign pct = block.settings.discount_percent -%}
-                <label class="pdp-tier{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
-                  <input type="radio" name="tier" value="{{ q }}" data-tier data-tier-discount="{{ pct }}" data-tier-label="{{ block.settings.label | escape }}" {% if forloop.first %}checked{% endif %}>
-                  <span class="pdp-tier__radio-dot"></span>
-                  <div class="pdp-tier__body">
-                    <div class="pdp-tier__title-row">
-                      <b class="pdp-tier__name">{{ block.settings.label }}</b>
-                      {%- if block.settings.badge != blank -%}
-                        <span class="pdp-tier__badge">{{ block.settings.badge }}</span>
-                      {%- endif -%}
-                    </div>
-                    {%- if block.settings.note != blank -%}<small class="pdp-tier__note">{{ block.settings.note }}</small>{%- endif -%}
-                  </div>
-                  <div class="pdp-tier__price-box" data-tier-qty="{{ q }}" data-tier-pct="{{ pct }}">
-                    {%- assign mult = 100 | minus: pct -%}
-                    <span class="pdp-tier__price">{{ current_variant.price | times: q | times: mult | divided_by: 100 | money }}</span>
-                    {%- if pct > 0 -%}<s class="pdp-tier__was">{{ current_variant.price | times: q | money }}</s>{%- endif -%}
-                  </div>
-                </label>
+      {%- for o in product.options_with_values -%}
+        {%- assign on = o.name | downcase -%}
+        {%- if forloop.index0 == color_index -%}
+          <div class="opt">
+            <div class="opt__label"><span><b>Select Color</b> · <span data-opt-label="{{ forloop.index0 }}">{{ o.selected_value }}</span></span></div>
+            <div class="colors" role="radiogroup" aria-label="{{ o.name }}">
+              {%- for val in o.values -%}
+                <button type="button" class="color-btn {% if val == o.selected_value %}is-active{% endif %}" role="radio" aria-checked="{% if val == o.selected_value %}true{% else %}false{% endif %}" data-opt="{{ forloop.parentloop.index0 }}" data-value="{{ val | escape }}" title="{{ val | escape }}" aria-label="{{ val | escape }}" style="background: {% render 'swatch-hex', name: val %}"></button>
               {%- endfor -%}
             </div>
-            <!-- Hidden properties for line item bundle metadata -->
-            <input type="hidden" name="properties[_bundle_tier]" id="BundleTierProp" value="Buy 1">
-            <input type="hidden" name="properties[_bundle_discount]" id="BundleDiscProp" value="0">
+          </div>
+        {%- elsif o.name != 'Title' -%}
+          <div class="opt">
+            <div class="opt__label"><span><b>Select {{ o.name }}</b> · <span data-opt-label="{{ forloop.index0 }}">{{ o.selected_value }}</span></span>{%- if forloop.index0 == size_index -%}<button type="button" data-open-modal="SizeChart">Size chart</button>{%- endif -%}</div>
+            <div class="sizes" role="radiogroup" aria-label="{{ o.name }}">
+              {%- for val in o.values -%}
+                {%- capture vs -%}{{ val }}{%- endcapture -%}<button type="button" class="size-btn {% if vs.size > 4 %}size-btn--long{% endif %} {% if val == o.selected_value %}is-active{% endif %}" role="radio" aria-checked="{% if val == o.selected_value %}true{% else %}false{% endif %}" data-opt="{{ forloop.parentloop.index0 }}" data-value="{{ val | escape }}">{{ val }}</button>
+              {%- endfor -%}
+            </div>
           </div>
         {%- endif -%}
+      {%- endfor -%}
 
-        <!-- Action Buttons -->
-        <div class="pdp__actions-group">
-          <div class="pdp__buy-row">
-            <div class="qty-pill" data-qty>
-              <button type="button" class="qty-btn" data-qty-minus aria-label="Decrease quantity">&minus;</button>
-              <input type="number" name="quantity" value="1" min="1" inputmode="numeric" aria-label="Quantity" class="qty-input">
-              <button type="button" class="qty-btn" data-qty-plus aria-label="Increase quantity">+</button>
-            </div>
-            <button type="submit" name="add" class="btn btn--luxury-atc" data-add-btn {% unless current_variant.available %}disabled style="display:none;"{% endunless %}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
-              <span data-add-label>{% if current_variant.available %}Add to Bag{% else %}Sold out{% endif %}</span>
-            </button>
-            <button type="button" class="btn btn--notify-stock" id="NotifyStockBtn" data-open-stock-modal style="{% if current_variant.available %}display:none;{% else %}display:inline-flex;{% endif %}">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-              <span>Notify When Restocked</span>
-            </button>
-            <button type="button" class="btn btn--pdp-wishlist" data-wishlist-toggle="{{ product.handle }}" data-product-id="{{ product.id }}" data-title="{{ product.title | escape }}" data-price="{{ current_variant.price | money | escape }}" data-image="{{ featured | image_url: width: 300 }}" data-url="{{ product.url }}" aria-label="Save to Wishlist">
-              <svg class="heart-icon heart-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-              <svg class="heart-icon heart-filled" viewBox="0 0 24 24" fill="#E23636" stroke="#E23636" stroke-width="1.8"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-            </button>
-          </div>
-          <div class="pdp__dynamic">
-            {{ form | payment_button }}
-          </div>
-        </div>
-      {%- endform -%}
-
-      {%- if settings.show_low_stock and current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= settings.low_stock_threshold -%}
-        <p class="lowstock" data-lowstock>Only {{ current_variant.inventory_quantity }} left in stock</p>
-      {%- endif -%}
-
-      <!-- Luxury Trust Assurance Grid -->
-      <div class="pdp-assure">
-        <div class="pdp-assure__item">
-          {% render 'icon', name: 'truck' %}
-          <div>
-            <b>Free Tracked Delivery</b>
-            <small>Fast dispatch across India</small>
-          </div>
-        </div>
-        <div class="pdp-assure__item">
-          {% render 'icon', name: 'lock' %}
-          <div>
-            <b>Secure Checkout</b>
-            <small>Encrypted 256-bit SSL</small>
-          </div>
-        </div>
-        <div class="pdp-assure__item">
-          {% render 'icon', name: 'return' %}
-          <div>
-            <b>7-Day Easy Return</b>
-            <small>Hassle-free exchange guarantee</small>
-          </div>
-        </div>
-        <div class="pdp-assure__item">
-          {% render 'icon', name: 'shield' %}
-          <div>
-            <b>100% Genuine Quality</b>
-            <small>Verified authentic design</small>
-          </div>
-        </div>
+      <div class="bundlebox" data-bundles>
+        <h3>Bundle Offer</h3>
+        {%- assign p2 = settings.bundle2_pct | default: 5 -%}{%- assign p3 = settings.bundle3_pct | default: 10 -%}
+        {%- for q in (1..3) -%}
+          {%- if q == 1 -%}{%- assign pct = 0 -%}{%- elsif q == 2 -%}{%- assign pct = p2 -%}{%- else -%}{%- assign pct = p3 -%}{%- endif -%}
+          {%- assign full = v.price | times: q -%}
+          {%- assign deal = 100 | minus: pct | times: full | divided_by: 100 -%}
+          <label class="brow">
+            <input type="radio" name="bundle-qty" value="{{ q }}" data-pct="{{ pct }}" {% if q == 1 %}checked{% endif %}>
+            <span>{{ q }} Piece{% if q > 1 %}s{% endif %} – {% if pct > 0 %}<em>Extra {{ pct }}% OFF</em>{% else %}<span data-bundle-one>{{ v.price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span> <span class="muted">(Actual Price)</span>{% endif %}</span>
+            <b data-bundle-price>{% if pct > 0 %}{{ deal | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}{% endif %}</b>
+          </label>
+        {%- endfor -%}
       </div>
 
-      <div class="pdp__pay">
-        <small>Guaranteed Safe &amp; Encrypted Checkout</small>
-        {% render 'payment-icons' %}
+      <form action="{{ routes.cart_add_url }}" method="post" data-product-form>
+        <input type="hidden" name="id" value="{{ v.id }}" data-variant-id>
+        <input type="hidden" name="quantity" value="1" data-qty>
+        <div class="buy" data-buy>
+          <button type="submit" class="btn" data-atc {% unless v.available %}disabled{% endunless %}>{% render 'icon', name: 'cart' %}<span data-atc-text>{% if v.available %}Add to Cart{% else %}Sold out{% endif %}</span></button>
+          <button type="button" class="heart-lg" data-wish="{{ product.handle }}" aria-label="Save to wishlist" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.4-7.5-10.1A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.6C19.5 15.6 12 20 12 20z"/></svg></button>
+          <button type="button" class="btn btn--dark" data-buy-now {% unless v.available %}disabled{% endunless %}>Buy it now</button>
+        </div>
+      </form>
+      <p class="muted" style="font-size:13px">Cart offer: {{ settings.tier1_qty }}+ items = extra {{ settings.tier1_pct }}% off · {{ settings.tier2_qty }}+ items = extra {{ settings.tier2_pct }}% off.</p>
+
+      <div class="perks">
+        <div>{% render 'icon', name: 'truck' %}Free delivery (online pay)</div>
+        <div>{% render 'icon', name: 'cod' %}COD +₹{{ settings.cod_fee | default: 80 }}</div>
+        <div>{% render 'icon', name: 'return' %}7-day replace</div>
       </div>
 
       <div class="acc">
-        <details open>
-          <summary>Product details &amp; Craftsmanship{% render 'icon', name: 'chevron' %}</summary>
-          <div class="rte">{{ product.description }}</div>
-        </details>
-        <details>
-          <summary>Shipping &amp; Pan-India Dispatch{% render 'icon', name: 'chevron' %}</summary>
-          <div class="rte">
-            <p><strong>Order Processing:</strong> 1–2 working days with instant tracking updates via SMS &amp; email.</p>
-            <p><strong>Estimated Delivery:</strong> 4–7 working days across India with insured courier transit.</p>
-            {%- assign prod_shipping_link = pages['shipping-policy'].url | default: pages['shipping'].url | default: pages['shipping-and-delivery-policy'].url | default: shop.shipping_policy.url | default: '/pages/shipping-policy' -%}
-            {%- assign prod_refund_link = pages['refund-policy'].url | default: pages['returns'].url | default: pages['return-policy'].url | default: pages['return-and-refund-policy'].url | default: shop.refund_policy.url | default: '/pages/refund-policy' -%}
-            <p class="small"><a href="{{ prod_shipping_link }}">View Shipping Policy</a> &bull; <a href="{{ prod_refund_link }}">View 7-Day Return Policy</a></p>
-          </div>
-        </details>
+        <details open><summary>Description{% render 'icon', name: 'chev' %}</summary><div class="rte">{{ product.description | default: '<p>Our own-brand tee, cut and finished in-house.</p>' }}</div></details>
+        <details><summary>Fabric &amp; fit{% render 'icon', name: 'chev' %}</summary><div class="rte">
+          {%- if product.metafields.zeyov.fabric_details != blank -%}{{ product.metafields.zeyov.fabric_details | metafield_tag }}{%- else -%}
+          <ul><li>100% combed cotton, bio-washed for a soft hand-feel</li><li>Rib collar with double-needle stitched hems</li><li>Oversized: drop shoulder, boxy body. Take your usual size for the oversized look, one size down for a relaxed fit.</li><li>Wash cold inside out, dry in shade, do not iron on print</li></ul>{%- endif -%}
+        </div></details>
+        <details><summary>Shipping &amp; replacement{% render 'icon', name: 'chev' %}</summary><div class="rte"><p>Dispatched in 24–48 hours. Delivery in 3–7 days across India. Free delivery on online payment; cash on delivery available for ₹{{ settings.cod_fee | default: 80 }} extra. 7-day replace: if your item arrives damaged, defective or in the wrong size, we replace it within 7 days of delivery.</p></div></details>
       </div>
+      {%- for block in section.blocks -%}{%- case block.type -%}{%- when '@app' -%}{% render block %}{%- endcase -%}{%- endfor -%}
     </div>
   </div>
 
-  <!-- Sticky mobile bar -->
-  <div class="sticky-atc" data-sticky-atc>
-    <div class="sticky-atc__info"><b>{{ product.title | truncate: 28 }}</b><span data-sticky-price>{{ current_variant.price | money }}</span></div>
-    <button type="button" class="btn btn--luxury-atc" data-sticky-btn style="min-width: 140px; height: 46px; padding: 0 20px; font-size: 0.88rem;" {% unless current_variant.available %}disabled{% endunless %}>{% if current_variant.available %}Add to Bag{% else %}Sold out{% endif %}</button>
+  <div class="sticky-atc" data-sticky-atc aria-hidden="true">
+    <div class="sticky-atc__inner" style="display:flex;align-items:center;gap:12px;width:100%">
+      {%- if product.featured_media -%}{{ product.featured_media | image_url: width: 120 | image_tag: alt: '', loading: 'lazy' }}{%- endif -%}
+      <div class="sticky-atc__t"><div>{{ product.title }}</div><b data-sticky-price>{{ v.price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</b> <span class="muted" data-sticky-variant>{{ v.title }}</span></div>
+      <button type="button" class="btn" data-sticky-btn>Add to Cart</button>
+    </div>
   </div>
 
-  <script type="application/json" data-variants>{{ product.variants | json }}</script>
-  <script type="application/json" data-money>{ "format": {{ shop.money_format | json }} }</script>
-
-  {% render 'size-chart-modal' %}
-</section>
-
-{% render 'personalized-recommendations' %}
-
+  <div class="modal" id="SizeChart" hidden role="dialog" aria-modal="true" aria-labelledby="SizeChartTitle">
+    <div class="scrim" data-close-modal></div>
+    <div class="modal__panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2 id="SizeChartTitle" style="font-size:24px">Size chart (inches)</h2><button class="icon-btn" data-close-modal aria-label="Close">{% render 'icon', name: 'close' %}</button></div>
+      {%- if settings.size_chart_page != blank -%}<div class="rte">{{ settings.size_chart_page.content }}</div>{%- else -%}
+      <div class="table-wrap"><table class="size-table">
+        <thead><tr><th>Size</th><th>Oversized chest</th><th>Oversized length</th><th>Regular chest</th><th>Regular length</th></tr></thead>
+        <tbody>
+          <tr><td>S</td><td>42</td><td>28</td><td>38</td><td>27</td></tr>
+          <tr><td>M</td><td>44</td><td>29</td><td>40</td><td>28</td></tr>
+          <tr><td>L</td><td>46</td><td>30</td><td>42</td><td>29</td></tr>
+          <tr><td>XL</td><td>48</td><td>31</td><td>44</td><td>30</td></tr>
+          <tr><td>XXL</td><td>50</td><td>32</td><td>46</td><td>31</td></tr>
+        </tbody>
+      </table></div>
+      <p class="muted" style="font-size:13px;margin-top:12px">Measured flat, garment measurements ±0.5". Between sizes? Size up for oversized drape.</p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
 {% schema %}
 {
   "name": "Product",
-  "settings": [
-    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false },
-    { "type": "checkbox", "id": "show_short", "label": "Show short description under price", "default": true },
-    { "type": "checkbox", "id": "show_tiers", "label": "Show 'Buy more, save more' selector", "default": true },
-    { "type": "textarea", "id": "shipping_text", "label": "Shipping & returns text", "default": "Orders are dispatched after confirmation and delivered across India with tracking. Delivery times may vary by location. Please see our policies for return conditions." }
-  ],
-  "blocks": [
-    { "type": "tier", "name": "Quantity offer", "settings": [
-      { "type": "range", "id": "qty", "min": 1, "max": 10, "step": 1, "label": "Quantity", "default": 1 },
-      { "type": "text", "id": "label", "label": "Label", "default": "Buy 1" },
-      { "type": "text", "id": "note", "label": "Small note" },
-      { "type": "text", "id": "badge", "label": "Badge", "info": "e.g. Most popular" },
-      { "type": "range", "id": "discount_percent", "min": 0, "max": 50, "step": 1, "unit": "%", "label": "Discount shown", "info": "Create a matching automatic discount in Shopify Admin (Buy X get % off). The cart only reduces the price if that discount exists.", "default": 0 }
-    ] }
-  ],
-  "presets": [{ "name": "Product" }]
+  "blocks": [{ "type": "@app" }],
+  "settings": []
 }
 {% endschema %}

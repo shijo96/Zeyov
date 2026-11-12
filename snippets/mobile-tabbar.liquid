@@ -1,0 +1,8 @@
+{%- assign studio_url = '/pages/studio' -%}
+<nav class="tabbar" aria-label="Quick links">
+  <a href="{{ routes.root_url }}" class="{% if template.name == 'index' %}is-active{% endif %}"><span class="tab-ic">{% render 'icon', name: 'home' %}</span>Home</a>
+  <a href="{{ routes.collections_url }}" class="{% if template.name == 'collection' or template.name == 'list-collections' or template.name == 'product' %}is-active{% endif %}"><span class="tab-ic">{% render 'icon', name: 'grid' %}</span>Shop</a>
+  <a href="{{ studio_url }}" class="{% if template.suffix == 'studio' %}is-active{% endif %}"><span class="tab-ic">{% render 'icon', name: 'tee' %}</span>Studio</a>
+  <a href="/pages/orders" class="{% if template.suffix == 'orders' or template.suffix == 'track-order' or template.name == 'order' %}is-active{% endif %}"><span class="tab-ic">{% render 'icon', name: 'orders' %}</span>Orders</a>
+  <a href="{{ routes.account_url }}" class="{% if template.directory == 'customers' and template.name != 'order' %}is-active{% endif %}"><span class="tab-ic">{% render 'icon', name: 'user' %}</span>Profile</a>
+</nav>

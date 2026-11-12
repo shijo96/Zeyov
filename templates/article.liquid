@@ -1,0 +1,1 @@
+<div class="wrap"><article class="page-narrow"><span class="eyebrow">{{ article.published_at | date: '%d %b %Y' }}</span><h1>{{ article.title }}</h1>{% if article.image %}{{ article.image | image_url: width: 1200 | image_tag: style: 'border-radius:14px' }}{% endif %}<div class="rte">{{ article.content }}</div></article></div>

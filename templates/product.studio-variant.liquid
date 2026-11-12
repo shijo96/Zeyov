@@ -1,0 +1,1 @@
+{% layout none %}{%- assign v = product.selected_or_first_available_variant -%}{"id":{{ v.id }},"price":{{ v.price }},"available":{{ v.available }},"title":{{ v.title | json }},"options":{{ v.options | json }}}

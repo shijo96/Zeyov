@@ -1,34 +1,19 @@
-{%- assign p_title = policy.title | downcase -%}
-
-{%- if p_title contains 'shipping' -%}
-  {% render 'page-shipping-content' %}
-
-{%- elsif p_title contains 'refund' or p_title contains 'return' -%}
-  {% render 'page-refund-content' %}
-
-{%- elsif p_title contains 'privacy' -%}
-  {% render 'page-privacy-content' %}
-
-{%- elsif p_title contains 'terms' -%}
-  {% render 'page-terms-content' %}
-
-{%- else -%}
-  <section class="section policy-page">
-    <div class="container container--narrow">
-      <header class="section__head center">
-        <p class="eyebrow">ZEYOV Policy</p>
-        <h1>{{ policy.title }}</h1>
-      </header>
-      <div class="policy-body rte">
-        {{ policy.body }}
-      </div>
+<div class="about about--policy">
+  <div class="about__hero">
+    <img src="{{ 'z-studio-label.webp' | asset_url }}" alt="" loading="eager" width="900" height="500">
+    <div class="wrap"><span class="eyebrow">Help &amp; policies</span><h1>{{ page.title }}</h1><p>Last updated {{ page.updated_at | default: page.published_at | date: '%d %B %Y' }}</p></div>
+  </div>
+  <div class="wrap">
+    <div class="about__stats">
+      <div><b>190–250</b><span>GSM cotton</span></div>
+      <div><b>8+</b><span>Colours</span></div>
+      <div><b>7-day</b><span>Replace</span></div>
+      <div><b>COD</b><span>All India</span></div>
     </div>
-  </section>
-{%- endif -%}
-
+    <div class="rte page-body">{{ page.content }}</div>
+    <div class="about__cta"><a class="btn" href="{{ routes.all_products_collection_url }}">Shop the collection</a><a class="btn btn--outline-gold" href="/pages/contact">Contact us</a></div>
+  </div>
+</div>
 {% schema %}
-{
-  "name": "Policy",
-  "settings": []
-}
+{ "name": "Policy page" }
 {% endschema %}

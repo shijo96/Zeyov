@@ -1,18 +1,30 @@
-<section class="brand-banner">
-  <div class="container">
-    <div class="brand-banner__box">
-      {%- if section.settings.image != blank -%}
-        {{ section.settings.image | image_url: width: 2000 | image_tag: loading: 'lazy', alt: 'ZEYOV' }}
-      {%- else -%}
-        <img src="{{ 'brand-banner.jpg' | asset_url }}" alt="ZEYOV – Style for a brighter you" loading="lazy" width="1920" height="768">
-      {%- endif -%}
+<section class="section">
+  <div class="wrap">
+    <div class="banner">
+      <div class="banner__img">
+        {%- if section.settings.image != blank -%}{{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', alt: section.settings.heading }}
+        {%- else -%}<img src="{{ 'zeyov-brand.jpg' | asset_url }}" alt="Zeyov brand" loading="lazy" width="1200" height="1200">{%- endif -%}
+      </div>
+      <div class="banner__copy">
+        <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+        <h2>{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.text }}</p>
+        <div><a class="btn btn--gold" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.cta }}</a></div>
+      </div>
     </div>
   </div>
 </section>
 {% schema %}
 {
   "name": "Brand banner",
-  "settings": [{ "type": "image_picker", "id": "image", "label": "Image (blank = Zeyov brand banner)" }],
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Fashion · Lifestyle · Everyday essentials" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Made for the everyday, finished like a label" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Every Zeyov tee is our own design: bio-washed cotton, double-stitched hems, rib collars that hold their shape, and colours that stay true wash after wash." },
+    { "type": "text", "id": "cta", "label": "Button", "default": "Explore the range" },
+    { "type": "url", "id": "link", "label": "Link" }
+  ],
   "presets": [{ "name": "Brand banner" }]
 }
 {% endschema %}

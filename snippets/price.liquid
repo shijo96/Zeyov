@@ -1,12 +1,9 @@
-{%- comment -%} Usage: {% render 'price', product: product, variant: variant %} {%- endcomment -%}
-{%- assign v = variant | default: product.selected_or_first_available_variant -%}
-{%- assign on_sale = false -%}
-{%- if v.compare_at_price > v.price -%}{%- assign on_sale = true -%}{%- endif -%}
-<div class="price{% if on_sale %} price--sale{% endif %}">
-  <span class="price__now" data-price>{{ v.price | money }}</span>
-  {%- if on_sale -%}
-    <s class="price__was" data-compare>{{ v.compare_at_price | money }}</s>
-    {%- assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round -%}
-    <span class="badge badge--sale" data-pct>{{ pct }}% OFF</span>
+{%- assign _v = variant | default: product.selected_or_first_available_variant -%}
+<div class="price" data-price>
+  <span class="price__now">{{ _v.price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span>
+  {%- if _v.compare_at_price > _v.price -%}
+    <s class="price__was">{{ _v.compare_at_price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</s>
+    {%- assign _off = _v.compare_at_price | minus: _v.price | times: 100 | divided_by: _v.compare_at_price -%}
+    <span class="price__off">{{ _off }}% off</span>
   {%- endif -%}
 </div>

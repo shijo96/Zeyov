@@ -1,0 +1,6 @@
+<div class="announce" role="region" aria-label="Offers">
+  <div class="announce__track">
+    {%- capture msgs -%}<span>Buy any {{ settings.tier1_qty }} · Extra {{ settings.tier1_pct }}% off</span><span>Buy any {{ settings.tier2_qty }} · Extra {{ settings.tier2_pct }}% off</span><span>Free delivery on online payment</span><span>COD available · +₹{{ settings.cod_fee | default: 80 }}</span>{%- endcapture -%}
+    {{ msgs }}{{ msgs }}{{ msgs }}{{ msgs }}
+  </div>
+</div>

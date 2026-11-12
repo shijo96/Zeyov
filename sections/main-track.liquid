@@ -1,0 +1,25 @@
+<div class="wrap">
+  <div class="track">
+    <div class="coll-hero" style="text-align:center;justify-items:center"><span class="eyebrow">Orders</span><h1>Track your order</h1><p class="muted">See live status, delivery updates and invoices for every order.</p></div>
+    {%- if customer -%}
+      <a class="btn btn--block" href="{{ routes.account_url }}">{% render 'icon', name: 'orders' %} View my orders</a>
+    {%- else -%}
+      <div class="step">
+        <h3>{% render 'icon', name: 'user' %} Sign in with your email</h3>
+        <p class="muted" style="font-size:13.5px">Use the email or phone you ordered with. You'll get a one-time code, then see every order and its live tracking.</p>
+        <a class="btn btn--block" href="{{ routes.account_login_url }}">Sign in to track</a>
+      </div>
+      <div class="step">
+        <h3>{% render 'icon', name: 'box' %} Have your order email?</h3>
+        <p class="muted" style="font-size:13.5px">Open the confirmation email from Zeyov and tap <b>View your order</b> for live status without signing in.</p>
+      </div>
+    {%- endif -%}
+    <div class="step">
+      <h3>{% render 'icon', name: 'truck' %} Delivery times</h3>
+      <p class="muted" style="font-size:13.5px">Dispatch in 24–48 hours. Delivery in 3–7 days across India. Studio orders ship in 4–6 days after design approval.</p>
+    </div>
+  </div>
+</div>
+{% schema %}
+{ "name": "Track order" }
+{% endschema %}

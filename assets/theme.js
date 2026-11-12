@@ -1,2459 +1,707 @@
-/* ZEYOV THEME JS – vanilla, no dependencies */
-(function () {
+/* ZEYOV theme script — cart drawer, offers, quick add, product form, wishlist, filters, predictive search, reviews */
+(() => {
   'use strict';
-  if (typeof window !== 'undefined') {
-    window.addEventListener('unhandledrejection', function (e) {
-      var r = (e && e.reason && (e.reason.message || e.reason.stack || String(e.reason))) || '';
-      if (r.indexOf('Failed to fetch') !== -1 || r.indexOf('shopifysvc') !== -1 || r.indexOf('monorail') !== -1) {
-        if (e.preventDefault) e.preventDefault();
-      }
+  const Z = window.Zeyov || {};
+  const O = Object.assign({ tier1Qty: 3, tier1Pct: 5, tier2Qty: 5, tier2Pct: 15, bundle2Pct: 5, bundle3Pct: 10 }, Z.offers || {});
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const root = (Z.routes && Z.routes.root) || '/';
+  const url = (p) => (root.endsWith('/') ? root : root + '/') + p.replace(/^\//, '');
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  /* ---------- money ---------- */
+  function money(cents) {
+    const fmt = Z.moneyFormat || '₹{{amount}}';
+    const n = Math.round(Number(cents) || 0);
+    const group = (v, dec, ts, ds) => {
+      const [i, d] = (v / 100).toFixed(dec).split('.');
+      return i.replace(/\B(?=(\d{3})+(?!\d))/g, ts) + (d ? ds + d : '');
+    };
+    return fmt.replace(/Rs\.?\s?/g, '₹').replace(/\{\{\s*(\w+)\s*\}\}/, (_, k) => {
+      if (k === 'amount_no_decimals') return group(n, 0, ',', '.');
+      if (k === 'amount_with_comma_separator') return group(n, 2, '.', ',');
+      if (k === 'amount_no_decimals_with_comma_separator') return group(n, 0, '.', ',');
+      return group(n, 2, ',', '.').replace(/\.00$/, '');
     });
   }
-  var $ = function (s, c) { return (c || document).querySelector(s); };
-  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
-  /* ---------- helpers ---------- */
-  function formatMoney(cents, format) {
-    format = format || (window.ZEYOV && ZEYOV.moneyFormat) || 'Rs. {{amount}}';
-    function fmt(n, d, t, dec) {
-      d = d == null ? 2 : d; t = t || ','; dec = dec || '.';
-      n = (n / 100).toFixed(d);
-      var p = n.split('.');
-      p[0] = p[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + t);
-      return p[0] + (p[1] ? dec + p[1] : '');
-    }
-    var m = format.match(/\{\{\s*(\w+)\s*\}\}/); var v = '';
-    switch (m && m[1]) {
-      case 'amount': v = fmt(cents, 2); break;
-      case 'amount_no_decimals': v = fmt(cents, 0); break;
-      case 'amount_with_comma_separator': v = fmt(cents, 2, '.', ','); break;
-      case 'amount_no_decimals_with_comma_separator': v = fmt(cents, 0, '.', ','); break;
-      case 'amount_with_apostrophe_separator': v = fmt(cents, 2, "'", '.'); break;
-      default: v = fmt(cents, 2);
-    }
-    return format.replace(m[0], v);
-  }
-  function escapeHtml(str) {
-    var d = document.createElement('div');
-    d.textContent = str || '';
-    return d.innerHTML;
-  }
-  function isSafeUrl(url) {
-    if (!url || typeof url !== 'string') return false;
-    if (url.startsWith('/') && !url.startsWith('//')) return true;
-    try {
-      var p = new URL(url, window.location.origin);
-      return p.origin === window.location.origin && (p.protocol === 'https:' || p.protocol === 'http:');
-    } catch (e) {
-      return false;
-    }
-  }
-  function safeNavigate(url) {
-    if (isSafeUrl(url)) {
-      window.location.href = url;
-    }
-  }
-  var toastTimer;
-  function toast(msg, withCart) {
-    var t = $('#Toast'); if (!t) return;
-    t.innerHTML = escapeHtml(msg) + (withCart ? ' <a href="' + encodeURI(ZEYOV.routes.cart) + '">View cart</a>' : '');
-    t.classList.add('is-on'); clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.classList.remove('is-on'); }, 3200);
-  }
-  function setCount(n) {
-    $$('[data-cart-count]').forEach(function (el) { el.textContent = n; el.classList.toggle('is-empty', !n); });
-  }
-  function addItems(items) {
-    return fetch(ZEYOV.routes.cartAdd, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ items: items })
-    }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.description || j.message || 'Could not add to cart'); return j; }); })
-      .then(function () { return fetch(ZEYOV.routes.cartJson).then(function (r) { return r.json(); }); })
-      .then(function (cart) { setCount(cart.item_count); return cart; });
+  /* ---------- swatches ---------- */
+  const swatchMap = {};
+  (Z.swatches || []).forEach((line) => {
+    const [n, h] = String(line).split(':');
+    if (n && h) swatchMap[n.trim().toLowerCase()] = h.trim();
+  });
+  const hex = (name) => swatchMap[String(name).trim().toLowerCase()] || '#cfc6b8';
+  const isColorName = (n) => /colou?r/i.test(n || '');
+  const isSizeName = (n) => /size/i.test(n || '');
+
+  /* ---------- storage ---------- */
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ignore */ } }
+  };
+
+  /* ---------- toast ---------- */
+  let toastT;
+  function toast(msg) {
+    const t = $('#Toast'); if (!t) return;
+    t.textContent = msg; t.classList.add('is-on');
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('is-on'), 2400);
   }
 
-  /* ---------- drawers / search ---------- */
-  var overlay = $('[data-overlay]');
-  function openEl(id) {
-    var el = document.getElementById(id); if (!el) return;
+  /* ---------- overlays ---------- */
+  const scrim = $('#Scrim');
+  let openEl = null; let lastFocus = null;
+  function openPanel(el) {
+    if (!el) return;
+    if (openEl && openEl !== el) closePanel();
+    lastFocus = document.activeElement;
+    openEl = el;
     el.hidden = false;
-    if (id === 'NavDrawer' && overlay) { overlay.hidden = false; document.body.style.overflow = 'hidden'; }
-    var inp = $('input[type=search]', el); if (inp) inp.focus();
+    requestAnimationFrame(() => el.classList.add('is-open'));
+    el.setAttribute('aria-hidden', 'false');
+    if (scrim && !el.classList.contains('modal')) scrim.hidden = false;
+    document.body.classList.add('lock');
+    const f = el.querySelector('input[type=search], [data-close], button, a');
+    setTimeout(() => (el.id === 'SearchOverlay' ? $('#SearchInput') : el).focus({ preventScroll: true }), 60);
+    void f;
   }
-  function closeEl(id) {
-    var el = document.getElementById(id); if (!el) return;
-    el.hidden = true;
-    if ((id === 'NavDrawer' || id === 'WishlistDrawer') && overlay) { overlay.hidden = true; document.body.style.overflow = ''; }
+  function closePanel() {
+    if (!openEl) return;
+    const el = openEl; openEl = null;
+    el.classList.remove('is-open');
+    el.setAttribute('aria-hidden', 'true');
+    if (el.classList.contains('modal')) el.hidden = true;
+    if (scrim) scrim.hidden = true;
+    document.body.classList.remove('lock');
+    if (lastFocus) lastFocus.focus({ preventScroll: true });
   }
-  document.addEventListener('click', function (e) {
-    var o = e.target.closest('[data-open]'); if (o) { e.preventDefault(); openEl(o.getAttribute('data-open')); return; }
-    var c = e.target.closest('[data-close]'); if (c) { e.preventDefault(); closeEl(c.getAttribute('data-close')); return; }
-    if (e.target === overlay) { closeEl('NavDrawer'); closeEl('WishlistDrawer'); }
-    var t = e.target.closest('[data-toggle]'); if (t) { var box = document.getElementById(t.getAttribute('data-toggle')); if (box) box.hidden = !box.hidden; }
-    var r = e.target.closest('[data-toggle-recover]'); if (r) { e.preventDefault(); var rb = $('#recover'); if (rb) rb.hidden = !rb.hidden; }
-    var del = e.target.closest('[data-delete-address]');
-    if (del && window.Shopify && Shopify.postLink) {
-      var delUrl = del.getAttribute('data-delete-address');
-      if (isSafeUrl(delUrl) && confirm('Delete this address?')) Shopify.postLink(delUrl, { parameters: { _method: 'delete' } });
-    }
-  });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeEl('NavDrawer'); closeEl('SearchPanel'); closeEl('WishlistDrawer'); } });
-
-  /* ---------- flying particle animation ---------- */
-  function animateFlyParticle(startEl, targetEl) {
-    if (!startEl || !targetEl) return;
-    var sRect = startEl.getBoundingClientRect();
-    var tRect = targetEl.getBoundingClientRect();
-    var sX = sRect.left + sRect.width / 2;
-    var sY = sRect.top + sRect.height / 2;
-    var tX = tRect.left + tRect.width / 2;
-    var tY = tRect.top + tRect.height / 2;
-
-    var dot = document.createElement('div');
-    dot.className = 'flying-dot';
-    dot.style.left = sX + 'px';
-    dot.style.top = sY + 'px';
-    dot.style.setProperty('--dx', (tX - sX) + 'px');
-    dot.style.setProperty('--dy', (tY - sY) + 'px');
-    document.body.appendChild(dot);
-
-    setTimeout(function () {
-      if (dot.parentNode) dot.parentNode.removeChild(dot);
-      targetEl.classList.add('badge-bump-anim');
-      setTimeout(function () { targetEl.classList.remove('badge-bump-anim'); }, 500);
-    }, 700);
-  }
-
-  /* ---------- announcement rotator ---------- */
-  var ann = $$('.announce__item');
-  if (ann.length > 1) {
-    var ai = 0;
-    setInterval(function () { ann[ai].classList.remove('is-active'); ai = (ai + 1) % ann.length; ann[ai].classList.add('is-active'); }, 4500);
-  }
-
-  /* ---------- quantity steppers ---------- */
-  document.addEventListener('click', function (e) {
-    var minus = e.target.closest('[data-qty-minus]'), plus = e.target.closest('[data-qty-plus]');
-    if (!minus && !plus) return;
-    var wrap = e.target.closest('[data-qty]'); var input = $('input', wrap);
-    var min = parseInt(input.min || '0', 10); var v = parseInt(input.value || '1', 10);
-    v = plus ? v + 1 : Math.max(min, v - 1); input.value = v;
-    input.dispatchEvent(new Event('change', { bubbles: true }));
+  scrim && scrim.addEventListener('click', closePanel);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closePanel(); $$('[data-sort-menu]').forEach((m) => { m.hidden = true; }); } });
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-close], [data-close-modal]');
+    if (t) { e.preventDefault(); closePanel(); return; }
+    if (e.target.closest('[data-open-menu]')) openPanel($('#MenuDrawer'));
+    else if (e.target.closest('[data-open-search]')) openPanel($('#SearchOverlay'));
+    else if (e.target.closest('[data-open-cart]')) { openPanel($('#CartDrawer')); refreshCart(); }
+    else if (e.target.closest('[data-open-filters]')) openPanel($('#FilterDrawer'));
+    else if (e.target.closest('[data-open-modal]')) { const m = document.getElementById(e.target.closest('[data-open-modal]').dataset.openModal); openPanel(m); }
   });
 
-  /* ---------- ajax add to cart (cards + product form) with luxury animations ---------- */
-  document.addEventListener('submit', function (e) {
-    var form = e.target; if (!form.matches('[data-ajax-add]')) return;
-    if (e.submitter && e.submitter.name === 'checkout') return;
-    e.preventDefault();
-    var btn = $('button[type=submit]', form); var label = btn && ($('[data-add-label]', btn) || btn);
-    var old = label && label.textContent;
-    if (btn) {
-      btn.disabled = true;
-      btn.classList.add('atc-pulse-anim');
-      setTimeout(function () { btn.classList.remove('atc-pulse-anim'); }, 600);
-      if (label) label.textContent = 'Adding…';
-      var cartTarget = $('.header__cart') || $('[data-cart-count]');
-      if (cartTarget) animateFlyParticle(btn, cartTarget);
+  /* ---------- header ---------- */
+  const header = $('[data-header]');
+  if (header) {
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  }
+
+  /* ---------- offers maths ---------- */
+  // Bundle: same product qty 2 -> bundle2Pct, 3+ -> bundle3Pct. Cart: total items >= tier1Qty -> tier1Pct, >= tier2Qty -> tier2Pct.
+  function bundlePct(q) { return q >= 3 ? O.bundle3Pct : q === 2 ? O.bundle2Pct : 0; }
+  function tierPct(n) { return n >= O.tier2Qty ? O.tier2Pct : n >= O.tier1Qty ? O.tier1Pct : 0; }
+  function calcOffers(items) {
+    const groups = {};
+    items.forEach((it) => {
+      const g = groups[it.product_id] || (groups[it.product_id] = { qty: 0, total: 0 });
+      g.qty += it.quantity; g.total += it.original_line_price;
+    });
+    let subtotal = 0; let bundleSave = 0; let count = 0;
+    Object.values(groups).forEach((g) => {
+      g.pct = bundlePct(g.qty);
+      g.save = Math.round(g.total * g.pct / 100);
+      subtotal += g.total; bundleSave += g.save; count += g.qty;
+    });
+    const tp = tierPct(count);
+    const tierSave = Math.round((subtotal - bundleSave) * tp / 100);
+    return { groups, subtotal, bundleSave, tierPct: tp, tierSave, count, total: subtotal - bundleSave - tierSave };
+  }
+
+  const ICON_CART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 4h2.2l2.3 11h10.8l2-8H6.3"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg>';
+  function tierHTML(count, cart) {
+    const applied = cart && cart.items_subtotal_price > cart.total_price;
+    const tp = tierPct(count);
+    if (tp && applied) {
+      const next = count < O.tier2Qty ? `<br><span style="font-size:12px">Add ${O.tier2Qty - count} more for extra ${O.tier2Pct}% OFF</span>` : '';
+      return `<div class="applied">${ICON_CART}<div><b>Cart Discount Applied ✓</b>${count} items → Extra ${tp}% OFF${next}</div></div>`;
     }
-    var fd = new FormData(form);
-    var rawId = parseInt(fd.get('id'), 10);
-    var rawQty = parseInt(fd.get('quantity') || '1', 10);
-    if (isNaN(rawId) || rawId <= 0) {
-      if (btn) { btn.disabled = false; if (label) label.textContent = old; }
-      toast('Please select a valid product option');
+    if (tp) return `<div class="applied is-next">${ICON_CART}<div><b>${count} items in cart</b>Extra ${tp}% OFF applies at checkout</div></div>`;
+    const need = O.tier1Qty - count;
+    return `<div class="applied is-next">${ICON_CART}<div><b>Add ${need} more item${need > 1 ? 's' : ''}</b>${O.tier1Qty} items → Extra ${O.tier1Pct}% OFF · ${O.tier2Qty} items → Extra ${O.tier2Pct}% OFF</div></div>`;
+  }
+
+  /* ---------- cart ---------- */
+  let cartCache = null;
+  async function getCart() {
+    const r = await fetch(url('cart.js'), { headers: { Accept: 'application/json' } });
+    cartCache = await r.json();
+    return cartCache;
+  }
+  function setCounts(n) {
+    $$('[data-cart-count]').forEach((b) => { b.textContent = n > 0 ? n : ''; b.dataset.count = n; });
+    $$('[data-cart-count-text]').forEach((b) => { b.textContent = `(${n})`; });
+  }
+  function lineHTML(it, offers) {
+    const g = offers.groups[it.product_id];
+    const props0 = it.properties || {};
+    const isStudio = !!props0['Design ID'];
+    const pr0 = (k) => props0[k];
+    const mock = props0['Front mockup'] || props0['Back mockup'];
+    const img = isStudio && mock && /^(https?:)?\/\//.test(mock) ? mock : it.image ? `${it.image}${it.image.includes('?') ? '&' : '?'}width=240` : '';
+    if (isStudio) it = Object.assign({}, it, { url: '/pages/studio' });
+    let deal = '';
+    if (g && g.pct && it.original_line_price > it.final_line_price) deal = `<span class="line__deal">Bundle of ${g.qty}: extra ${g.pct}% off</span>`;
+    else if (g && g.qty === 1 && !isStudio) deal = `<span class="line__deal hint">Add 1 more of this product: extra ${O.bundle2Pct}% off</span>`;
+    let variant = isStudio && it.options_with_values ? `<span class="line__variant">${[pr0('Size') && 'Size ' + pr0('Size'), pr0('Colour'), it.options_with_values[0] && it.options_with_values[0].value].filter(Boolean).map(esc).join(' · ')}</span>` : it.variant_title && it.variant_title !== 'Default Title' ? `<span class="line__variant">${esc(it.variant_title)}</span>` : '';
+    const pr = it.properties || {};
+    if (pr['Design ID']) {
+      const keep = ['Design ID', 'T-shirt', 'Front print', 'Back print'];
+      variant += `<span class="line__props">${keep.filter((k) => pr[k] && pr[k] !== 'None').map((k) => `<span><b>${esc(k)}:</b> ${esc(String(pr[k]).split(' · top edge')[0])}</span>`).join('')}${Object.keys(pr).some((k) => /file|mockup|artwork/i.test(k)) ? '<span class="line__ok">✓ Design files attached</span>' : ''}</span>`;
+    }
+    const was = it.original_line_price > it.final_line_price ? `<s class="price__was">${money(it.original_line_price)}</s>` : '';
+    return `<div class="line" data-key="${esc(it.key)}">
+      <a class="line__img" href="${esc(it.url)}">${img ? `<img src="${esc(img)}" alt="${esc(it.product_title)}" loading="lazy" width="240" height="300">` : `<span class="line__ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 3 3 6l2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0Z"/></svg></span>`}</a>
+      <div class="line__body">
+        <a class="line__title" href="${esc(it.url)}">${esc(it.product_title)}</a>
+        ${variant}
+        <div class="line__price"><b>${money(it.final_line_price)}</b>${was}</div>${deal}
+        <div class="line__bottom">
+          <div class="qty"><button type="button" data-qty-step="-1" aria-label="Decrease">−</button><input type="number" min="0" value="${it.quantity}" aria-label="Quantity" data-line-qty><button type="button" data-qty-step="1" aria-label="Increase">+</button></div>
+          <button type="button" class="remove" data-remove>Remove</button>
+        </div>
+      </div></div>`;
+  }
+  function renderCart(cart) {
+    setCounts(cart.item_count);
+    const offers = calcOffers(cart.items);
+    const bodies = $$('[data-cart-body]'); const foots = $$('[data-cart-foot]');
+    if (!cart.item_count) {
+      bodies.forEach((b) => { b.innerHTML = `<div class="cart-empty"><h2 style="font-size:24px">Your cart is empty</h2><p class="muted">Pick any ${O.tier1Qty} tees and save ${O.tier1Pct}%.</p><a class="btn" href="${url('collections/all')}">Shop tees</a></div>`; });
+      foots.forEach((f) => { f.hidden = true; });
       return;
     }
-    var id = rawId;
-    var qty = Math.max(1, Math.min(999, isNaN(rawQty) ? 1 : rawQty));
+    const lines = cart.items.map((it) => lineHTML(it, offers)).join('');
+    bodies.forEach((b) => { b.innerHTML = tierHTML(offers.count, cart) + lines + '<div class="cart-upsell" data-upsell></div>'; });
+    // Show Shopify's own totals so the cart always matches the payment page.
+    const lineSave = cart.original_total_price - cart.items_subtotal_price;
+    let rows = `<div><span>Subtotal (${cart.item_count} item${cart.item_count > 1 ? 's' : ''})</span><span>${money(cart.original_total_price)}</span></div>`;
+    if (lineSave > 0) rows += `<div class="save"><span>Bundle Discount</span><span>−${money(lineSave)}</span></div>`;
+    const orderSave = cart.items_subtotal_price - cart.total_price;
+    if (orderSave > 0) rows += `<div class="save"><span>Cart Discount${tierPct(cart.item_count) ? ` (${tierPct(cart.item_count)}%)` : ''}</span><span>−${money(orderSave)}</span></div>`;
+    rows += `<div class="grand"><span>Total</span><span>${money(cart.total_price)}</span></div>`;
+    const foot = `<div class="totals">${rows}</div>
+      <form action="${url('cart')}" method="post"><button class="btn btn--block" name="checkout" type="submit">Checkout · ${money(cart.total_price)} <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:18px;height:18px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+      <p class="muted" style="font-size:11.5px;text-align:center;margin-top:8px">Free delivery on online payment · COD +₹${O.codFee || 80}</p>`;
+    foots.forEach((f) => { f.innerHTML = foot; f.hidden = false; });
+    loadUpsell(cart);
+  }
+  async function refreshCart() { try { renderCart(await getCart()); } catch (e) { /* offline */ } }
 
-    var props = {};
-    $$('[name^="properties["]', form).forEach(function (inp) {
-      var m = inp.name.match(/^properties\[(.*?)\]$/);
-      if (m && inp.value !== undefined && inp.value !== '') {
-        props[m[1]] = String(inp.value).slice(0, 500); // Bounds limit property strings
-      }
-    });
-    var itemObj = { id: id, quantity: qty };
-    if (Object.keys(props).length > 0) {
-      itemObj.properties = props;
+  async function changeLine(key, quantity) {
+    const lineEl = $$(`[data-key="${CSS.escape(key)}"]`);
+    lineEl.forEach((l) => { l.style.opacity = '.5'; });
+    const r = await fetch(url('cart/change.js'), { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ id: key, quantity }) });
+    const cart = await r.json();
+    if (!r.ok) { toast(cart.description || 'Could not update the bag'); refreshCart(); return; }
+    cartCache = cart; renderCart(cart);
+  }
+  document.addEventListener('click', (e) => {
+    const line = e.target.closest('[data-key]'); if (!line) return;
+    const key = line.dataset.key;
+    if (e.target.closest('[data-remove]')) changeLine(key, 0);
+    const step = e.target.closest('[data-qty-step]');
+    if (step) { const inp = line.querySelector('[data-line-qty]'); changeLine(key, Math.max(0, Number(inp.value) + Number(step.dataset.qtyStep))); }
+  });
+  document.addEventListener('change', (e) => {
+    if (e.target.matches('[data-line-qty]')) changeLine(e.target.closest('[data-key]').dataset.key, Math.max(0, parseInt(e.target.value, 10) || 0));
+  });
+
+  async function addToCart(id, quantity, btn) {
+    btn && btn.classList.add('is-loading');
+    try {
+      const r = await fetch(url('cart/add.js'), { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: [{ id: Number(id), quantity: Number(quantity) || 1 }] }) });
+      const data = await r.json();
+      if (!r.ok) { toast(data.description || data.message || 'Could not add to bag'); return false; }
+      const cart = await getCart();
+      renderCart(cart);
+      return true;
+    } finally { btn && btn.classList.remove('is-loading'); }
+  }
+
+  let upsellFor = null;
+  async function loadUpsell(cart) {
+    const holders = $$('[data-upsell]'); if (!holders.length || !cart.items.length) return;
+    const pid = cart.items[0].product_id;
+    try {
+      const inCart = new Set(cart.items.map((i) => i.product_id));
+      const r = await fetch(url(`recommendations/products.json?product_id=${pid}&limit=4`));
+      const data = await r.json();
+      const list = (data.products || []).filter((p) => !inCart.has(p.id)).slice(0, 2);
+      if (!list.length) return;
+      upsellFor = pid;
+      const html = `<h3>Complete the bundle</h3>` + list.map((p) => `<div class="mini"><img src="${esc(p.featured_image)}${String(p.featured_image).includes('?') ? '&' : '?'}width=120" alt="" loading="lazy"><div><div style="font-size:13px;font-weight:500">${esc(p.title)}</div><div class="muted tabular" style="font-size:12px">${money(p.price)}</div></div><button type="button" class="btn btn--sm" data-quick-add="${esc(p.handle)}">Add</button></div>`).join('');
+      $$('[data-upsell]').forEach((h) => { h.innerHTML = html; });
+    } catch (e) { /* ignore */ }
+    void upsellFor;
+  }
+
+  /* ---------- quick add sheet ---------- */
+  const productCache = {};
+  async function fetchProduct(handle) {
+    if (productCache[handle]) return productCache[handle];
+    const r = await fetch(url(`products/${handle}.js`));
+    if (!r.ok) throw new Error('not found');
+    return (productCache[handle] = await r.json());
+  }
+  function sizedImg(src, w) { if (!src) return ''; const s = src.startsWith('//') ? 'https:' + src : src; return s + (s.includes('?') ? '&' : '?') + 'width=' + w; }
+
+  let qaEl = null;
+  async function openQuickAdd(handle) {
+    let p;
+    try { p = await fetchProduct(handle); } catch (e) { window.location = url(`products/${handle}`); return; }
+    if (!qaEl) {
+      qaEl = document.createElement('div');
+      qaEl.className = 'modal'; qaEl.id = 'QuickAdd'; qaEl.hidden = true;
+      qaEl.setAttribute('role', 'dialog'); qaEl.setAttribute('aria-modal', 'true'); qaEl.setAttribute('aria-label', 'Quick add');
+      document.body.appendChild(qaEl);
     }
-    addItems([itemObj]).then(function () {
-      if (btn && label) {
-        label.textContent = '✓ Added to Bag!';
+    const sel = (p.variants.find((v) => v.available) || p.variants[0]).options.slice();
+    const render = () => {
+      const v = p.variants.find((x) => x.options.every((o, i) => o === sel[i])) || null;
+      const img = (v && v.featured_image && v.featured_image.src) || p.featured_image;
+      const opts = p.options.map((o, i) => {
+        if (o.name === 'Title') return '';
+        const btns = o.values.map((val) => {
+          const test = sel.slice(); test[i] = val;
+          const avail = p.variants.some((x) => x.available && x.options.every((oo, j) => oo === test[j]));
+          const active = sel[i] === val;
+          return isColorName(o.name)
+            ? `<button type="button" class="color-btn ${active ? 'is-active' : ''} ${avail ? '' : 'is-out'}" data-qa-opt="${i}" data-value="${esc(val)}" title="${esc(val)}" aria-label="${esc(val)}" style="background:${hex(val)}"></button>`
+            : `<button type="button" class="size-btn ${active ? 'is-active' : ''} ${avail ? '' : 'is-out'}" data-qa-opt="${i}" data-value="${esc(val)}">${esc(val)}</button>`;
+        }).join('');
+        return `<div class="opt"><div class="opt__label"><span><b>${esc(o.name)}</b> · ${esc(sel[i])}</span></div><div class="${isColorName(o.name) ? 'colors' : 'sizes'}">${btns}</div></div>`;
+      }).join('');
+      const qty = Number(qaEl.dataset.qty || 1);
+      const price = v ? v.price : p.price;
+      const bundles = [1, 2, 3].map((q) => { const pct = bundlePct(q); const full = price * q; return `<button type="button" class="pill ${q === qty ? 'is-active' : ''}" data-qa-qty="${q}">${q} pc · ${money(Math.round(full * (100 - pct) / 100))}${pct ? ` <small>(extra ${pct}% off)</small>` : ''}</button>`; }).join('');
+      qaEl.innerHTML = `<div class="scrim" data-close-modal></div><div class="modal__panel" style="display:grid;gap:16px">
+        <div style="display:grid;grid-template-columns:96px 1fr auto;gap:14px;align-items:start">
+          <img src="${esc(sizedImg(img, 240))}" alt="" style="width:96px;aspect-ratio:4/5;object-fit:cover;border-radius:10px">
+          <div style="display:grid;gap:4px"><span class="card__meta">${esc(p.type || '')}</span><b style="font:600 18px/1.25 var(--font-display)">${esc(p.title)}</b>
+            <div class="price"><span class="price__now">${money(price)}</span>${v && v.compare_at_price > v.price ? `<s class="price__was">${money(v.compare_at_price)}</s>` : ''}</div></div>
+          <button class="icon-btn" data-close-modal aria-label="Close"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+        ${opts}
+        <div class="opt"><div class="opt__label"><b>Bundle &amp; save</b></div><div class="pills" style="flex-wrap:wrap">${bundles}</div></div>
+        <button type="button" class="btn btn--block" data-qa-add ${v && v.available ? '' : 'disabled'}>${v && v.available ? 'Add to Cart' : 'Sold out'}</button>
+        <a href="${esc(p.url)}" class="remove" style="text-align:center">View full details</a></div>`;
+      qaEl.dataset.variant = v ? v.id : '';
+    };
+    qaEl.dataset.qty = 1;
+    render();
+    qaEl.onclick = async (e) => {
+      const o = e.target.closest('[data-qa-opt]');
+      if (o) { sel[Number(o.dataset.qaOpt)] = o.dataset.value; render(); return; }
+      const q = e.target.closest('[data-qa-qty]');
+      if (q) { qaEl.dataset.qty = q.dataset.qaQty; render(); return; }
+      const add = e.target.closest('[data-qa-add]');
+      if (add && qaEl.dataset.variant) {
+        const ok = await addToCart(qaEl.dataset.variant, qaEl.dataset.qty, add);
+        if (ok) { closePanel(); openPanel($('#CartDrawer')); }
       }
-      toast('Added to Bag ✓', true);
-    }).catch(function (err) { toast(err.message); })
-      .then(function () {
-        setTimeout(function () {
-          if (btn) { btn.disabled = false; if (label) label.textContent = old; }
-        }, 1200);
-      });
+    };
+    openPanel(qaEl);
+  }
+  document.addEventListener('click', (e) => {
+    const q = e.target.closest('[data-quick-add]');
+    if (q) { e.preventDefault(); openQuickAdd(q.dataset.quickAdd); }
   });
 
-  /* ---------- bundle add ---------- */
-  document.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-bundle-add]'); if (!b) return;
-    var ids = b.getAttribute('data-bundle-add').split(',').filter(Boolean);
-    var items = ids.map(function (i) { return { id: parseInt(i, 10), quantity: 1 }; }).filter(function (it) { return !isNaN(it.id) && it.id > 0; });
-    if (items.length === 0) return;
-    var old = b.textContent; b.disabled = true; b.textContent = 'Adding…';
-    var cartTarget = $('.header__cart') || $('[data-cart-count]');
-    if (cartTarget) animateFlyParticle(b, cartTarget);
-    addItems(items).then(function () { toast('Curated combo added to bag ✓', true); })
-      .catch(function (err) { toast(err.message); })
-      .then(function () { b.disabled = false; b.textContent = old; });
+  /* ---------- wishlist ---------- */
+  const WKEY = 'zeyov:wishlist';
+  const getWish = () => store.get(WKEY, []);
+  function syncHearts() {
+    const w = getWish();
+    $$('[data-wish]').forEach((b) => { const on = w.includes(b.dataset.wish); b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
+    $$('[data-wish-count]').forEach((c) => { c.textContent = w.length || ''; c.dataset.count = w.length; });
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-wish]'); if (!b) return;
+    e.preventDefault();
+    const h = b.dataset.wish; let w = getWish();
+    if (w.includes(h)) { w = w.filter((x) => x !== h); toast('Removed from wishlist'); }
+    else { w.unshift(h); toast('Saved to wishlist'); b.classList.add('pop'); setTimeout(() => b.classList.remove('pop'), 400); }
+    store.set(WKEY, w.slice(0, 60)); syncHearts();
+    if ($('[data-wishlist-grid]') && !w.includes(h)) renderWishlist();
   });
+  function cardFromJSON(p) {
+    const img = p.images[0]; const img2 = p.images[1];
+    const off = p.compare_at_price > p.price ? Math.round((p.compare_at_price - p.price) * 100 / p.compare_at_price) : 0;
+    const colorOpt = p.options.find((o) => isColorName(o.name));
+    const dots = colorOpt && colorOpt.values.length > 1 ? `<div class="swatches">${colorOpt.values.slice(0, 6).map((v) => `<span class="swatch-dot" title="${esc(v)}" style="background:${hex(v)}"></span>`).join('')}</div>` : '';
+    return `<article class="card" data-handle="${esc(p.handle)}"><div class="card__media"><a href="${esc(p.url)}" aria-label="${esc(p.title)}">${img ? `<img src="${esc(sizedImg(img, 600))}" alt="${esc(p.title)}" loading="lazy">` : ''}${img2 ? `<img class="alt" src="${esc(sizedImg(img2, 600))}" alt="" loading="lazy">` : ''}</a>
+      <div class="card__badges">${off ? `<span class="badge badge--sale">-${off}%</span>` : ''}</div>
+      <button type="button" class="heart is-active" data-wish="${esc(p.handle)}" aria-label="Remove from wishlist" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.4-7.5-10.1A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.6C19.5 15.6 12 20 12 20z"/></svg></button>
+      ${p.available ? `<div class="card__quick"><button type="button" class="btn btn--sm" data-quick-add="${esc(p.handle)}">Quick add</button></div><button type="button" class="card__plus" data-quick-add="${esc(p.handle)}" aria-label="Quick add">+</button>` : ''}</div>
+      <div class="card__info">${p.type ? `<span class="card__meta">${esc(p.type)}</span>` : ''}<a class="card__title" href="${esc(p.url)}">${esc(p.title)}</a>
+      <div class="price"><span class="price__now">${money(p.price)}</span>${off ? `<s class="price__was">${money(p.compare_at_price)}</s><span class="price__off">${off}% off</span>` : ''}</div>${dots}</div></article>`;
+  }
+  async function renderWishlist() {
+    const grid = $('[data-wishlist-grid]'); if (!grid) return;
+    const w = getWish(); const empty = $('[data-wishlist-empty]');
+    if (!w.length) { grid.innerHTML = ''; empty.hidden = false; return; }
+    empty.hidden = true;
+    const res = await Promise.all(w.map((h) => fetchProduct(h).catch(() => null)));
+    grid.innerHTML = res.filter(Boolean).map(cardFromJSON).join('');
+  }
 
   /* ---------- product page ---------- */
-  $$('[data-product]').forEach(function (root) {
-    var variants = JSON.parse($('[data-variants]', root).textContent);
-    var moneyFmt = JSON.parse($('[data-money]', root).textContent).format;
-    var form = $('#ProductForm', root);
-    var idInput = $('[data-variant-id]', root);
-    var addBtn = $('[data-add-btn]', root), addLabel = $('[data-add-label]', root);
-    var slides = $$('[data-slide]', root), thumbs = $$('[data-thumb]', root);
-    var qtyInput = $('input[name=quantity]', root);
-    var current = 0;
+  function initProduct(rootEl) {
+    const json = rootEl.querySelector('[data-product-json]'); if (!json) return;
+    const p = JSON.parse(json.textContent);
+    const form = rootEl.querySelector('[data-product-form]');
+    const idInput = rootEl.querySelector('[data-variant-id]');
+    const qtyInput = rootEl.querySelector('[data-qty]');
+    const atc = rootEl.querySelector('[data-atc]');
+    const buyNow = rootEl.querySelector('[data-buy-now]');
+    const track = rootEl.querySelector('[data-track]');
+    const dots = $$('[data-dots] i', rootEl);
+    const thumbs = $$('[data-thumb]', rootEl);
+    const params = new URLSearchParams(location.search);
+    let current = p.variants.find((v) => String(v.id) === params.get('variant')) || p.variants.find((v) => v.available) || p.variants[0];
+    const sel = current.options.slice();
 
-    function show(i) {
-      if (!slides.length) return;
-      current = (i + slides.length) % slides.length;
-      slides.forEach(function (s, k) { s.classList.toggle('is-active', k === current); });
-      thumbs.forEach(function (t, k) { t.classList.toggle('is-active', k === current); });
+    function slideTo(i, smooth = true) { if (track) track.scrollTo({ left: track.clientWidth * i, behavior: smooth ? 'smooth' : 'auto' }); }
+    if (track) {
+      let raf;
+      track.addEventListener('scroll', () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const i = Math.round(track.scrollLeft / track.clientWidth);
+          dots.forEach((d, j) => d.classList.toggle('is-active', i === j));
+          thumbs.forEach((t, j) => t.classList.toggle('is-active', i === j));
+        });
+      }, { passive: true });
+      thumbs.forEach((t) => t.addEventListener('click', () => slideTo(Number(t.dataset.thumb))));
     }
-    function showById(mid) { slides.forEach(function (s, k) { if (s.getAttribute('data-media-id') == mid) show(k); }); }
-    thumbs.forEach(function (t, k) { t.addEventListener('click', function () { show(k); }); });
-    var pv = $('[data-prev]', root), nx = $('[data-next]', root);
-    if (pv) pv.addEventListener('click', function () { show(current - 1); });
-    if (nx) nx.addEventListener('click', function () { show(current + 1); });
-    var g = $('.gallery__main', root), sx = 0;
-    if (g) { g.addEventListener('touchstart', function (e) { sx = e.changedTouches[0].clientX; }, { passive: true });
-      g.addEventListener('touchend', function (e) { var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1)); }); }
 
-    function selectedOptions() {
-      return $$('.opt', root).map(function (f) { var c = $('input:checked', f); return c ? c.value : null; });
-    }
-    function findVariant() {
-      var sel = selectedOptions();
-      if (!sel.length) return variants[0];
-      return variants.filter(function (v) { return sel.every(function (o, i) { return v.options[i] === o; }); })[0];
-    }
-    function updateTiers(v) {
-      $$('[data-tier-qty]', root).forEach(function (el) {
-        var q = +el.dataset.tierQty, pct = +el.dataset.tierPct;
-        var total = v.price * q, now = Math.round(total * (100 - pct) / 100);
-        el.innerHTML = formatMoney(now, moneyFmt) + (pct > 0 ? '<s>' + formatMoney(total, moneyFmt) + '</s>' : '');
-      });
-    }
     function update() {
-      var v = findVariant();
-      $$('.opt', root).forEach(function (f) { var c = $('input:checked', f); var l = $('[data-opt-label]', f); if (c && l) l.textContent = c.value; });
-      if (!v) { addBtn.disabled = true; addLabel.textContent = 'Unavailable'; return; }
-      idInput.value = v.id;
-      var priceWrap = $('[data-price-wrap] .price', root);
-      if (priceWrap) {
-        var on = v.compare_at_price && v.compare_at_price > v.price;
-        priceWrap.className = 'price' + (on ? ' price--sale' : '');
-        priceWrap.innerHTML = '<span class="price__now">' + formatMoney(v.price, moneyFmt) + '</span>' +
-          (on ? '<s class="price__was">' + formatMoney(v.compare_at_price, moneyFmt) + '</s><span class="badge badge--sale">' + Math.round((v.compare_at_price - v.price) * 100 / v.compare_at_price) + '% OFF</span>' : '');
-      }
-      var pNow = $('[data-price-now]', root);
-      var pWas = $('[data-price-was]', root);
-      var pOff = $('[data-price-off]', root);
-      if (pNow) pNow.textContent = formatMoney(v.price, moneyFmt);
-      if (pWas) {
-        if (v.compare_at_price && v.compare_at_price > v.price) {
-          pWas.textContent = formatMoney(v.compare_at_price, moneyFmt);
-          pWas.style.display = 'inline';
-          if (pOff) {
-            pOff.textContent = Math.round((v.compare_at_price - v.price) * 100 / v.compare_at_price) + '% OFF';
-            pOff.style.display = 'inline-block';
-          }
-        } else {
-          pWas.style.display = 'none';
-          if (pOff) pOff.style.display = 'none';
-        }
-      }
-      var notifyBtn = $('#NotifyStockBtn', root);
-      if (v.available) {
-        addBtn.disabled = false;
-        addBtn.style.display = 'inline-flex';
-        addLabel.textContent = 'Add to Bag';
-        if (notifyBtn) notifyBtn.style.display = 'none';
-      } else {
-        addBtn.disabled = true;
-        addBtn.style.display = 'none';
-        addLabel.textContent = 'Sold out';
-        if (notifyBtn) {
-          notifyBtn.style.display = 'inline-flex';
-          var stockVId = $('#StockVariantId');
-          if (stockVId) stockVId.value = v.id;
-          var stockVTitle = $('#StockModalVariantTitle');
-          if (stockVTitle) stockVTitle.textContent = v.title && v.title !== 'Default Title' ? 'Selected: ' + v.title : '';
-        }
-      }
-      var sb = $('[data-sticky-btn]', root); if (sb) { sb.disabled = !v.available; sb.textContent = v.available ? 'Add to Bag' : 'Sold out'; }
-      if (v.featured_media) showById(v.featured_media.id);
-      updateTiers(v);
-      if (history.replaceState) history.replaceState({}, '', location.pathname + '?variant=' + v.id);
-    }
-    $$('.opt input', root).forEach(function (i) { i.addEventListener('change', update); });
-
-    /* tiers */
-    function syncTierProperties(tierEl) {
-      var tierProp = $('#BundleTierProp', root);
-      var discProp = $('#BundleDiscProp', root);
-      if (tierEl) {
-        if (tierProp) tierProp.value = tierEl.dataset.tierLabel || ('Buy ' + tierEl.value);
-        if (discProp) discProp.value = tierEl.dataset.tierDiscount || '0';
-      }
-    }
-
-    $$('[data-tier]', root).forEach(function (r) {
-      r.addEventListener('change', function () {
-        $$('.pdp-tier, .tier', root).forEach(function (t) { t.classList.remove('is-active'); });
-        var parentTier = r.closest('.pdp-tier, .tier');
-        if (parentTier) parentTier.classList.add('is-active');
-        if (qtyInput) qtyInput.value = r.value;
-        syncTierProperties(r);
+      current = p.variants.find((v) => v.options.every((o, i) => o === sel[i])) || null;
+      $$('[data-opt]', rootEl).forEach((b) => {
+        const i = Number(b.dataset.opt); const val = b.dataset.value;
+        const active = sel[i] === val;
+        b.classList.toggle('is-active', active); b.setAttribute('aria-checked', active);
+        const test = sel.slice(); test[i] = val;
+        b.classList.toggle('is-out', !p.variants.some((x) => x.available && x.options.every((o, j) => o === test[j])));
       });
+      $$('[data-opt-label]', rootEl).forEach((l) => { l.textContent = sel[Number(l.dataset.optLabel)]; });
+      const price = current ? current.price : 0;
+      const pr = rootEl.querySelector('[data-main-price]');
+      if (pr && current) {
+        const off = current.compare > current.price ? Math.round((current.compare - current.price) * 100 / current.compare) : 0;
+        pr.innerHTML = `<span class="price__now">${money(price)}</span>${off ? `<s class="price__was">${money(current.compare)}</s><span class="save-badge">-${off}%</span>` : ''}`;
+      }
+      $$('[data-bundles] .brow', rootEl).forEach((b) => {
+        const q = Number(b.querySelector('input').value); const pct = Number(b.querySelector('input').dataset.pct);
+        const one = b.querySelector('[data-bundle-one]'); if (one) one.textContent = money(price);
+        if (pct) b.querySelector('[data-bundle-price]').textContent = money(Math.round(price * q * (100 - pct) / 100));
+      });
+      const ok = current && current.available;
+      if (atc) { atc.disabled = !ok; const t = atc.querySelector('[data-atc-text]') || atc; t.textContent = !current ? 'Unavailable' : ok ? 'Add to Cart' : 'Sold out'; }
+      if (buyNow) buyNow.disabled = !ok;
+      const sb = rootEl.querySelector('[data-sticky-btn]'); if (sb) { sb.disabled = !ok; sb.textContent = ok ? 'Add to Cart' : 'Sold out'; }
+      const sp = rootEl.querySelector('[data-sticky-price]'); if (sp && current) sp.textContent = money(price);
+      const sv = rootEl.querySelector('[data-sticky-variant]'); if (sv) sv.textContent = sel.filter((s) => s !== 'Default Title').join(' / ');
+      if (current) {
+        idInput.value = current.id;
+        const u = new URL(location.href); u.searchParams.set('variant', current.id); history.replaceState(null, '', u);
+      }
+    }
+    rootEl.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-opt]'); if (!b) return;
+      const i = Number(b.dataset.opt); sel[i] = b.dataset.value;
+      update();
+      if (current && current.media && track) {
+        const slides = $$('.gallery__slide', track);
+        const idx = slides.findIndex((s) => s.dataset.mediaId === String(current.media));
+        if (idx > -1) slideTo(idx);
+      } else if (String(i) === rootEl.dataset.colorIndex && track) {
+        // colour without variant image: try matching image alt text
+        const slides = $$('.gallery__slide', track);
+        const idx = slides.findIndex((s) => (s.querySelector('img') || {}).alt && s.querySelector('img').alt.toLowerCase().includes(b.dataset.value.toLowerCase()));
+        if (idx > -1) slideTo(idx);
+      }
     });
-    if (qtyInput) {
-      qtyInput.addEventListener('change', function () {
-        var matched = false;
-        $$('[data-tier]', root).forEach(function (r) {
-          var m = r.value === qtyInput.value;
-          r.checked = m;
-          var parentTier = r.closest('.pdp-tier, .tier');
-          if (parentTier) parentTier.classList.toggle('is-active', m);
-          if (m) {
-            matched = true;
-            syncTierProperties(r);
-          }
-        });
-        if (!matched) {
-          var val = parseInt(qtyInput.value, 10) || 1;
-          var tierProp = $('#BundleTierProp', root);
-          var discProp = $('#BundleDiscProp', root);
-          if (val === 1) {
-            if (tierProp) tierProp.value = 'Buy 1';
-            if (discProp) discProp.value = '0';
-          } else if (val === 2) {
-            if (tierProp) tierProp.value = 'Buy 2';
-            if (discProp) discProp.value = '10';
-          } else if (val >= 3) {
-            if (tierProp) tierProp.value = 'Buy 3+';
-            if (discProp) discProp.value = '13';
-          }
-        }
-      });
+    $$('input[name="bundle-qty"]', rootEl).forEach((r) => r.addEventListener('change', () => { qtyInput.value = r.value; }));
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!current) return toast('Pick a size and colour');
+      const ok = await addToCart(current.id, qtyInput.value, atc);
+      if (ok) { openPanel($('#CartDrawer')); }
+    });
+    buyNow && buyNow.addEventListener('click', async () => {
+      if (!current) return;
+      const ok = await addToCart(current.id, qtyInput.value, buyNow);
+      if (ok) location.href = url('checkout');
+    });
+    const sticky = rootEl.querySelector('[data-sticky-atc]');
+    const buy = rootEl.querySelector('[data-buy]');
+    if (sticky && buy && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([en]) => {
+        const show = !en.isIntersecting && en.boundingClientRect.top < 0;
+        sticky.classList.toggle('is-visible', show); sticky.setAttribute('aria-hidden', !show);
+      }).observe(buy);
+      sticky.querySelector('[data-sticky-btn]').addEventListener('click', (e) => { if (form.requestSubmit) form.requestSubmit(); else form.dispatchEvent(new Event('submit', { cancelable: true })); void e; });
     }
-
-    /* sticky mobile bar */
-    var sticky = $('[data-sticky-atc]', root), sbtn = $('[data-sticky-btn]', root);
-    if (sticky && addBtn && 'IntersectionObserver' in window) {
-      new IntersectionObserver(function (en) { sticky.classList.toggle('is-visible', !en[0].isIntersecting && en[0].boundingClientRect.top < 0); }).observe(addBtn);
+    update();
+    if (current && current.media && track) {
+      const idx = $$('.gallery__slide', track).findIndex((s) => s.dataset.mediaId === String(current.media));
+      if (idx > 0) slideTo(idx, false);
     }
-    if (sbtn) sbtn.addEventListener('click', function () { if (form.requestSubmit) form.requestSubmit(addBtn); else addBtn.click(); });
+    // recently viewed for search overlay
+    const rv = store.get('zeyov:recent', []).filter((h) => h !== p.handle); rv.unshift(p.handle); store.set('zeyov:recent', rv.slice(0, 8));
+  }
 
-    /* delivery estimate - tailored for Indian transit */
-    var chk = $('[data-check-pin]', root), pin = $('#Pincode', root), res = $('[data-deliver-result]', root);
-    if (chk) {
-      var run = function () {
-        var p = (pin.value || '').trim();
-        res.classList.remove('is-error');
-        if (!/^[1-9][0-9]{5}$/.test(p)) {
-          res.textContent = 'Please enter a valid 6-digit Indian PIN code.';
-          res.classList.add('is-error');
-          return;
-        }
-        var isMetro = /^(11|40|56|60|70|68|50|38|41)/.test(p);
-        var minDays = isMetro ? 3 : 4;
-        var maxDays = isMetro ? 5 : 7;
-        var d = new Date(), a = new Date(d), b = new Date(d);
-        a.setDate(d.getDate() + minDays);
-        b.setDate(d.getDate() + maxDays);
-        var o = { weekday: 'short', day: 'numeric', month: 'short' };
-        var metroTag = isMetro ? ' [Express Metro Route]' : '';
-        res.innerHTML = '<strong>Estimated delivery: ' + a.toLocaleDateString('en-IN', o) + ' – ' + b.toLocaleDateString('en-IN', o) + metroTag + '</strong><br><small class="muted">Order processing: 1–2 working days. Tracking link sent on WhatsApp/SMS.</small>';
-        try { localStorage.setItem('zeyov_pin', p); } catch (e) {}
-      };
-      chk.addEventListener('click', run);
-      pin.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
+  /* ---------- facets (filters + sort) ---------- */
+  function initFacets(rootEl) {
+    const sectionId = rootEl.dataset.sectionId;
+    let ctrl;
+    async function load(href, push = true) {
+      const results = $('[data-facet-results]', rootEl);
+      results && results.classList.add('is-loading');
+      ctrl && ctrl.abort(); ctrl = new AbortController();
       try {
-        var sp2 = localStorage.getItem('zeyov_pin');
-        if (sp2) { pin.value = sp2; run(); }
-      } catch (e) {}
+        const u = new URL(href, location.origin); u.searchParams.set('section_id', sectionId);
+        const html = await (await fetch(u, { signal: ctrl.signal })).text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const swap = (sel) => { const a = $(sel, rootEl); const b = doc.querySelector(sel); if (a && b) a.innerHTML = b.innerHTML; };
+        swap('[data-facet-results]'); swap('[data-facet-count]'); swap('#FacetForm'); swap('[data-result-count]');
+        const nextClear = doc.querySelector('[data-facet-clear]'); if (nextClear) { const c = $('[data-facet-clear]', rootEl); if (c) c.href = nextClear.getAttribute('href'); }
+        if (push) history.pushState({ facets: true }, '', href);
+        syncHearts();
+      } catch (e) { if (e.name !== 'AbortError') location.href = href; }
+      finally { results && results.classList.remove('is-loading'); }
     }
-  });
-
-  /* ---------- PDP bundle buy (Combo Offer / Frequently Bought Together) ---------- */
-  $$('[data-bundle-widget]').forEach(function (widget) {
-    var checks = $$('[data-bundle-check]', widget);
-    var submitBtn = $('[data-bundle-submit-btn]', widget);
-    var btnLabel = $('[data-bundle-btn-label]', widget);
-    var finalPriceEl = $('[data-bundle-final-price]', widget);
-    var wasPriceEl = $('[data-bundle-was-price]', widget);
-    var saveTag = $('[data-bundle-save-tag]', widget);
-    var discountPct = parseInt((submitBtn && submitBtn.getAttribute('data-discount')) || '15', 10);
-    var moneyFmt = (window.ZEYOV && ZEYOV.moneyFormat) || 'Rs. {{amount}}';
-
-    function recalculateBundle() {
-      var total = 0;
-      var selectedCount = 0;
-      checks.forEach(function (chk, idx) {
-        var itemWrap = chk.closest('[data-bundle-item]');
-        var thumb = $('[data-thumb-index="' + (idx + 1) + '"]', widget);
-        if (chk.checked) {
-          total += parseInt(chk.getAttribute('data-price') || '0', 10);
-          selectedCount++;
-          if (itemWrap) itemWrap.classList.add('is-selected');
-          if (thumb) thumb.classList.add('is-active');
-        } else {
-          if (itemWrap) itemWrap.classList.remove('is-selected');
-          if (thumb) thumb.classList.remove('is-active');
-        }
-      });
-
-      var applyDiscount = selectedCount > 1 ? discountPct : 0;
-      var discounted = Math.round(total * (100 - applyDiscount) / 100);
-
-      if (finalPriceEl) finalPriceEl.textContent = formatMoney(discounted, moneyFmt);
-      if (wasPriceEl) {
-        if (selectedCount > 1 && discountPct > 0) {
-          wasPriceEl.textContent = formatMoney(total, moneyFmt);
-          wasPriceEl.style.display = 'inline-block';
-        } else {
-          wasPriceEl.style.display = 'none';
-        }
-      }
-      if (saveTag) {
-        if (selectedCount > 1 && discountPct > 0) {
-          saveTag.textContent = 'Save ' + discountPct + '%';
-          saveTag.style.display = 'inline-block';
-        } else {
-          saveTag.style.display = 'none';
-        }
-      }
-
-      if (submitBtn) {
-        submitBtn.disabled = selectedCount === 0;
-        if (btnLabel) {
-          if (selectedCount === 0) {
-            btnLabel.textContent = 'Select items to add';
-          } else if (selectedCount === 1) {
-            btnLabel.textContent = 'Add Item to Cart';
-          } else {
-            btnLabel.textContent = 'Add Combo to Cart (' + selectedCount + ' items)' + (discountPct > 0 ? ' • Save ' + discountPct + '%' : '');
-          }
-        }
-      }
+    function formHref() {
+      const form = $('#FacetForm', rootEl);
+      const fd = new FormData(form); const qs = new URLSearchParams();
+      for (const [k, v] of fd.entries()) if (String(v).trim() !== '') qs.append(k, v);
+      return form.getAttribute('action') + '?' + qs.toString();
     }
-
-    checks.forEach(function (chk) {
-      chk.addEventListener('change', recalculateBundle);
+    let t;
+    rootEl.addEventListener('change', (e) => {
+      if (e.target.matches('[data-sort]')) { const m = $('[data-sort-mirror]', rootEl); if (m) m.value = e.target.value; load(formHref()); return; }
+      if (e.target.closest('#FacetForm')) { clearTimeout(t); t = setTimeout(() => load(formHref()), e.target.type === 'number' ? 600 : 50); }
     });
+    rootEl.addEventListener('submit', (e) => { if (e.target.id === 'FacetForm') { e.preventDefault(); load(formHref()); } });
+    const sortMenu = () => $('[data-sort-menu]', rootEl);
+    const toggleSort = (open) => { const m = sortMenu(); const b = $('[data-sort-toggle]', rootEl); if (!m) return; m.hidden = !open; b && b.setAttribute('aria-expanded', open); };
+    document.addEventListener('click', (e) => { if (!e.target.closest('[data-sortbox]')) toggleSort(false); });
+    rootEl.addEventListener('click', (e) => {
+      if (e.target.closest('[data-sort-toggle]')) { toggleSort(sortMenu().hidden); return; }
+      const so = e.target.closest('[data-sort-value]');
+      if (so) {
+        const m = $('[data-sort-mirror]', rootEl); if (m) m.value = so.dataset.sortValue;
+        $$('[data-sort-value]', rootEl).forEach((x) => { x.classList.toggle('is-active', x === so); x.setAttribute('aria-selected', x === so); });
+        const lbl = $('[data-sort-label]', rootEl); if (lbl) lbl.textContent = so.textContent.trim();
+        toggleSort(false); load(formHref()); return;
+      }
+      const a = e.target.closest('[data-facet-link], [data-facet-clear]');
+      if (a && a.getAttribute('href')) { e.preventDefault(); load(a.getAttribute('href')); if (a.matches('[data-facet-clear]')) closePanel(); return; }
+      const pr = e.target.closest('[data-price-preset]');
+      if (pr) {
+        const [min, max] = pr.dataset.pricePreset.split(',');
+        const f = $('#FacetForm', rootEl);
+        const lo = f.querySelector('input[name$="price.gte"]'); const hi = f.querySelector('input[name$="price.lte"]');
+        if (lo) lo.value = min || ''; if (hi) hi.value = max || '';
+        load(formHref());
+      }
+    });
+    window.addEventListener('popstate', () => load(location.href, false));
+  }
 
-    if (submitBtn) {
-      submitBtn.addEventListener('click', function () {
-        var itemsToAdd = [];
-        checks.forEach(function (chk) {
-          if (chk.checked) {
-            var vid = parseInt(chk.getAttribute('data-variant-id'), 10);
-            if (vid) itemsToAdd.push({ id: vid, quantity: 1 });
-          }
-        });
-        if (!itemsToAdd.length) return;
-
-        var origText = btnLabel ? btnLabel.textContent : submitBtn.textContent;
-        submitBtn.disabled = true;
-        if (btnLabel) btnLabel.textContent = 'Adding Combo…';
-
-        addItems(itemsToAdd).then(function () {
-          toast('Combo added to cart ✓ (' + itemsToAdd.length + ' items)', true);
-        }).catch(function (err) {
-          toast(err.message || 'Error adding combo to cart');
-        }).then(function () {
-          submitBtn.disabled = false;
-          if (btnLabel) btnLabel.textContent = origText;
-        });
-      });
-    }
-
-    recalculateBundle();
-  });
-
-  /* ---------- PDP Customer reviews interactivity ---------- */
-  var reviewsRoot = $('[data-product-reviews]');
-  var pdpRatingBadge = $('[data-pdp-rating-badge]');
-  if (reviewsRoot) {
-    var productId = reviewsRoot.getAttribute('data-product-id') || '';
-    var STORAGE_KEY = productId ? 'zeyov_reviews_' + productId : null;
-    var INITIAL_VISIBLE_COUNT = 4;
-    var isExpanded = false;
-    var currentFilter = 'all';
-
-    var expandWrap = $('#ReviewsExpandWrap');
-    var toggleExpandBtn = $('#ToggleReviewsBtn');
-    var expandBtnText = $('#ExpandBtnText');
-    var container = $('#UserSubmittedReviews');
-    var emptyEl = $('#ReviewsEmptyState', reviewsRoot);
-    var summaryEl = $('.reviews-summary', reviewsRoot);
-    var filtersEl = $('.reviews-filters', reviewsRoot);
-
-    function loadSavedReviews() {
-      if (!STORAGE_KEY) return [];
+  /* ---------- search (predictive + price terms) ---------- */
+  function parsePrice(q) {
+    const s = q.toLowerCase().replace(/[₹,]|rs\.?|inr/g, ' ');
+    let m;
+    if ((m = s.match(/(?:under|below|less than|upto|up to|<)\s*(\d+)/))) return { lte: m[1], rest: s.replace(m[0], '') };
+    if ((m = s.match(/(?:above|over|more than|>)\s*(\d+)/))) return { gte: m[1], rest: s.replace(m[0], '') };
+    if ((m = s.match(/(\d{3,5})\s*(?:-|to)\s*(\d{3,5})/))) return { gte: m[1], lte: m[2], rest: s.replace(m[0], '') };
+    return null;
+  }
+  function priceHref(q) {
+    const p = parsePrice(q); if (!p) return null;
+    const rest = p.rest.replace(/\s+/g, ' ').trim();
+    const qs = new URLSearchParams();
+    if (rest) { qs.set('q', rest); qs.set('type', 'product'); }
+    if (p.gte) qs.set('filter.v.price.gte', p.gte);
+    if (p.lte) qs.set('filter.v.price.lte', p.lte);
+    return (rest ? url('search') : url('collections/all')) + '?' + qs.toString();
+  }
+  function initSearch() {
+    const input = $('#SearchInput'); if (!input) return;
+    const out = $('[data-search-results]'); const def = $('[data-search-default]');
+    let t; let ctrl;
+    async function run(q) {
+      q = q.trim();
+      if (q.length < 2) { out.innerHTML = ''; def.hidden = false; return; }
+      def.hidden = true;
+      const ph = priceHref(q);
+      ctrl && ctrl.abort(); ctrl = new AbortController();
+      let items = [];
       try {
-        var raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        var list = JSON.parse(raw);
-        if (Array.isArray(list)) return list;
-      } catch (e) {}
-      return [];
+        const term = ph ? (parsePrice(q).rest.trim() || '') : q;
+        if (term.length > 1) {
+          const r = await fetch(url(`search/suggest.json?q=${encodeURIComponent(term)}&resources[type]=product&resources[limit]=6&resources[options][fields]=title,product_type,variants.title,tag`), { signal: ctrl.signal });
+          const d = await r.json(); items = (d.resources && d.resources.results && d.resources.results.products) || [];
+        }
+      } catch (e) { if (e.name === 'AbortError') return; }
+      const priceRow = ph ? `<a class="ps-item" href="${esc(ph)}" style="grid-template-columns:1fr auto;background:var(--surface)"><b>Show tees ${esc(q)}</b><span>→</span></a>` : '';
+      const rows = items.map((p) => `<a class="ps-item" href="${esc(p.url)}"><img src="${esc(sizedImg(p.image || p.featured_image && p.featured_image.url, 120))}" alt="" loading="lazy"><span><b>${esc(p.title)}</b><br><span class="muted" style="font-size:12px">${esc(p.type || '')}</span></span><span class="tabular">${money(Math.round(parseFloat(p.price) * 100))}</span></a>`).join('');
+      const all = `<a class="btn btn--ghost btn--block" href="${esc(ph || url('search') + '?type=product&q=' + encodeURIComponent(q))}">See all results for “${esc(q)}”</a>`;
+      out.innerHTML = `<div class="ps-list">${priceRow}${rows || (ph ? '' : '<p class="muted">No exact matches. Try a colour or fit.</p>')}</div><div style="margin-top:12px">${all}</div>`;
     }
+    input.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => run(input.value), 220); });
+    input.form.addEventListener('submit', (e) => { const ph = priceHref(input.value); if (ph) { e.preventDefault(); location.href = ph; } });
+    document.addEventListener('click', (e) => { const b = e.target.closest('[data-search-term]'); if (b) { input.value = b.dataset.searchTerm; run(input.value); input.focus(); } });
+    const pageForm = $('[data-search-page-form]');
+    pageForm && pageForm.addEventListener('submit', (e) => { const ph = priceHref(pageForm.q.value); if (ph) { e.preventDefault(); location.href = ph; } });
+  }
 
-    function saveReview(rev) {
-      if (!STORAGE_KEY) return;
+  /* ---------- reviews ---------- */
+  function initReviews() {
+    const box = $('[data-reviews]'); if (!box) return;
+    const handle = box.dataset.handle; const KEY = 'zeyov:pending-reviews';
+    const form = $('#ReviewForm');
+    const pend = store.get(KEY, {})[handle];
+    const holder = $('[data-pending-review]', box);
+    if (pend && holder) {
+      holder.innerHTML = `<article class="review" style="background:var(--surface);padding:16px;border-radius:14px;border:0"><div class="review__top"><span class="stars"><span class="stars__row" style="--pct:${pend.rating * 20}%"></span></span><span class="muted">Pending approval</span></div><h4>${esc(pend.title)}</h4><p>${esc(pend.body)}</p><b style="font-size:13px">${esc(pend.name)} (you)</b></article>`;
+    }
+    form && form.addEventListener('submit', () => {
+      const all = store.get(KEY, {});
+      all[handle] = { rating: Number((form.querySelector('input[name="contact[Rating]"]:checked') || {}).value || 5), title: form.querySelector('#rv-title').value, body: form.querySelector('#rv-body').value, name: form.querySelector('#rv-name').value };
+      store.set(KEY, all);
+    });
+  }
+
+  /* ---------- recommendations ---------- */
+  function initRecs() {
+    const el = $('[data-recommendations]'); if (!el || el.children.length) return;
+    fetch(el.dataset.url).then((r) => r.text()).then((html) => {
+      const d = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-recommendations]');
+      if (d) { el.innerHTML = d.innerHTML; syncHearts(); }
+    }).catch(() => {});
+  }
+
+  /* ---------- share ---------- */
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-share]'); if (!b) return;
+    const data = { title: b.dataset.shareTitle, url: b.dataset.share };
+    try { if (navigator.share) { await navigator.share(data); return; } await navigator.clipboard.writeText(data.url); toast('Link copied'); } catch (err) { /* cancelled */ }
+  });
+
+  /* ---------- hero slideshow ---------- */
+  function initHero(el) {
+    const tr = $('[data-hero-track]', el); const dots = $$('[data-hero-dots] i', el); if (!tr || dots.length < 2) return;
+    let i = 0; let timer;
+    const go = (n) => { i = (n + dots.length) % dots.length; tr.scrollTo({ left: tr.clientWidth * i, behavior: 'smooth' }); };
+    tr.addEventListener('scroll', () => { const k = Math.round(tr.scrollLeft / tr.clientWidth); i = k; dots.forEach((d, j) => d.classList.toggle('is-active', j === k)); }, { passive: true });
+    const play = () => { clearInterval(timer); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(() => go(i + 1), 5000); };
+    tr.addEventListener('pointerdown', () => clearInterval(timer)); play();
+  }
+
+  /* ---------- Zeyov Studio ---------- */
+  function initStudio(el) {
+    const form = $('[data-studio-form]', el); if (!form) return;
+    const json = $('[data-studio-json]', el); const data = json ? JSON.parse(json.textContent) : null;
+    const img = $('[data-base-img]', el); const assetBase = img.dataset.assetBase;
+    const print = $('[data-print]', el); const ptext = $('[data-print-text]', el);
+    const colorList = $('[data-color-list]', el); const colorLabel = $('[data-color-label]', el);
+    const fileInput = $('#StudioFile', el); let fileURL = null; let size = 'M'; let color = 'Black';
+    const POS = { 'Front Center': [33, 30, 34, 30], 'Back Center': [31, 26, 38, 36], 'Left Chest': [56, 31, 13, 10], 'Sleeve': [14, 34, 11, 8] };
+    const slug = (x) => x.toLowerCase().replace(/\s+/g, '-');
+    const val = (n) => (form.querySelector(`input[name="${n}"]:checked`) || {}).value;
+    function variant() {
+      if (!data) return null;
+      const pi = data.options.findIndex((o) => /print/i.test(o)); const si = data.options.findIndex((o) => /size/i.test(o));
+      return data.variants.find((v) => (pi < 0 || v.options[pi] === val('print')) && (si < 0 || v.options[si] === size)) || data.variants[0];
+    }
+    function render() {
+      const base = form.querySelector('input[name="base"]:checked');
+      const colors = base.dataset.colors.split(',');
+      if (!colors.includes(color)) color = colors[0];
+      colorList.innerHTML = colors.map((c) => `<button type="button" class="color-btn ${c === color ? 'is-active' : ''}" data-studio-color="${esc(c)}" aria-label="${esc(c)}" title="${esc(c)}" style="background:${hex(c)}"></button>`).join('');
+      colorLabel.textContent = color;
+      img.src = `${assetBase}${base.dataset.handle}-${slug(color)}.webp`;
+      const p = POS[val('place')] || POS['Front Center'];
+      Object.assign(print.style, { left: p[0] + '%', top: p[1] + '%', width: p[2] + '%', height: p[3] + '%' });
+      const txt = $('#StudioText', el).value.trim();
+      const tc = $('#StudioTextColor', el).value;
+      const small = p[2] < 20;
+      print.innerHTML = (fileURL ? `<img src="${fileURL}" alt="Your design">` : '') + (txt || !fileURL ? `<span style="color:${tc};font-size:${small ? 9 : 18}px">${esc(txt || (small ? 'LOGO' : 'YOUR DESIGN'))}</span>` : '');
+      print.style.borderStyle = val('print') === 'Embroidery' ? 'dotted' : 'dashed';
+      $$('[data-studio-size]', el).forEach((b) => b.classList.toggle('is-active', b.dataset.studioSize === size));
+      const v = variant(); const price = v ? v.price : 0;
+      const q = Number(val('sqty') || 1);
+      $$('[data-sq]', el).forEach((b) => { const n = Number(b.dataset.sq); b.textContent = price ? money(Math.round(price * n * (100 - bundlePct(n)) / 100)) : ''; });
+      const sp = $('[data-studio-price]', el); if (sp && price) sp.textContent = money(Math.round(price * q * (100 - bundlePct(q)) / 100));
+      void ptext;
+    }
+    form.addEventListener('change', render);
+    $('#StudioText', el).addEventListener('input', render);
+    el.addEventListener('click', (e) => {
+      const c = e.target.closest('[data-studio-color]'); if (c) { color = c.dataset.studioColor; render(); }
+      const s = e.target.closest('[data-studio-size]'); if (s) { size = s.dataset.studioSize; render(); }
+    });
+    fileInput.addEventListener('change', () => {
+      const f = fileInput.files[0]; if (!f) return;
+      if (f.size > 20 * 1024 * 1024) { toast('File is over 20 MB'); fileInput.value = ''; return; }
+      if (fileURL) URL.revokeObjectURL(fileURL); fileURL = URL.createObjectURL(f);
+      $('[data-file-name]', el).textContent = f.name; render();
+    });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const v = variant(); if (!v) return;
+      const txt = $('#StudioText', el).value.trim();
+      if (!fileInput.files[0] && !txt) { toast('Upload a design or add text'); return; }
+      const btn = $('[data-studio-add]', el); btn.classList.add('is-loading');
+      const fd = new FormData();
+      fd.append('id', v.id); fd.append('quantity', val('sqty') || 1);
+      fd.append('properties[Base T-Shirt]', val('base')); fd.append('properties[Colour]', color);
+      fd.append('properties[Print Type]', val('print')); fd.append('properties[Placement]', val('place'));
+      if (txt) { fd.append('properties[Text]', txt); fd.append('properties[Text colour]', $('#StudioTextColor', el).selectedOptions[0].text); }
+      if (fileInput.files[0]) fd.append('properties[Design file]', fileInput.files[0]);
       try {
-        var list = loadSavedReviews();
-        list.unshift(rev);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      } catch (e) {}
-    }
-
-    function createReviewCardElement(rev) {
-      var starsHtml = '';
-      var rating = parseInt(rev.rating || '5', 10);
-      for (var i = 1; i <= 5; i++) {
-        starsHtml += '<span class="' + (i <= rating ? 'on' : 'off') + '"><svg class="icon icon--star" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z"/></svg></span>';
-      }
-      var safeName = escapeHtml(rev.name || 'Verified Customer');
-      var safeCity = escapeHtml(rev.city || 'India');
-      var safeTitle = escapeHtml(rev.title || '');
-      var safeBody = escapeHtml(rev.body || '');
-      var initials = safeName.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'ZC';
-
-      var card = document.createElement('article');
-      card.className = 'review-card is-new';
-      card.setAttribute('data-review-stars', rating);
-      card.setAttribute('data-verified', 'true');
-      card.innerHTML =
-        '<div class="review-card__header">' +
-          '<div class="review-card__author">' +
-            '<div class="review-card__avatar">' + initials + '</div>' +
-            '<div>' +
-              '<div class="review-card__name-row">' +
-                '<b>' + safeName + '</b>' +
-                '<span class="verified"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Verified Buyer &bull; ' + safeCity + '</span>' +
-              '</div>' +
-              '<small class="muted">' + (rev.date || 'Just now') + ' &bull; Verified Purchase</small>' +
-            '</div>' +
-          '</div>' +
-          '<div class="stars">' + starsHtml + '</div>' +
-        '</div>' +
-        '<h4 class="review-card__title">' + safeTitle + '</h4>' +
-        '<p class="review-card__body">' + safeBody + '</p>' +
-        '<div class="review-card__footer"><span class="review-card__helpful is-voted"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Helpful (<span>1</span>)</span></div>';
-      return card;
-    }
-
-    // Populate saved reviews from storage
-    var saved = loadSavedReviews();
-    if (container && saved.length > 0) {
-      saved.forEach(function (rev) {
-        container.appendChild(createReviewCardElement(rev));
-      });
-    }
-
-    function applyReviewVisibility() {
-      var allCards = $$('.review-card', reviewsRoot);
-      var matchingCards = [];
-
-      allCards.forEach(function (card) {
-        var stars = card.getAttribute('data-review-stars');
-        var isVer = card.getAttribute('data-verified') === 'true';
-        var match = false;
-        if (currentFilter === 'all') match = true;
-        else if (currentFilter === 'verified') match = isVer;
-        else if (currentFilter === '5star') match = (stars === '5');
-        else if (currentFilter === '4star') match = (stars === '4');
-
-        if (match) {
-          matchingCards.push(card);
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      matchingCards.forEach(function (card, index) {
-        if (isExpanded || index < INITIAL_VISIBLE_COUNT) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      if (expandWrap && toggleExpandBtn && expandBtnText) {
-        if (matchingCards.length <= INITIAL_VISIBLE_COUNT) {
-          expandWrap.style.display = 'none';
-        } else {
-          expandWrap.style.display = 'block';
-          if (!isExpanded) {
-            expandBtnText.textContent = 'View All ' + matchingCards.length + ' Verified Reviews (' + (matchingCards.length - INITIAL_VISIBLE_COUNT) + ' More)';
-            toggleExpandBtn.classList.remove('is-expanded');
-          } else {
-            expandBtnText.textContent = 'Show Fewer Reviews';
-            toggleExpandBtn.classList.add('is-expanded');
-          }
-        }
-      }
-    }
-
-    if (toggleExpandBtn) {
-      toggleExpandBtn.addEventListener('click', function () {
-        isExpanded = !isExpanded;
-        applyReviewVisibility();
-        if (!isExpanded && reviewsRoot) {
-          reviewsRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    }
-
-    function updateReviewCounts() {
-      var cards = $$('.review-card', reviewsRoot);
-      var total = cards.length;
-
-      if (total === 0) {
-        if (emptyEl) emptyEl.style.display = 'block';
-        if (summaryEl) summaryEl.style.display = 'none';
-        if (filtersEl) filtersEl.style.display = 'none';
-        if (expandWrap) expandWrap.style.display = 'none';
-
-        if (pdpRatingBadge) {
-          pdpRatingBadge.className = 'pdp__rating-badge pdp__rating-badge--empty';
-          pdpRatingBadge.setAttribute('data-open-review-modal', 'true');
-          pdpRatingBadge.innerHTML = '<span class="pdp__stars pdp__stars--empty">☆☆☆☆☆</span><span class="pdp__count">No reviews yet &bull; <span class="pdp__write-text">Write a review</span></span>';
-        }
-      } else {
-        if (emptyEl) emptyEl.style.display = 'none';
-        if (summaryEl) summaryEl.style.display = '';
-        if (filtersEl) filtersEl.style.display = '';
-
-        var sum = 0;
-        var starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-        var verified = 0;
-
-        cards.forEach(function (c) {
-          var s = parseInt(c.getAttribute('data-review-stars') || '5', 10);
-          if (s >= 1 && s <= 5) {
-            starCounts[s] = (starCounts[s] || 0) + 1;
-            sum += s;
-          }
-          if (c.getAttribute('data-verified') === 'true') verified++;
-        });
-
-        var avg = (sum / total).toFixed(1);
-        var avgEl = $('[data-reviews-avg]', reviewsRoot);
-        if (avgEl) avgEl.textContent = avg;
-        var tEl = $('[data-reviews-total-text]', reviewsRoot);
-        if (tEl) tEl.textContent = total;
-        var pAll = $('[data-pill-all]', reviewsRoot);
-        if (pAll) pAll.textContent = total;
-        var pVer = $('[data-pill-verified]', reviewsRoot);
-        if (pVer) pVer.textContent = verified;
-        var p5 = $('[data-pill-5star]', reviewsRoot);
-        if (p5) p5.textContent = starCounts[5];
-        var p4 = $('[data-pill-4star]', reviewsRoot);
-        if (p4) p4.textContent = starCounts[4];
-
-        for (var star = 1; star <= 5; star++) {
-          var count = starCounts[star] || 0;
-          var pct = Math.round((count / total) * 100);
-          var fillEl = $('[data-bar-fill-' + star + ']', reviewsRoot);
-          if (fillEl) fillEl.style.width = pct + '%';
-          var countEl = $('[data-bar-count-' + star + ']', reviewsRoot);
-          if (countEl) countEl.textContent = count;
-        }
-
-        if (pdpRatingBadge) {
-          pdpRatingBadge.className = 'pdp__rating-badge';
-          pdpRatingBadge.removeAttribute('data-open-review-modal');
-          pdpRatingBadge.innerHTML = '<span class="pdp__stars">★★★★★</span><b class="pdp__score">' + avg + '</b><span class="pdp__count">(' + total + (total === 1 ? ' Review' : ' Reviews') + ')</span>';
-        }
-      }
-    }
-
-    // Filter reviews
-    $$('[data-filter-reviews]', reviewsRoot).forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        $$('[data-filter-reviews]', reviewsRoot).forEach(function (b) { b.classList.remove('is-active'); });
-        btn.classList.add('is-active');
-        currentFilter = btn.getAttribute('data-filter-reviews') || 'all';
-        isExpanded = false;
-        applyReviewVisibility();
-      });
+        const r = await fetch(url('cart/add.js'), { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+        const d = await r.json();
+        if (!r.ok) { toast(d.description || 'Could not add to cart'); return; }
+        renderCart(await getCart()); openPanel($('#CartDrawer'));
+      } finally { btn.classList.remove('is-loading'); }
     });
-
-    // Helpful button
-    document.addEventListener('click', function (e) {
-      var h = e.target.closest('[data-helpful-btn]');
-      if (!h || h.classList.contains('is-voted')) return;
-      var c = $('[data-helpful-count]', h);
-      if (c) c.textContent = parseInt(c.textContent || '0', 10) + 1;
-      h.classList.add('is-voted');
-    });
-
-    // Write a Review modal
-    var modal = $('#ReviewModal');
-    var closeBtns = $$('[data-close-review-modal]');
-    var reviewForm = $('#CustomerReviewForm') || $('#NewReviewForm');
-
-    function openReviewModal() {
-      if (modal) {
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
-      }
-      document.body.style.overflow = 'hidden';
-    }
-    function closeReviewModal() {
-      if (modal) {
-        modal.classList.remove('is-open');
-        modal.setAttribute('aria-hidden', 'true');
-      }
-      document.body.style.overflow = '';
-    }
-
-    // Delegated click for open-review-modal buttons anywhere
-    document.addEventListener('click', function (e) {
-      var trigger = e.target.closest('[data-open-review-modal]');
-      if (!trigger) return;
-      e.preventDefault();
-      openReviewModal();
-      if (reviewsRoot) {
-        reviewsRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-
-    closeBtns.forEach(function (btn) {
-      btn.addEventListener('click', closeReviewModal);
-    });
-
-    // Star rating picker with descriptive feedback hint
-    var ratingBtns = $$('.star-btn, .star-select-btn', modal);
-    var ratingInput = $('#ReviewStarInput') || $('#ReviewRatingInput');
-    var ratingHint = $('#StarRatingHint');
-    var ratingTexts = {
-      1: '1.0 / 5.0 — Poor Experience',
-      2: '2.0 / 5.0 — Needs Improvement',
-      3: '3.0 / 5.0 — Average Quality',
-      4: '4.0 / 5.0 — Very Good Fabric & Fit',
-      5: '5.0 / 5.0 — Outstanding Quality & Fit'
-    };
-
-    ratingBtns.forEach(function (sBtn) {
-      sBtn.addEventListener('click', function () {
-        var val = parseInt(sBtn.getAttribute('data-star-val') || sBtn.getAttribute('data-star') || '5', 10);
-        if (ratingInput) ratingInput.value = val;
-        ratingBtns.forEach(function (b, idx) {
-          b.classList.toggle('is-active', (idx + 1) <= val);
-        });
-        if (ratingHint && ratingTexts[val]) {
-          ratingHint.textContent = ratingTexts[val];
-        }
-      });
-    });
-
-    // Form submission
-    if (reviewForm) {
-      reviewForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var fd = new FormData(reviewForm);
-        var trap = fd.get('comment_bot_trap');
-        if (trap) {
-          closeReviewModal();
-          return;
-        }
-        var now = Date.now();
-        if (window._lastRevSubmit && (now - window._lastRevSubmit < 15000)) {
-          toast('Please wait a moment before submitting another review.');
-          return;
-        }
-        window._lastRevSubmit = now;
-
-        var name = (fd.get('name') || '').trim().slice(0, 80);
-        var city = (fd.get('city') || '').trim().slice(0, 60);
-        var title = (fd.get('title') || '').trim().slice(0, 120);
-        var body = (fd.get('body') || '').trim().slice(0, 2000);
-        var rating = parseInt(fd.get('rating') || '5', 10);
-        rating = Math.max(1, Math.min(5, isNaN(rating) ? 5 : rating));
-
-        if (!name || !title || !body) {
-          toast('Please fill in all required review fields.');
-          return;
-        }
-
-        var newRev = {
-          name: name,
-          city: city,
-          title: title,
-          body: body,
-          rating: rating,
-          date: 'Today'
-        };
-        saveReview(newRev);
-
-        var newCard = createReviewCardElement(newRev);
-        if (container) container.prepend(newCard);
-
-        updateReviewCounts();
-        applyReviewVisibility();
-        closeReviewModal();
-        reviewForm.reset();
-        toast('Thank you! Your verified review has been submitted ✓');
-      });
-    }
-
-    updateReviewCounts();
-    applyReviewVisibility();
+    render();
   }
 
-  /* ---------- ZEYOV Size Chart Modal Controller ---------- */
-  (function initSizeChartModal() {
-    var modal = $('#SizeChartModal');
-    if (!modal) return;
-
-    function openSizeModal() {
-      var bodyText = (document.title + ' ' + (document.querySelector('.pdp__title') ? document.querySelector('.pdp__title').textContent : '')).toLowerCase();
-      var dept = 'women';
-      if (/\b(men|man|mens|gentleman|gents)\b/.test(bodyText) && !/\b(women|womens|lady|ladies)\b/.test(bodyText)) {
-        dept = 'men';
-      } else if (/\b(kid|kids|baby|boy|girl|toddler)\b/.test(bodyText)) {
-        dept = 'kids';
-      }
-      switchTab(dept);
-
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeSizeModal() {
-      modal.classList.remove('is-open');
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    function switchTab(dept) {
-      $$('[data-size-tab]', modal).forEach(function (tab) {
-        var isTarget = tab.getAttribute('data-size-tab') === dept;
-        tab.classList.toggle('is-active', isTarget);
-        tab.setAttribute('aria-selected', isTarget ? 'true' : 'false');
-      });
-      $$('[data-size-panel]', modal).forEach(function (panel) {
-        panel.classList.toggle('is-active', panel.getAttribute('data-size-panel') === dept);
-      });
-    }
-
-    function setUnit(unit) {
-      $$('[data-unit]', modal).forEach(function (btn) {
-        btn.classList.toggle('is-active', btn.getAttribute('data-unit') === unit);
-      });
-      $$('.unit-label', modal).forEach(function (lbl) {
-        lbl.textContent = unit;
-      });
-      $$('td[data-in]', modal).forEach(function (td) {
-        td.textContent = (unit === 'cm') ? td.getAttribute('data-cm') : td.getAttribute('data-in');
-      });
-    }
-
-    document.addEventListener('click', function (e) {
-      var trigger = e.target.closest('[data-open-size-chart]');
-      if (trigger) {
-        e.preventDefault();
-        openSizeModal();
-        return;
-      }
-      var closeBtn = e.target.closest('[data-close-size-chart]');
-      if (closeBtn) {
-        e.preventDefault();
-        closeSizeModal();
-        return;
-      }
-      var tabBtn = e.target.closest('[data-size-tab]');
-      if (tabBtn && modal.contains(tabBtn)) {
-        e.preventDefault();
-        switchTab(tabBtn.getAttribute('data-size-tab'));
-        return;
-      }
-      var unitBtn = e.target.closest('[data-unit]');
-      if (unitBtn && modal.contains(unitBtn)) {
-        e.preventDefault();
-        setUnit(unitBtn.getAttribute('data-unit'));
-        return;
-      }
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && modal.classList.contains('is-open')) {
-        closeSizeModal();
-      }
-    });
-  })();
-
-  /* ---------- cart page ---------- */
-  var cartForm = $('#CartForm');
-  if (cartForm) {
-    var timer;
-    $$('input[name="updates[]"]', cartForm).forEach(function (inp, idx) {
-      inp.addEventListener('change', function () {
-        clearTimeout(timer);
-        timer = setTimeout(function () {
-          fetch(ZEYOV.routes.cartChange, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ line: idx + 1, quantity: Math.max(0, parseInt(inp.value || '0', 10)) }) })
-            .then(function () { location.reload(); });
-        }, 450);
-      });
-    });
-
-    cartForm.addEventListener('submit', function (e) {
-      if (e.submitter && e.submitter.name === 'checkout') {
-        var pPhone = $('#PrimaryPhone', cartForm);
-        if (pPhone && pPhone.value.trim()) {
-          var val = pPhone.value.trim().replace(/\D/g, '');
-          if (val.length > 0 && val.length < 10) {
-            pPhone.classList.add('is-warning');
-          } else {
-            pPhone.classList.remove('is-error');
-            pPhone.classList.remove('is-warning');
-          }
-        }
-        var discInput = $('#CartDiscountCode', cartForm);
-        var discCode = discInput ? discInput.value.trim() : '';
-        if (discCode) {
-          e.preventDefault();
-          var primaryPhone = pPhone ? pPhone.value.trim() : '';
-          var altPhone = ($('#AltPhone', cartForm) && $('#AltPhone', cartForm).value.trim()) || '';
-          var note = ($('#CartNote', cartForm) && $('#CartNote', cartForm).value.trim()) || '';
-          var checkoutUrl = '/checkout?discount=' + encodeURIComponent(discCode);
-
-          fetch('/cart/update.js', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              attributes: {
-                'Primary Phone': primaryPhone,
-                'Alternate Phone': altPhone
-              },
-              note: note
-            })
-          }).then(function () {
-            window.location.href = checkoutUrl;
-          }).catch(function () {
-            window.location.href = checkoutUrl;
-          });
-          return false;
-        }
-      }
-    });
-  }
-
-  /* ---------- country / state selects (address page) ---------- */
-  $$('[data-country-select]').forEach(function (cs) {
-    var ps = cs.closest('form').querySelector('[data-province-select]');
-    var wantC = cs.getAttribute('data-default'); if (wantC) { $$('option', cs).forEach(function (o) { if (o.value === wantC || o.text === wantC) o.selected = true; }); }
-    function fill() {
-      var opt = cs.options[cs.selectedIndex]; var list = [];
-      try { list = JSON.parse(opt.getAttribute('data-provinces') || '[]'); } catch (e) {}
-      ps.innerHTML = ''; ps.disabled = !list.length;
-      list.forEach(function (p) { var o = document.createElement('option'); o.value = p[0]; o.textContent = p[1]; ps.appendChild(o); });
-      var wantP = ps.getAttribute('data-default'); if (wantP) { $$('option', ps).forEach(function (o) { if (o.value === wantP) o.selected = true; }); }
-    }
-    cs.addEventListener('change', function () { ps.removeAttribute('data-default'); fill(); });
-    fill();
+  /* ---------- verified reviews from My Orders ---------- */
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-review-open]'); if (!b) return;
+    const m = $('#ReviewModal'); if (!m) return;
+    $('[data-rv-title]', m).textContent = b.dataset.product;
+    $('[data-rv-product]', m).value = b.dataset.product;
+    $('[data-rv-handle]', m).value = b.dataset.handle;
+    $('[data-rv-order]', m).value = b.dataset.order;
+    $('[data-rv-variant]', m).value = b.dataset.variant;
+    openPanel(m);
   });
-
-  /* ---------- reveal on scroll ---------- */
-  var rv = $$('.section__head, .feature, .review, .bundle, .card, .bundle-box, .review-card, .look-card, .rail-card, .craft-feature');
-  if ('IntersectionObserver' in window) {
-    rv.forEach(function (el) { el.classList.add('reveal'); });
-    var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('is-in'); io.unobserve(x.target); } }); }, { rootMargin: '0px 0px -40px 0px' });
-    rv.forEach(function (el) { io.observe(el); });
-  }
-
-  /* ==========================================================================
-     VIDEO 1: RUNWAY ORBIT SHOWCASE (3D Orbit, Rolling Watermark, Tracklist)
-     ========================================================================== */
-  var orbitSection = $('#RunwayOrbit');
-  if (orbitSection) {
-    var orbitItems = $$('.orbit__item', orbitSection);
-    var trackItems = $$('.orbit__track-item', orbitSection);
-    var watermark = $('[data-orbit-watermark]', orbitSection);
-    var titleEl = $('[data-orbit-title]', orbitSection);
-    var priceEl = $('[data-orbit-price]', orbitSection);
-    var curNumEl = $('[data-orbit-cur-num]', orbitSection);
-    var progressEl = $('[data-orbit-progress]', orbitSection);
-    var prevBtn = $('[data-orbit-prev]', orbitSection);
-    var nextBtn = $('[data-orbit-next]', orbitSection);
-    var totalCount = orbitItems.length;
-    var activeIdx = 0;
-
-    function updateOrbit(idx) {
-      if (idx < 0) idx = totalCount - 1;
-      if (idx >= totalCount) idx = 0;
-      activeIdx = idx;
-
-      // Update 3D carousel items
-      orbitItems.forEach(function (item, i) {
-        item.classList.remove('is-active', 'is-prev', 'is-next');
-        if (i === activeIdx) {
-          item.classList.add('is-active');
-        } else if (i === (activeIdx - 1 + totalCount) % totalCount) {
-          item.classList.add('is-prev');
-        } else if (i === (activeIdx + 1) % totalCount) {
-          item.classList.add('is-next');
-        }
-      });
-
-      // Update tracklist on left
-      trackItems.forEach(function (t, i) {
-        t.classList.toggle('is-active', i === activeIdx);
-      });
-
-      // Active item metadata
-      var curItem = orbitItems[activeIdx];
-      if (curItem) {
-        var title = curItem.getAttribute('data-title') || '';
-        var price = curItem.getAttribute('data-price') || '';
-        var url = curItem.getAttribute('data-product-url') || '';
-        var vid = curItem.getAttribute('data-variant-id') || '';
-
-        if (titleEl) titleEl.textContent = title;
-        if (priceEl) priceEl.textContent = price;
-        if (curNumEl) curNumEl.textContent = ('0' + (activeIdx + 1)).slice(-2);
-        if (progressEl) progressEl.style.width = (((activeIdx + 1) / totalCount) * 100) + '%';
-        var totNumEl = $('[data-orbit-total-num]', orbitSection);
-        if (totNumEl) totNumEl.textContent = ('0' + totalCount).slice(-2);
-
-        var pdpLink = $('[data-orbit-pdp-link]', orbitSection);
-        if (pdpLink && url) pdpLink.setAttribute('href', url);
-        var pdpBtn = $('[data-orbit-pdp-btn]', orbitSection);
-        if (pdpBtn && url) pdpBtn.setAttribute('href', url);
-
-        // Animate rolling serif typography (Video 1 signature)
-        if (watermark) {
-          watermark.classList.add('is-rolling');
-          setTimeout(function () {
-            watermark.textContent = title.replace(/Zeyov|Amber|Camel|Emerald|Cream/gi, '').trim() || title;
-            watermark.classList.remove('is-rolling');
-          }, 250);
-        }
-      }
-    }
-
-    // Auto-advance timer (Smooth continuous 3-second automatic rotation)
-    var orbitTimer = null;
-    var isHovered = false;
-
-    function startOrbitTimer() {
-      if (orbitTimer) clearInterval(orbitTimer);
-      if (totalCount <= 1) return;
-      orbitTimer = setInterval(function () {
-        if (!isHovered) {
-          updateOrbit(activeIdx + 1);
-        }
-      }, 3000);
-    }
-
-    function resetOrbitTimer() {
-      startOrbitTimer();
-    }
-
-    startOrbitTimer();
-
-    // Pause only when mouse is directly hovering the center carousel or controller buttons
-    var carouselEl = $('[data-orbit-carousel]', orbitSection);
-    var controllerEl = $('.orbit__controller', orbitSection);
-
-    if (carouselEl) {
-      carouselEl.addEventListener('mouseenter', function () { isHovered = true; });
-      carouselEl.addEventListener('mouseleave', function () { isHovered = false; });
-    }
-    if (controllerEl) {
-      controllerEl.addEventListener('mouseenter', function () { isHovered = true; });
-      controllerEl.addEventListener('mouseleave', function () { isHovered = false; });
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', function () { updateOrbit(activeIdx - 1); resetOrbitTimer(); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { updateOrbit(activeIdx + 1); resetOrbitTimer(); });
-
-    trackItems.forEach(function (t, i) {
-      t.addEventListener('click', function () { updateOrbit(i); resetOrbitTimer(); });
-    });
-
-    orbitItems.forEach(function (item, i) {
-      item.addEventListener('click', function (e) {
-        if (i !== activeIdx) {
-          e.preventDefault();
-          updateOrbit(i);
-          resetOrbitTimer();
-        } else {
-          // DIRECT NAVIGATION TO PRODUCT DETAILS PAGE!
-          var url = item.getAttribute('data-product-url');
-          if (url && url !== '#') {
-            window.location.href = url;
-          }
-        }
-      });
-    });
-
-    // Mobile Touch Swipe support for 3D Orbit Carousel
-    var carouselEl = $('[data-orbit-carousel]', orbitSection);
-    if (carouselEl) {
-      var touchStartX = 0;
-      var touchEndX = 0;
-      carouselEl.addEventListener('touchstart', function (e) {
-        touchStartX = e.changedTouches[0].screenX;
-        if (orbitTimer) clearInterval(orbitTimer);
-      }, { passive: true });
-      carouselEl.addEventListener('touchend', function (e) {
-        touchEndX = e.changedTouches[0].screenX;
-        var diff = touchStartX - touchEndX;
-        if (Math.abs(diff) > 35) {
-          if (diff > 0) {
-            updateOrbit(activeIdx + 1);
-          } else {
-            updateOrbit(activeIdx - 1);
-          }
-        }
-        startOrbitTimer();
-      }, { passive: true });
-    }
-
-    // Orbit Quick View Modal
-    var modal = $('#OrbitModal');
-    var openModalBtn = $('[data-open-orbit-modal]', orbitSection);
-    var closeModalBtns = $$('[data-close-orbit-modal]', modal || document);
-
-    function openModal() {
-      if (!modal) return;
-      var cur = orbitItems[activeIdx];
-      if (cur) {
-        var img = cur.getAttribute('data-img') || ($('img', cur) && $('img', cur).src);
-        var title = cur.getAttribute('data-title');
-        var price = cur.getAttribute('data-price');
-        var tag = cur.getAttribute('data-tag');
-        var desc = cur.getAttribute('data-desc');
-        var url = cur.getAttribute('data-product-url');
-        var vid = cur.getAttribute('data-variant-id');
-
-        var mImg = $('[data-modal-img]', modal);
-        var mTitle = $('[data-modal-title]', modal);
-        var mPrice = $('[data-modal-price]', modal);
-        var mTag = $('[data-modal-tag]', modal);
-        var mDesc = $('[data-modal-desc]', modal);
-        var mPdpLink = $('[data-modal-pdp-link]', modal);
-
-        if (mImg && img) mImg.src = img;
-        if (mTitle) mTitle.textContent = title;
-        if (mPrice) mPrice.textContent = price;
-        if (mTag) mTag.textContent = tag;
-        if (mDesc) mDesc.textContent = desc;
-        if (mPdpLink && url) mPdpLink.setAttribute('href', url);
-
-        var modalAddBtn = $('[data-modal-add-to-cart]', modal);
-        if (modalAddBtn && vid) modalAddBtn.setAttribute('data-variant-id', vid);
-      }
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      if (!modal) return;
-      modal.classList.remove('is-open');
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    if (openModalBtn) openModalBtn.addEventListener('click', openModal);
-    closeModalBtns.forEach(function (btn) { btn.addEventListener('click', closeModal); });
-
-    // Swatches and sizes inside modal
-    if (modal) {
-      $$('.orbit-modal__swatches .swatch', modal).forEach(function (sw) {
-        sw.addEventListener('click', function () {
-          $$('.orbit-modal__swatches .swatch', modal).forEach(function (s) { s.classList.remove('is-active'); });
-          sw.classList.add('is-active');
-        });
-      });
-
-      $$('.orbit-modal__sizes .size-btn', modal).forEach(function (sz) {
-        sz.addEventListener('click', function () {
-          $$('.orbit-modal__sizes .size-btn', modal).forEach(function (s) { s.classList.remove('is-active'); });
-          sz.classList.add('is-active');
-        });
-      });
-
-      var modalAddBtn = $('[data-modal-add-to-cart]', modal);
-      if (modalAddBtn) {
-        modalAddBtn.addEventListener('click', function () {
-          var variantId = modalAddBtn.getAttribute('data-variant-id');
-          if (!variantId) {
-            var cur = orbitItems[activeIdx];
-            if (cur) variantId = cur.getAttribute('data-variant-id');
-          }
-          if (!variantId) {
-            var cur = orbitItems[activeIdx];
-            var pUrl = cur && cur.getAttribute('data-product-url');
-            if (pUrl) {
-              safeNavigate(pUrl);
-              return;
-            }
-            toast('Please select an option');
-            return;
-          }
-          var oldText = modalAddBtn.textContent;
-          modalAddBtn.textContent = 'Adding to Bag...';
-          modalAddBtn.disabled = true;
-          var cartTarget = $('.header__cart') || $('[data-cart-count]');
-          if (cartTarget) animateFlyParticle(modalAddBtn, cartTarget);
-
-          addItems([{ id: parseInt(variantId, 10), quantity: 1 }]).then(function () {
-            modalAddBtn.textContent = '✓ Added to Bag!';
-            toast('Runway piece added to bag ✓', true);
-            setTimeout(function () {
-              closeModal();
-              modalAddBtn.textContent = oldText;
-              modalAddBtn.disabled = false;
-              if (window.CartDrawer && typeof window.CartDrawer.open === 'function') {
-                window.CartDrawer.open();
-              }
-            }, 700);
-          }).catch(function (err) {
-            toast(err.message || 'Could not add to bag');
-            modalAddBtn.textContent = oldText;
-            modalAddBtn.disabled = false;
-          });
-        });
-      }
-    }
-
-    // Initialize initial orbit state
-    updateOrbit(0);
-  }
-
-  /* ==========================================================================
-     VIDEO 2: PRODUCTS SHOWCASE (Category Switcher, Rail & Floating Bar)
-     ========================================================================== */
-  var showcase = $('#FashionShowcase');
-  if (showcase) {
-    var catPills = $$('.cat-pill', showcase);
-    var genderBtns = $$('.segment-btn', showcase);
-    var railCards = $$('.rail-card', showcase);
-    var railTrack = $('#ShowcaseRailTrack', showcase);
-    var railPrev = $('[data-rail-prev]', showcase);
-    var railNext = $('[data-rail-next]', showcase);
-    var modelImg = $('#ShowcaseModelImg', showcase);
-    var activeLook = $('#ShowcaseActiveLook', showcase);
-    var activePrice = $('#ShowcaseActivePrice', showcase);
-    var floatingBar = $('#ShowcaseFloatingBar');
-    var floatTitle = $('#FloatingBarTitle');
-    var floatPrice = $('#FloatingBarPrice');
-    var floatAddBtn = $('#FloatingBarAddBtn');
-
-    var activeGenderBtn = $('.segment-btn.is-active', showcase);
-    var currentCat = 'all';
-    var currentGender = activeGenderBtn ? (activeGenderBtn.getAttribute('data-gender-filter') || 'women') : 'women';
-    var modelWomen = showcase.getAttribute('data-model-women');
-    var modelMen = showcase.getAttribute('data-model-men');
-
-    function cardMatches(card, cat, gender) {
-      var cardCat = (card.getAttribute('data-cat') || '').trim().toLowerCase();
-      var cardGender = (card.getAttribute('data-gender') || '').trim().toLowerCase();
-      var matchCat = (cat === 'all') || (cardCat === cat) || (cardCat.indexOf(cat) > -1);
-
-      var matchGender = false;
-      if (gender === 'all') {
-        matchGender = true;
-      } else {
-        var tokens = cardGender.split(/[\s,]+/).filter(Boolean);
-        matchGender = (tokens.indexOf(gender) > -1) || (tokens.indexOf('unisex') > -1);
-      }
-
-      return matchCat && matchGender;
-    }
-
-    function updateCategoryCounts() {
-      catPills.forEach(function (pill) {
-        var cat = pill.getAttribute('data-cat') || 'all';
-        var count = 0;
-        railCards.forEach(function (card) {
-          if (cardMatches(card, cat, currentGender)) {
-            count++;
-          }
-        });
-        var countEl = pill.querySelector('.cat-count');
-        if (countEl) {
-          countEl.textContent = (count < 10 ? '0' : '') + count;
-        }
-        if (count === 0 && cat !== 'all') {
-          pill.style.display = 'none';
-        } else {
-          pill.style.display = '';
-        }
-      });
-    }
-
-    function filterCards() {
-      var visibleCount = 0;
-      var firstVisibleCard = null;
-
-      railCards.forEach(function (card) {
-        if (cardMatches(card, currentCat, currentGender)) {
-          card.style.display = 'flex';
-          visibleCount++;
-          if (!firstVisibleCard) firstVisibleCard = card;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      var emptyRail = $('#ShowcaseEmptyRail', showcase);
-      if (emptyRail) {
-        emptyRail.style.display = (visibleCount === 0) ? 'flex' : 'none';
-      }
-
-      // If active card is now hidden, activate first visible one
-      var activeCard = $('.rail-card.is-active', showcase);
-      if (firstVisibleCard && (!activeCard || activeCard.style.display === 'none')) {
-        activateCard(firstVisibleCard);
-      }
-
-      updateCategoryCounts();
-      if (typeof initCardSliders === 'function') {
-        initCardSliders();
-      }
-    }
-
-    catPills.forEach(function (pill) {
-      pill.addEventListener('click', function () {
-        catPills.forEach(function (p) { p.classList.remove('is-active'); });
-        pill.classList.add('is-active');
-        currentCat = pill.getAttribute('data-cat') || 'all';
-        filterCards();
-      });
-    });
-
-    genderBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        genderBtns.forEach(function (b) { b.classList.remove('is-active'); });
-        btn.classList.add('is-active');
-        currentGender = btn.getAttribute('data-gender-filter') || 'women';
-
-        // Switch editorial model photo
-        var targetModel = (currentGender === 'men') ? modelMen : modelWomen;
-        if (modelImg && targetModel) {
-          modelImg.style.opacity = '0.35';
-          setTimeout(function () {
-            modelImg.src = targetModel;
-            modelImg.style.opacity = '1';
-          }, 150);
-        }
-
-        // Reset category pill to 'all' so customer immediately sees matching items
-        currentCat = 'all';
-        catPills.forEach(function (p) {
-          p.classList.toggle('is-active', (p.getAttribute('data-cat') || 'all') === 'all');
-        });
-
-        if (railTrack) {
-          railTrack.scrollTo({ left: 0, behavior: 'smooth' });
-        }
-
-        filterCards();
-      });
-    });
-
-    var resetCatBtn = $('[data-reset-category]', showcase);
-    if (resetCatBtn) {
-      resetCatBtn.addEventListener('click', function () {
-        currentCat = 'all';
-        catPills.forEach(function (p) {
-          p.classList.toggle('is-active', (p.getAttribute('data-cat') || 'all') === 'all');
-        });
-        filterCards();
-      });
-    }
-
-    updateCategoryCounts();
-
-    // Clicking rail card activates look on model & floating bar
-    function activateCard(card) {
-      railCards.forEach(function (c) { c.classList.remove('is-active'); });
-      card.classList.add('is-active');
-
-      var title = card.getAttribute('data-title') || '';
-      var price = card.getAttribute('data-price') || '';
-      var look = card.getAttribute('data-look') || '';
-      var img = card.getAttribute('data-img') || '';
-      var url = card.getAttribute('data-product-url') || '';
-      var vid = card.getAttribute('data-variant-id') || '';
-
-      var activeDot = $('.swatch-dot.is-active', card);
-      var colorVal = activeDot ? activeDot.getAttribute('data-color-val') : '';
-      if (activeLook) activeLook.textContent = title + (colorVal ? ' (' + colorVal + ')' : '');
-      if (activePrice) activePrice.textContent = price;
-
-      var activeLink = $('#ShowcaseActiveLink', showcase);
-      if (activeLink && url) activeLink.setAttribute('href', url);
-
-      if (modelImg && img) {
-        modelImg.style.opacity = '0.35';
-        setTimeout(function () {
-          modelImg.src = img;
-          modelImg.style.opacity = '1';
-        }, 150);
-      }
-
-      // Update sticky floating bar
-      if (floatTitle) floatTitle.textContent = title + (colorVal ? ' (' + colorVal + ')' : '');
-      if (floatPrice) floatPrice.textContent = price;
-      if (floatAddBtn && vid) floatAddBtn.setAttribute('data-variant-id', vid);
-      var floatPdp = $('#FloatingBarPdpLink');
-      if (floatPdp && url) floatPdp.setAttribute('href', url);
-
-      // Dynamically sync real sizes for active piece in docked bar
-      var sizesContainer = $('#FloatingBarSizes', showcase);
-      var sizeButtonsContainer = $('#FloatingBarSizeButtons', showcase);
-      var sizeLabel = $('#FloatingBarSizeLabel', showcase);
-      var sizesData = card.getAttribute('data-sizes');
-      var sizeName = card.getAttribute('data-size-name') || 'Size';
-
-      if (sizesContainer && sizeButtonsContainer) {
-        var sizes = [];
-        try {
-          if (sizesData) sizes = JSON.parse(sizesData);
-        } catch (err) {
-          sizes = [];
-        }
-
-        var variants = [];
-        try {
-          var vData = card.getAttribute('data-variants');
-          if (vData) variants = JSON.parse(vData);
-        } catch (e) {
-          variants = [];
-        }
-
-        if (Array.isArray(sizes) && sizes.length > 0) {
-          if (sizeLabel) sizeLabel.textContent = 'Select ' + sizeName + ':';
-          sizeButtonsContainer.innerHTML = '';
-
-          var selectedSize = sizes[0].name;
-
-          function getMatchingVariantId(chosenSize) {
-            if (variants && variants.length > 0) {
-              var match = variants.find(function (v) {
-                var hasColor = !colorVal || (v.options && v.options.indexOf(colorVal) > -1) || (v.title && v.title.indexOf(colorVal) > -1);
-                var hasSize = (v.options && v.options.indexOf(chosenSize) > -1) || (v.title && v.title.indexOf(chosenSize) > -1);
-                return hasColor && hasSize;
-              });
-              if (match) return match.id;
-              match = variants.find(function (v) {
-                return (v.options && v.options.indexOf(chosenSize) > -1) || (v.title && v.title.indexOf(chosenSize) > -1);
-              });
-              if (match) return match.id;
-            }
-            var sObj = sizes.find(function (s) { return s.name === chosenSize; });
-            return (sObj && sObj.variant_id) ? sObj.variant_id : vid;
-          }
-
-          sizes.forEach(function (s, idx) {
-            var sBtn = document.createElement('button');
-            sBtn.type = 'button';
-            sBtn.className = 'bar-size-btn' + (idx === 0 ? ' is-active' : '');
-            sBtn.textContent = s.name;
-            sBtn.addEventListener('click', function (e) {
-              e.stopPropagation();
-              $$('.bar-size-btn', sizeButtonsContainer).forEach(function (b) { b.classList.remove('is-active'); });
-              sBtn.classList.add('is-active');
-              selectedSize = s.name;
-              var targetVid = getMatchingVariantId(selectedSize);
-              if (targetVid && floatAddBtn) {
-                floatAddBtn.setAttribute('data-variant-id', targetVid);
-              }
-            });
-            sizeButtonsContainer.appendChild(sBtn);
-          });
-
-          var initialVid = getMatchingVariantId(selectedSize);
-          if (initialVid && floatAddBtn) {
-            floatAddBtn.setAttribute('data-variant-id', initialVid);
-          }
-          sizesContainer.style.display = 'flex';
-        } else {
-          sizesContainer.style.display = 'none';
-        }
-      }
-    }
-
-    railCards.forEach(function (card) {
-      // Swatch dot selection
-      $$('.swatch-dot', card).forEach(function (dot) {
-        dot.addEventListener('click', function (e) {
-          e.stopPropagation();
-          $$('.swatch-dot', card).forEach(function (d) { d.classList.remove('is-active'); });
-          dot.classList.add('is-active');
-
-          var vImg = dot.getAttribute('data-variant-img');
-          var vId = dot.getAttribute('data-variant-id');
-          var cardImg = $('.rail-card__img', card);
-          var quickBtn = $('.rail-card__quick-add', card);
-          var colorName = dot.getAttribute('data-color-val') || '';
-
-          if (vImg && cardImg) {
-            cardImg.src = vImg;
-            card.setAttribute('data-img', vImg);
-          }
-          if (vId) {
-            card.setAttribute('data-variant-id', vId);
-            if (quickBtn) quickBtn.setAttribute('data-quick-add-id', vId);
-          }
-
-          var hintEl = $('#ShowcaseVariantHint', showcase);
-          if (hintEl && colorName) {
-            var hintText = hintEl.querySelector('.variant-hint__text');
-            if (hintText && !hintEl._animating) {
-              hintEl._animating = true;
-              var origHTML = hintText.innerHTML;
-              hintText.innerHTML = '<span style="color:#8C6D37;font-weight:700;">✦ Previewing ' + escapeHtml(colorName) + ' on showcase &larr;</span>';
-              hintEl.style.borderColor = 'var(--gold)';
-              hintEl.style.background = '#FFFFFF';
-              hintEl.style.boxShadow = '0 6px 20px rgba(184, 155, 101, 0.22)';
-              setTimeout(function () {
-                hintText.innerHTML = origHTML;
-                hintEl.style.borderColor = '';
-                hintEl.style.background = '';
-                hintEl.style.boxShadow = '';
-                hintEl._animating = false;
-              }, 2500);
-            }
-          }
-
-          activateCard(card);
-        });
-      });
-
-      card.addEventListener('click', function (e) {
-        if (e.target.closest('.rail-card__quick-add') || e.target.closest('.swatch-dot') || e.target.closest('a')) return;
-        activateCard(card);
-      });
-    });
-
-    // Auto-sync initial active card with showcase model image, category pills, and floating bar
-    filterCards();
-
-    // Quick add buttons on rail cards with real Shopify Cart API
-    $$('.rail-card__quick-add', showcase).forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var card = btn.closest('.rail-card');
-        var variantId = btn.getAttribute('data-quick-add-id') || (card && card.getAttribute('data-variant-id'));
-        if (!variantId) {
-          if (card && card.getAttribute('data-product-url')) {
-            safeNavigate(card.getAttribute('data-product-url'));
-          }
-          return;
-        }
-        var originalText = btn.innerHTML;
-        btn.innerHTML = '<span>Adding...</span>';
-        btn.disabled = true;
-        var cartTarget = $('.header__cart') || $('[data-cart-count]');
-        if (cartTarget) animateFlyParticle(btn, cartTarget);
-
-        addItems([{ id: parseInt(variantId, 10), quantity: 1 }]).then(function () {
-          btn.innerHTML = '<span>✓ Added!</span>';
-          toast('Piece added to bag ✓', true);
-          setTimeout(function () {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            if (window.CartDrawer && typeof window.CartDrawer.open === 'function') {
-              window.CartDrawer.open();
-            }
-          }, 700);
-        }).catch(function (err) {
-          toast(err.message || 'Could not add to bag');
-          btn.innerHTML = originalText;
-          btn.disabled = false;
-        });
-      });
-    });
-
-    // Rail horizontal arrows
-    if (railPrev && railTrack) {
-      railPrev.addEventListener('click', function () {
-        railTrack.scrollBy({ left: -300, behavior: 'smooth' });
-      });
-    }
-    if (railNext && railTrack) {
-      railNext.addEventListener('click', function () {
-        railTrack.scrollBy({ left: 300, behavior: 'smooth' });
-      });
-    }
-
-    // Sticky Floating Bar visibility on scroll
-    if (floatingBar && 'IntersectionObserver' in window) {
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            floatingBar.classList.add('is-visible');
-          } else {
-            floatingBar.classList.remove('is-visible');
-          }
-        });
-      }, { threshold: 0.15 });
-      obs.observe(showcase);
-    }
-
-    // Floating bar size selection
-    $$('.bar-size-btn', floatingBar).forEach(function (b) {
-      b.addEventListener('click', function () {
-        $$('.bar-size-btn', floatingBar).forEach(function (x) { x.classList.remove('is-active'); });
-        b.classList.add('is-active');
-      });
-    });
-
-    if (floatAddBtn) {
-      floatAddBtn.addEventListener('click', function () {
-        var variantId = floatAddBtn.getAttribute('data-variant-id');
-        if (!variantId) {
-          var activeCard = $('.rail-card.is-active', showcase);
-          if (activeCard) variantId = activeCard.getAttribute('data-variant-id');
-        }
-        if (!variantId) {
-          var activeCard = $('.rail-card.is-active', showcase);
-          var pUrl = (activeCard && activeCard.getAttribute('data-product-url'));
-          if (pUrl) {
-            safeNavigate(pUrl);
-            return;
-          }
-          toast('Please select an option');
-          return;
-        }
-        var original = floatAddBtn.innerHTML;
-        floatAddBtn.innerHTML = '<span>Adding to Bag...</span>';
-        floatAddBtn.disabled = true;
-        var cartTarget = $('.header__cart') || $('[data-cart-count]');
-        if (cartTarget) animateFlyParticle(floatAddBtn, cartTarget);
-
-        addItems([{ id: parseInt(variantId, 10), quantity: 1 }]).then(function () {
-          floatAddBtn.innerHTML = '<span>✓ Added to Bag!</span>';
-          toast('Selected piece added to bag ✓', true);
-          setTimeout(function () {
-            floatAddBtn.innerHTML = original;
-            floatAddBtn.disabled = false;
-            if (window.CartDrawer && typeof window.CartDrawer.open === 'function') {
-              window.CartDrawer.open();
-            }
-          }, 700);
-        }).catch(function (err) {
-          toast(err.message || 'Could not add to bag');
-          floatAddBtn.innerHTML = original;
-          floatAddBtn.disabled = false;
-        });
-      });
-    }
-  }
-
-  /* ---------- Lookbook Rail Scroll Controls ---------- */
-  var lookRailViewport = $('#LookbookRailViewport');
-  var lookPrev = $('[data-rail-prev-look]');
-  var lookNext = $('[data-rail-next-look]');
-  if (lookRailViewport) {
-    if (lookPrev) {
-      lookPrev.addEventListener('click', function () {
-        lookRailViewport.scrollBy({ left: -260, behavior: 'smooth' });
-      });
-    }
-    if (lookNext) {
-      lookNext.addEventListener('click', function () {
-        lookRailViewport.scrollBy({ left: 260, behavior: 'smooth' });
-      });
-    }
-  }
-
-  // Full-card click navigation for Lookbook rail cards
-  document.addEventListener('click', function (e) {
-    var card = e.target.closest('.look-card');
-    if (card && !e.target.closest('a') && !e.target.closest('button')) {
-      var url = card.getAttribute('data-product-url');
-      if (url) {
-        safeNavigate(url);
-      }
-    }
+  if (/contact_posted=true/.test(location.search) && $('#OrderReviewForm')) setTimeout(() => toast('Thank you! Your review was sent for approval.'), 400);
+
+  /* ---------- boot ---------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    syncHearts();
+    $$('[data-product]').forEach(initProduct);
+    $$('[data-facet-root]').forEach(initFacets);
+    initSearch(); initReviews(); initRecs(); renderWishlist();
+    $$('[data-hero]').forEach(initHero); $$('[data-studio]').forEach(initStudio);
+    if ($('[data-cart-page]') || $('#CartDrawer')) refreshCart();
   });
-
-  /* ==========================================================================
-     WISHLIST / FAVORITES SYSTEM WITH LIVE ANIMATIONS
-     ========================================================================== */
-  var WISHLIST_KEY = 'zeyov_wishlist';
-
-  function getWishlist() {
-    try {
-      return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]');
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function saveWishlist(list) {
-    try {
-      localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
-    } catch (e) {}
-    updateWishlistUI();
-  }
-
-  function renderWishlistDrawer() {
-    var container = $('#WishlistItems');
-    var emptyState = $('#WishlistEmptyState');
-    if (!container) return;
-    var list = getWishlist();
-    if (list.length === 0) {
-      container.innerHTML = '';
-      if (emptyState) emptyState.style.display = 'flex';
-      return;
-    }
-    if (emptyState) emptyState.style.display = 'none';
-    var html = '';
-    list.forEach(function (item) {
-      if (!item || typeof item !== 'object') return;
-      var safeHandle = String(item.handle || '').replace(/[^a-zA-Z0-9_\-]/g, '');
-      var safeTitle = escapeHtml(item.title || '');
-      var safePrice = escapeHtml(item.price || '');
-      var safeUrl = isSafeUrl(item.url) ? encodeURI(item.url) : '#';
-      var rawImg = String(item.image || '');
-      var safeImg = (rawImg.startsWith('https://') || rawImg.startsWith('//') || rawImg.startsWith('/')) ? encodeURI(rawImg) : '';
-
-      html += '<div class="wishlist-item" data-wishlist-handle="' + safeHandle + '">' +
-        '<img class="wishlist-item__img" src="' + safeImg + '" alt="' + safeTitle + '" loading="lazy">' +
-        '<div class="wishlist-item__info">' +
-          '<a href="' + safeUrl + '" class="wishlist-item__title">' + safeTitle + '</a>' +
-          '<span class="wishlist-item__price">' + safePrice + '</span>' +
-        '</div>' +
-        '<div class="wishlist-item__actions">' +
-          '<a href="' + safeUrl + '" class="btn btn--small btn--luxury">View</a>' +
-          '<button type="button" class="icon-btn" data-wishlist-remove="' + safeHandle + '" aria-label="Remove piece" style="color:#C23636;padding:6px;">' +
-            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg>' +
-          '</button>' +
-        '</div>' +
-      '</div>';
-    });
-    container.innerHTML = html;
-  }
-
-  function updateWishlistUI() {
-    var list = getWishlist();
-    var count = list.length;
-    $$('[data-wishlist-count]').forEach(function (el) {
-      el.textContent = count;
-      el.classList.toggle('is-empty', count === 0);
-    });
-    $$('[data-wishlist-count-text]').forEach(function (el) {
-      el.textContent = count;
-    });
-    $$('[data-wishlist-toggle]').forEach(function (btn) {
-      var h = btn.getAttribute('data-wishlist-toggle');
-      var active = list.some(function (i) { return i.handle === h; });
-      btn.classList.toggle('is-active', active);
-    });
-    renderWishlistDrawer();
-  }
-
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest('[data-wishlist-toggle]');
-    if (btn) {
-      e.preventDefault();
-      var handle = btn.getAttribute('data-wishlist-toggle');
-      var title = btn.getAttribute('data-title') || 'Product';
-      var price = btn.getAttribute('data-price') || '';
-      var image = btn.getAttribute('data-image') || '';
-      var url = btn.getAttribute('data-url') || ('/products/' + handle);
-
-      btn.classList.add('heart-pop-anim');
-      setTimeout(function () { btn.classList.remove('heart-pop-anim'); }, 500);
-
-      var list = getWishlist();
-      var exists = list.some(function (i) { return i.handle === handle; });
-      var targetBadge = $('.header__wishlist') || $('[data-wishlist-count]');
-
-      if (exists) {
-        list = list.filter(function (i) { return i.handle !== handle; });
-        saveWishlist(list);
-        toast('Removed from Wishlist');
-      } else {
-        list.push({ handle: handle, title: title, price: price, image: image, url: url });
-        saveWishlist(list);
-        if (targetBadge) {
-          animateFlyParticle(btn, targetBadge);
-          targetBadge.classList.add('badge-bump-anim');
-          setTimeout(function () { targetBadge.classList.remove('badge-bump-anim'); }, 500);
-        }
-        toast('Saved to Wishlist ♥');
-      }
-      return;
-    }
-
-    var rmBtn = e.target.closest('[data-wishlist-remove]');
-    if (rmBtn) {
-      e.preventDefault();
-      var rmHandle = rmBtn.getAttribute('data-wishlist-remove');
-      var curList = getWishlist().filter(function (i) { return i.handle !== rmHandle; });
-      saveWishlist(curList);
-      toast('Removed from Wishlist');
-      return;
-    }
-
-    var openW = e.target.closest('[data-open-wishlist]');
-    if (openW) {
-      e.preventDefault();
-      var wDrawer = $('#WishlistDrawer');
-      if (wDrawer) {
-        wDrawer.hidden = false;
-        if (overlay) { overlay.hidden = false; document.body.style.overflow = 'hidden'; }
-      }
-      return;
-    }
-
-    var closeW = e.target.closest('[data-close-wishlist]');
-    if (closeW) {
-      e.preventDefault();
-      var wDrawer2 = $('#WishlistDrawer');
-      if (wDrawer2) {
-        wDrawer2.hidden = true;
-        if (overlay) { overlay.hidden = true; document.body.style.overflow = ''; }
-      }
-      return;
-    }
-  });
-
-  /* ==========================================================================
-     MARKETING AUTOMATION & RETENTION ENGINE (ZEYOV)
-     - Exit-Intent & Idle Cart Recovery Modal
-     - Back in Stock WhatsApp / Email Notification Modal
-     - Dynamic Personalized Recommendations & Browsing History Engine
-     - One-Tap Coupon Code Copy
-     ========================================================================== */
-
-  // 1. One-Tap Coupon Copy Handler
-  document.addEventListener('click', function (e) {
-    var cpBtn = e.target.closest('[data-copy-coupon]');
-    if (cpBtn) {
-      e.preventDefault();
-      var code = cpBtn.getAttribute('data-copy-coupon') || 'ZEYOV10';
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(code).then(function () {
-          toast('Code ' + code + ' copied to clipboard!');
-        }).catch(function () {
-          toast('Use code: ' + code);
-        });
-      } else {
-        toast('Use code: ' + code);
-      }
-    }
-  });
-
-  // 3. Back in Stock Modal
-  var stockModal = $('#BackInStockModal');
-  function openStockModal() {
-    if (!stockModal) return;
-    stockModal.style.display = 'flex';
-    stockModal.classList.add('is-open');
-    stockModal.setAttribute('aria-hidden', 'false');
-
-    try {
-      var storedContact = JSON.parse(localStorage.getItem('zeyov_customer_contact') || '{}');
-      if (storedContact.phone && $('#StockPhone')) $('#StockPhone').value = storedContact.phone;
-      if (storedContact.email && $('#StockEmail')) $('#StockEmail').value = storedContact.email;
-    } catch (e) {}
-  }
-
-  function closeStockModal() {
-    if (!stockModal) return;
-    stockModal.style.display = 'none';
-    stockModal.classList.remove('is-open');
-    stockModal.setAttribute('aria-hidden', 'true');
-  }
-
-  document.addEventListener('click', function (e) {
-    if (e.target.closest('[data-open-stock-modal]')) {
-      e.preventDefault();
-      openStockModal();
-      return;
-    }
-    if (e.target.closest('[data-close-stock-modal]')) {
-      e.preventDefault();
-      closeStockModal();
-      return;
-    }
-  });
-
-  var stockForm = $('#BackInStockForm');
-  if (stockForm) {
-    stockForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var phone = ($('#StockPhone') ? $('#StockPhone').value.trim() : '');
-      var email = ($('#StockEmail') ? $('#StockEmail').value.trim() : '');
-      var vId = ($('#StockVariantId') ? $('#StockVariantId').value : '');
-      var pTitle = ($('#StockModalProductTitle') ? $('#StockModalProductTitle').textContent : 'Product');
-
-      if (!phone || !/^[6-9][0-9]{9}$/.test(phone)) {
-        toast('Please enter a valid 10-digit WhatsApp number.');
-        return;
-      }
-
-      var btn = $('#StockSubmitBtn');
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = 'Submitting alert request...';
-      }
-
-      try {
-        localStorage.setItem('zeyov_customer_contact', JSON.stringify({ phone: phone, email: email }));
-        var list = JSON.parse(localStorage.getItem('zeyov_restock_alerts') || '[]');
-        list.push({ phone: phone, email: email, variantId: vId, title: pTitle, time: new Date().toISOString() });
-        localStorage.setItem('zeyov_restock_alerts', JSON.stringify(list));
-      } catch (err) {}
-
-      setTimeout(function () {
-        closeStockModal();
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = 'Notify Me on WhatsApp & Email →';
-        }
-        toast('Restock alert confirmed! We will message you on WhatsApp & Email when available.');
-      }, 500);
-    });
-  }
-
-  // 4. Personalized Recommendations & Browsing History Engine
-  var RECENT_KEY = 'zeyov_recent_views';
-  function trackCurrentProductView() {
-    if (window.location.pathname.indexOf('/products/') === -1) return;
-    var handle = window.location.pathname.split('/products/')[1].split('/')[0].split('?')[0];
-    if (!handle) return;
-
-    var titleEl = $('.pdp__title');
-    var priceEl = $('[data-price-now]');
-    var imgEl = $('.gallery__slide.is-active img') || $('.gallery__slide img');
-
-    if (!titleEl) return;
-
-    var productItem = {
-      handle: handle,
-      title: titleEl.textContent.trim(),
-      price: priceEl ? priceEl.textContent.trim() : '',
-      image: imgEl ? imgEl.src : '',
-      url: '/products/' + handle
-    };
-
-    try {
-      var views = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-      views = views.filter(function (p) { return p.handle !== handle; });
-      views.unshift(productItem);
-      if (views.length > 8) views = views.slice(0, 8);
-      localStorage.setItem(RECENT_KEY, JSON.stringify(views));
-    } catch (err) {}
-  }
-
-  function renderPersonalizedRecs() {
-    var recsSec = $('#PersonalizedRecsSection');
-    var grid = $('#PersonalizedRecsGrid');
-    if (!recsSec || !grid) return;
-
-    var curHandle = (window.location.pathname.indexOf('/products/') !== -1)
-      ? window.location.pathname.split('/products/')[1].split('/')[0].split('?')[0]
-      : '';
-
-    var views = [];
-    try {
-      views = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-    } catch (e) {
-      views = [];
-    }
-
-    var filtered = views.filter(function (p) { return p.handle !== curHandle; });
-
-    if (filtered.length > 0) {
-      var html = '';
-      filtered.slice(0, 4).forEach(function (p) {
-        html += '<a href="' + encodeURI(p.url) + '" class="personalized-card">' +
-          '<div class="personalized-card__media">' +
-            (p.image ? '<img src="' + encodeURI(p.image) + '" alt="' + escapeHtml(p.title) + '" loading="lazy" width="400" height="400">' : '') +
-          '</div>' +
-          '<div class="personalized-card__info">' +
-            '<span class="personalized-card__tag">RECENTLY VIEWED</span>' +
-            '<h3 class="personalized-card__title">' + escapeHtml(p.title) + '</h3>' +
-            '<div class="personalized-card__price-row">' +
-              '<span class="personalized-card__price">' + escapeHtml(p.price) + '</span>' +
-              '<span class="personalized-card__action">View &rarr;</span>' +
-            '</div>' +
-          '</div>' +
-        '</a>';
-      });
-      grid.innerHTML = html;
-      recsSec.style.display = 'block';
-    } else {
-      // If no browsing history yet, load 4 runway products via JSON
-      fetch('/collections/all/products.json?limit=4')
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (data && data.products && data.products.length > 0) {
-            var html = '';
-            data.products.filter(function (p) { return p.handle !== curHandle; }).slice(0, 4).forEach(function (p) {
-              var img = (p.images && p.images[0]) ? p.images[0].src : '';
-              var price = (p.variants && p.variants[0]) ? formatMoney(p.variants[0].price * 100) : '';
-              html += '<a href="/products/' + encodeURI(p.handle) + '" class="personalized-card">' +
-                '<div class="personalized-card__media">' +
-                  (img ? '<img src="' + encodeURI(img) + '" alt="' + escapeHtml(p.title) + '" loading="lazy" width="400" height="400">' : '') +
-                '</div>' +
-                '<div class="personalized-card__info">' +
-                  '<span class="personalized-card__tag">RECOMMENDED</span>' +
-                  '<h3 class="personalized-card__title">' + escapeHtml(p.title) + '</h3>' +
-                  '<div class="personalized-card__price-row">' +
-                    '<span class="personalized-card__price">' + escapeHtml(price) + '</span>' +
-                    '<span class="personalized-card__action">View &rarr;</span>' +
-                  '</div>' +
-                '</div>' +
-              '</a>';
-            });
-            if (html) {
-              grid.innerHTML = html;
-              recsSec.style.display = 'block';
-            }
-          }
-        })
-        .catch(function () {});
-    }
-  }
-
-  /* ==========================================================================
-     HIGH-CONVERSION UI SCRIPTS (ANTIGRAVITY STANDARDS)
-     ========================================================================== */
-
-  /* 1. Dynamic Promo Slider */
-  function initPromoSliders() {
-    $$('[data-promo-slider]').forEach(function (slider) {
-      var section = slider.closest('.promo-slider-section');
-      var slides = $$('.promo-slide', slider);
-      if (slides.length <= 1) return;
-
-      var dotsContainer = $('[data-slider-dots]', slider);
-      var prevBtn = $('[data-slider-prev]', slider);
-      var nextBtn = $('[data-slider-next]', slider);
-      var currentIndex = 0;
-      var autoplay = section && section.getAttribute('data-autoplay') === 'true';
-      var intervalMs = parseInt(section && section.getAttribute('data-interval')) || 5000;
-      var timer = null;
-
-      // Create dots
-      if (dotsContainer) {
-        dotsContainer.innerHTML = '';
-        slides.forEach(function (_, i) {
-          var dot = document.createElement('button');
-          dot.type = 'button';
-          dot.className = 'promo-slider__dot' + (i === 0 ? ' is-active' : '');
-          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-          dot.addEventListener('click', function () { goToSlide(i); });
-          dotsContainer.appendChild(dot);
-        });
-      }
-
-      function goToSlide(idx) {
-        slides[currentIndex].classList.remove('is-active');
-        if (dotsContainer && dotsContainer.children[currentIndex]) {
-          dotsContainer.children[currentIndex].classList.remove('is-active');
-        }
-
-        currentIndex = (idx + slides.length) % slides.length;
-
-        slides[currentIndex].classList.add('is-active');
-        if (dotsContainer && dotsContainer.children[currentIndex]) {
-          dotsContainer.children[currentIndex].classList.add('is-active');
-        }
-      }
-
-      function nextSlide() { goToSlide(currentIndex + 1); }
-      function prevSlide() { goToSlide(currentIndex - 1); }
-
-      if (nextBtn) nextBtn.addEventListener('click', function () { nextSlide(); resetTimer(); });
-      if (prevBtn) prevBtn.addEventListener('click', function () { prevSlide(); resetTimer(); });
-
-      // Touch swipe support
-      var touchStartX = 0;
-      slider.addEventListener('touchstart', function (e) {
-        touchStartX = e.changedTouches[0].screenX;
-      }, { passive: true });
-
-      slider.addEventListener('touchend', function (e) {
-        var touchEndX = e.changedTouches[0].screenX;
-        if (touchStartX - touchEndX > 45) { nextSlide(); resetTimer(); }
-        else if (touchEndX - touchStartX > 45) { prevSlide(); resetTimer(); }
-      }, { passive: true });
-
-      function startTimer() {
-        if (autoplay) {
-          timer = setInterval(nextSlide, intervalMs);
-        }
-      }
-
-      function resetTimer() {
-        if (timer) clearInterval(timer);
-        startTimer();
-      }
-
-      startTimer();
-    });
-  }
-
-  /* 2. Instant Quick View Modal */
-  function initQuickView() {
-    var modal = $('#QuickViewModal');
-    var content = $('#QuickViewContent');
-    if (!modal || !content) return;
-
-    function closeQuickView() {
-      modal.hidden = true;
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    modal.addEventListener('click', function (e) {
-      if (e.target.hasAttribute('data-close-quick-view') || e.target.closest('[data-close-quick-view]')) {
-        closeQuickView();
-      }
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !modal.hidden) closeQuickView();
-    });
-
-    document.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-quick-view]');
-      if (!btn) return;
-      e.preventDefault();
-
-      var handle = btn.getAttribute('data-quick-view');
-      if (!handle) return;
-
-      modal.hidden = false;
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      content.innerHTML = '<div class="quick-view-loading"><div class="quick-view-spinner"></div><span>Loading garment details...</span></div>';
-
-      fetch('/products/' + encodeURIComponent(handle) + '.js')
-        .then(function (r) {
-          if (!r.ok) throw new Error('Product not found');
-          return r.json();
-        })
-        .then(function (product) {
-          var featuredImg = (product.images && product.images[0]) || '';
-          var variants = product.variants || [];
-          var selectedVariant = variants[0] || {};
-          var priceFormatted = formatMoney(selectedVariant.price);
-          var comparePriceFormatted = selectedVariant.compare_at_price > selectedVariant.price ? formatMoney(selectedVariant.compare_at_price) : '';
-
-          var optionsHtml = '';
-          if (product.options && product.options.length > 0 && !(product.options.length === 1 && product.options[0].name === 'Title')) {
-            product.options.forEach(function (opt, optIdx) {
-              optionsHtml += '<div class="quick-view-options"><span class="quick-view-option-title">' + escapeHtml(opt.name) + '</span><div class="quick-view-pills">';
-              opt.values.forEach(function (val, valIdx) {
-                optionsHtml += '<button type="button" class="quick-view-pill' + (valIdx === 0 ? ' is-selected' : '') + '" data-qv-opt-index="' + optIdx + '" data-qv-val="' + escapeHtml(val) + '">' + escapeHtml(val) + '</button>';
-              });
-              optionsHtml += '</div></div>';
-            });
-          }
-
-          content.innerHTML = 
-            '<div class="quick-view-grid">' +
-              '<div class="quick-view-media">' +
-                (featuredImg ? '<img src="' + encodeURI(featuredImg) + '" alt="' + escapeHtml(product.title) + '" id="QvMainImg">' : '') +
-              '</div>' +
-              '<div class="quick-view-details">' +
-                '<span class="eyebrow" style="margin-bottom:4px">' + escapeHtml(product.vendor || 'ZEYOV') + '</span>' +
-                '<h2 class="quick-view-title" id="QuickViewTitle">' + escapeHtml(product.title) + '</h2>' +
-                '<div class="quick-view-price">' +
-                  '<span id="QvPrice">' + priceFormatted + '</span>' +
-                  (comparePriceFormatted ? '<s style="color:var(--muted);font-size:1rem" id="QvCompare">' + comparePriceFormatted + '</s>' : '') +
-                '</div>' +
-                optionsHtml +
-                '<button type="button" class="btn btn--gold btn--block quick-view-atc-btn" id="QvAddBtn" data-qv-id="' + selectedVariant.id + '">' +
-                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>' +
-                  '<span>Add to Bag</span>' +
-                '</button>' +
-                '<div style="margin-top:14px;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:6px">' +
-                  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' +
-                  '<span>Free Pan-India Delivery &bull; 7-Day Easy Returns</span>' +
-                '</div>' +
-              '</div>' +
-            '</div>';
-
-          // Option pill selection logic
-          var selectedOptions = product.options.map(function (opt) { return opt.values[0]; });
-
-          function updateVariant() {
-            var matched = variants.find(function (v) {
-              return v.options.every(function (val, idx) { return val === selectedOptions[idx]; });
-            });
-            var qvBtn = $('#QvAddBtn');
-            var qvPrice = $('#QvPrice');
-            var qvImg = $('#QvMainImg');
-
-            if (matched) {
-              if (qvBtn) {
-                qvBtn.setAttribute('data-qv-id', matched.id);
-                qvBtn.disabled = !matched.available;
-                $('span', qvBtn).textContent = matched.available ? 'Add to Bag' : 'Sold out';
-              }
-              if (qvPrice) qvPrice.textContent = formatMoney(matched.price);
-              if (matched.featured_image && qvImg) {
-                qvImg.src = matched.featured_image.src;
-              }
-            }
-          }
-
-          content.querySelectorAll('.quick-view-pill').forEach(function (pill) {
-            pill.addEventListener('click', function () {
-              var optIdx = parseInt(this.getAttribute('data-qv-opt-index'));
-              var val = this.getAttribute('data-qv-val');
-              this.parentElement.querySelectorAll('.quick-view-pill').forEach(function (p) { p.classList.remove('is-selected'); });
-              this.classList.add('is-selected');
-              selectedOptions[optIdx] = val;
-              updateVariant();
-            });
-          });
-
-          // Add to Bag action from Quick View
-          var addBtn = $('#QvAddBtn');
-          if (addBtn) {
-            addBtn.addEventListener('click', function () {
-              var vid = this.getAttribute('data-qv-id');
-              if (!vid) return;
-              var btnSpan = $('span', addBtn);
-              var origText = btnSpan ? btnSpan.textContent : 'Add to Bag';
-              if (btnSpan) btnSpan.textContent = 'Adding...';
-
-              addItems([{ id: parseInt(vid), quantity: 1 }])
-                .then(function () {
-                  if (btnSpan) btnSpan.textContent = 'Added to Bag!';
-                  toast('Added ' + product.title + ' to bag', true);
-                  setTimeout(function () {
-                    closeQuickView();
-                  }, 800);
-                })
-                .catch(function (err) {
-                  alert(err.message || 'Could not add to bag');
-                  if (btnSpan) btnSpan.textContent = origText;
-                });
-            });
-          }
-        })
-        .catch(function (err) {
-          content.innerHTML = '<div style="text-align:center;padding:30px 10px"><p>Could not load garment details.</p><button type="button" class="btn btn--small btn--gold" data-close-quick-view>Close</button></div>';
-        });
-    });
-  }
-
-  /* 3. Sticky Mobile PDP Bar */
-  function initStickyPdpBar() {
-    var bar = $('#StickyPdpBar');
-    var mainAtc = $('[data-add-btn]');
-    if (!bar || !mainAtc) return;
-
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        // If main ATC is out of view (scrolled past), show sticky bar
-        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-          bar.classList.add('is-visible');
-        } else {
-          bar.classList.remove('is-visible');
-        }
-      });
-    }, { threshold: 0.1 });
-
-    observer.observe(mainAtc);
-
-    var triggerBtn = $('[data-sticky-trigger-add]', bar);
-    if (triggerBtn) {
-      triggerBtn.addEventListener('click', function () {
-        if (mainAtc && !mainAtc.disabled) {
-          mainAtc.click();
-        }
-      });
-    }
-  }
-
-  /* 4. Mobile Bottom Sheet Filters */
-  function initMobileFilters() {
-    var openBtns = $$('[data-open-filters]');
-    var closeBackdrop = $('[data-close-filters]');
-    var facetsWrap = $('#CollectionFacets') || $('#CollectionTagFilters');
-    if (!facetsWrap) return;
-
-    function openFilters() {
-      facetsWrap.classList.add('is-open');
-      if (closeBackdrop) closeBackdrop.classList.add('is-active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeFilters() {
-      facetsWrap.classList.remove('is-open');
-      if (closeBackdrop) closeBackdrop.classList.remove('is-active');
-      document.body.style.overflow = '';
-    }
-
-    openBtns.forEach(function (btn) {
-      btn.addEventListener('click', openFilters);
-    });
-
-    if (closeBackdrop) closeBackdrop.addEventListener('click', closeFilters);
-
-    $$('[data-close-filters]').forEach(function (el) {
-      el.addEventListener('click', closeFilters);
-    });
-  }
-
-  /* 5. Mobile Sort Bottom Sheet Modal (Myntra App Architecture) */
-  function initSortBottomSheet() {
-    var openBtns = $$('[data-open-sort-sheet]');
-    var sheet = $('#SortBottomSheet') || $('#SortBottomSheetFallback');
-    var backdrop = $('#SortSheetBackdrop') || $('#SortSheetBackdropFallback');
-    if (!sheet) return;
-
-    function openSheet() {
-      sheet.classList.add('is-open');
-      if (backdrop) backdrop.hidden = false;
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeSheet() {
-      sheet.classList.remove('is-open');
-      if (backdrop) backdrop.hidden = true;
-      document.body.style.overflow = '';
-    }
-
-    openBtns.forEach(function (btn) {
-      btn.addEventListener('click', openSheet);
-    });
-
-    if (backdrop) backdrop.addEventListener('click', closeSheet);
-    $$('[data-close-sort-sheet]').forEach(function (el) {
-      el.addEventListener('click', closeSheet);
-    });
-
-    $$('.sort-sheet__item').forEach(function (item) {
-      item.addEventListener('click', function () {
-        var sortVal = item.getAttribute('data-sort');
-        if (sortVal) {
-          var url = new URL(window.location.href);
-          url.searchParams.set('sort_by', sortVal);
-          window.location.href = url.toString();
-        }
-      });
-    });
-  }
-
-  /* ==========================================================================
-     PRODUCT CARD MULTI-IMAGE SWIPE SLIDER (Flipkart / Myntra Architecture)
-     ========================================================================== */
-  function initCardSliders() {
-    var sliders = $$('[data-card-slider]');
-    sliders.forEach(function (slider) {
-      if (slider.__sliderInitialized) return;
-      slider.__sliderInitialized = true;
-
-      var track = $('[data-card-track]', slider);
-      if (!track) return;
-      var dots = $$('.card__slider-dot', slider);
-      var prevBtn = $('[data-card-slide-prev]', slider);
-      var nextBtn = $('[data-card-slide-next]', slider);
-
-      var startX = 0;
-      var moved = false;
-
-      // Update dots as user scrolls / swipes
-      var scrollTimer = null;
-      track.addEventListener('scroll', function () {
-        if (scrollTimer) cancelAnimationFrame(scrollTimer);
-        scrollTimer = requestAnimationFrame(function () {
-          var slideWidth = track.clientWidth || 1;
-          var index = Math.round(track.scrollLeft / slideWidth);
-          dots.forEach(function (dot, i) {
-            dot.classList.toggle('is-active', i === index);
-          });
-        });
-      }, { passive: true });
-
-      // Touch drag tracking to prevent navigation while swiping
-      track.addEventListener('touchstart', function (e) {
-        if (e.touches && e.touches[0]) {
-          startX = e.touches[0].clientX;
-          moved = false;
-        }
-      }, { passive: true });
-
-      track.addEventListener('touchmove', function (e) {
-        if (e.touches && e.touches[0]) {
-          var diff = Math.abs(e.touches[0].clientX - startX);
-          if (diff > 8) {
-            moved = true;
-          }
-        }
-      }, { passive: true });
-
-      var slides = $$('.card__slider-slide', track);
-      slides.forEach(function (slide) {
-        slide.addEventListener('click', function (e) {
-          if (moved) {
-            e.preventDefault();
-            e.stopPropagation();
-            moved = false;
-          }
-        });
-      });
-
-      // Desktop arrow controls
-      if (prevBtn) {
-        prevBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          var slideWidth = track.clientWidth || 250;
-          track.scrollBy({ left: -slideWidth, behavior: 'smooth' });
-        });
-      }
-      if (nextBtn) {
-        nextBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          var slideWidth = track.clientWidth || 250;
-          track.scrollBy({ left: slideWidth, behavior: 'smooth' });
-        });
-      }
-    });
-  }
-
-  // Initialize all conversion enhancements
-  initCardSliders();
-  initPromoSliders();
-  initQuickView();
-  initStickyPdpBar();
-  initMobileFilters();
-  initSortBottomSheet();
-
-  trackCurrentProductView();
-  renderPersonalizedRecs();
-
-  // Initial Wishlist UI sync on page load
-  updateWishlistUI();
+  window.ZeyovTheme = { money, calcOffers, refreshCart, openQuickAdd };
 })();
-
-

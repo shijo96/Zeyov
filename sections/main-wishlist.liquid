@@ -1,0 +1,12 @@
+<div class="wrap" style="padding-bottom:60px">
+  <div class="coll-hero"><span class="eyebrow">Saved for later</span><h1>{{ section.settings.heading }}</h1><p class="muted">Tap the heart on any tee to save it here. Saved on this device.</p></div>
+  <div data-wishlist-grid class="grid grid--4" style="margin-top:12px"></div>
+  <div data-wishlist-empty class="empty" hidden>
+    <h2>Nothing saved yet</h2>
+    <p class="muted">Your favourite colours and fits will live here.</p>
+    <a class="btn" href="{{ routes.all_products_collection_url }}">Browse tees</a>
+  </div>
+</div>
+{% schema %}
+{ "name": "Wishlist", "settings": [{ "type": "text", "id": "heading", "label": "Heading", "default": "Your wishlist" }] }
+{% endschema %}

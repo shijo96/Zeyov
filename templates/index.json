@@ -1,240 +1,207 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "quick_categories": {
-      "type": "quick-categories",
-      "settings": {
-        "heading": "",
-        "view_all_link": "",
-        "view_all_text": "Explore All"
-      }
-    },
-    "runway_orbit": {
-      "type": "runway-orbit",
-      "settings": {
-        "color_scheme": "ivory",
-        "eyebrow": "ZEYOV RUNWAY EDIT • SS25",
-        "heading": "NOT A STORE. A RUNWAY.",
-        "collection": "new-arrivals",
-        "product_1": "",
-        "tag_1": "AUTUMN / WINTER 24",
-        "product_2": "",
-        "tag_2": "RUNWAY COUTURE",
-        "product_3": "",
-        "tag_3": "TIMELESS OUTERWEAR",
-        "product_4": "",
-        "tag_4": "COMFORT LUXURY"
-      }
-    },
-    "fashion_showcase": {
-      "type": "fashion-showcase",
-      "settings": {
-        "eyebrow": "ZEYOV ATELIER • SS25 RUNWAY",
-        "heading": "PRODUCTS SHOWCASE",
-        "collection": "frontpage",
-        "limit": 8,
-        "quote": "Draped to sculpt, engineered to move effortlessly.",
-        "signature": "ZEYOV RUNWAY ATELIER"
-      }
-    },
-    "fashion_rail": {
-      "type": "fashion-rail",
-      "settings": {
-        "eyebrow": "THE RUNWAY LOOKBOOK",
-        "heading": "CURATED SILHOUETTES",
-        "subheading": "Every piece is precision-tailored in limited batches with luxury fabrics designed for lasting distinction.",
-        "collection": "women-s-clothing",
-        "product_1": "",
-        "tag_1": "EVENING & OCCASION",
-        "fabric_1": "100% Grade-6A Mulberry Silk • Hand-stitched drape",
-        "product_2": "",
-        "tag_2": "OUTERWEAR ATELIER",
-        "fabric_2": "Double-Faced Virgin Wool • Custom Horn Buttons",
-        "product_3": "",
-        "tag_3": "WINTER CAPSULE",
-        "fabric_3": "Water-repellent micro-ripstop shell • 700 Fill loft",
-        "product_4": "",
-        "tag_4": "COMFORT LUXURY",
-        "fabric_4": "Bonded High-Density Sherpa • Navy contrast flap"
-      }
-    },
-    "fashion_reveal": {
-      "type": "fashion-reveal",
-      "settings": {
-        "watermark": "ATELIER",
-        "badge_title": "MASTER TAILORED",
-        "badge_text": "Limited 50 Pieces Per Drop",
-        "eyebrow": "CRAFTSMANSHIP & ARCHITECTURE",
-        "heading": "TAILORED TO PERFECTION",
-        "lead": "We design clothing with the philosophy that garments should sculpt gracefully, provide unmatched tactile comfort, and endure across seasons.",
-        "f1_title": "Pure Natural Fibers • Grade-6A Silk & Virgin Wool",
-        "f1_text": "We strictly avoid cheap synthetics. Our silks glide with cool-touch fluidity, while our double-faced virgin wools insulate without weight.",
-        "f2_title": "Ergonomic Silhouette • Tailored for Indian Bodies",
-        "f2_text": "Every seam is drafted with custom torso lengths, generous shoulder mobility, and flattering cinch contours tested on real Indian figures.",
-        "f3_title": "Pre-Shrunk & Colorfast Integrity",
-        "f3_text": "Treated with eco-conscious reactive dyes and pre-washed so the rich emeralds, ambers, and blacks stay deep and vibrant wash after wash.",
-        "button_label": "Shop The Runway Collection →",
-        "button_link": "",
-        "guarantee": "7-Day Hassle-Free Exchange Guaranteed"
-      }
-    },
-    "featured": {
-      "type": "featured-collection",
-      "settings": {
-        "eyebrow": "ATELIER ACCESSORIES",
-        "heading": "Luxury Accessories & Runway Accents",
-        "text": "Handcrafted Italian silk scarves, gold-buckle leather belts, and couture accessories designed to complete every silhouette.",
-        "collection": "frontpage",
-        "limit": 10,
-        "show_all": true
-      }
-    },
-    "festive_campaign": {
-      "type": "festival-campaign-banner",
-      "disabled": true,
-      "settings": {
-        "enable_campaign": true,
-        "theme_style": "luxury_gold",
-        "badge_text": "LIMITED FESTIVE DROP",
-        "heading": "Curated Festive Celebrations",
-        "subheading": "Hand-finished silks, royal kurtas, festive kidswear, and contemporary ethnic co-ords crafted for joyful celebrations.",
-        "discount_code": "FESTIVE10",
-        "discount_text": "Flat 10% Extra OFF on all Festive Orders",
-        "button_label": "Explore Festive Atelier",
-        "button_link": "/collections/festive-collection",
-        "enable_whatsapp_cta": true
-      }
-    },
-    "why": {
-      "type": "why-us",
+    "hero": {
+      "type": "hero",
       "blocks": {
-        "f1": {
-          "type": "feature",
+        "s1": {
+          "type": "slide",
           "settings": {
-            "icon": "leaf",
-            "title": "Curated with care",
-            "text": "Every product is selected for premium fabric longevity, tactile comfort, and timeless elegance."
+            "heading": "Premium\nT-Shirt\nCollection",
+            "text": "Style for a Brighter You",
+            "cta": "Shop Now",
+            "fallback": "z-hero-model"
           }
         },
-        "f2": {
-          "type": "feature",
+        "s2": {
+          "type": "slide",
           "settings": {
-            "icon": "lock",
-            "title": "Safe & secure checkout",
-            "text": "Pay through Shopify's encrypted checkout with trusted Indian payment options."
+            "heading": "Heavyweight\n250 GSM\nOversized",
+            "text": "French Terry that holds its shape",
+            "cta": "Shop Oversized",
+            "fallback": "z-p-premium"
           }
         },
-        "f3": {
-          "type": "feature",
+        "s3": {
+          "type": "slide",
           "settings": {
-            "icon": "truck",
-            "title": "Tracked delivery",
-            "text": "Get real-time tracking updates for every order so you always know where your parcel is."
-          }
-        },
-        "f4": {
-          "type": "feature",
-          "settings": {
-            "icon": "headset",
-            "title": "Support that replies",
-            "text": "Questions about sizing or fit? Reach our concierge team on WhatsApp or email."
+            "heading": "Zeyov\nStudio",
+            "text": "Design your own tee: DTF, Puff, HD, Embroidery",
+            "cta": "Start Designing",
+            "link": "/pages/studio",
+            "fallback": "z-p-maroon"
           }
         }
       },
       "block_order": [
-        "f1",
-        "f2",
-        "f3",
-        "f4"
+        "s1",
+        "s2",
+        "s3"
       ],
       "settings": {
-        "eyebrow": "The Zeyov promise",
-        "heading": "Why you'll love shopping with us"
+        "autoplay": 5
       }
     },
-    "reviews": {
-      "type": "customer-reviews",
-      "settings": {
-        "eyebrow": "Loved Across India",
-        "heading": "What Our Customers Say",
-        "subheading": "Authentic reflections from verified buyers across India who wear and experience ZEYOV couture."
-      }
-    },
-    "banner": {
-      "type": "brand-banner",
+    "cats": {
+      "type": "category-grid",
+      "blocks": {
+        "c1": {
+          "type": "cat",
+          "settings": {
+            "title": "T-Shirts",
+            "fallback": "z-cat-tshirts"
+          }
+        },
+        "c2": {
+          "type": "cat",
+          "settings": {
+            "title": "Oversized",
+            "fallback": "z-cat-oversized"
+          }
+        },
+        "c3": {
+          "type": "cat",
+          "settings": {
+            "title": "Polos",
+            "fallback": "z-cat-polos"
+          }
+        },
+        "c4": {
+          "type": "cat",
+          "settings": {
+            "title": "Hoodies & Sweatshirts",
+            "fallback": "z-cat-hoodies"
+          }
+        },
+        "c5": {
+          "type": "cat",
+          "settings": {
+            "title": "Bottomwear",
+            "fallback": "z-cat-bottomwear"
+          }
+        },
+        "c6": {
+          "type": "cat",
+          "settings": {
+            "title": "Accessories",
+            "fallback": "z-cat-accessories"
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
       "settings": {}
     },
-    "faq": {
-      "type": "faq",
+    "featured": {
+      "type": "featured-products",
+      "settings": {
+        "eyebrow": "Bestsellers",
+        "heading": "Trending Now",
+        "limit": 8
+      }
+    },
+    "studio": {
+      "type": "studio-promo",
+      "settings": {}
+    },
+    "gsm": {
+      "type": "gsm-guide",
+      "blocks": {
+        "g1": {
+          "type": "row",
+          "settings": {
+            "gsm": 250,
+            "title": "French Terry & Acid Wash",
+            "text": "Heavyweight, loopback inside. Structured oversized drape that keeps its shape."
+          }
+        },
+        "g2": {
+          "type": "row",
+          "settings": {
+            "gsm": 230,
+            "title": "Premium Single Jersey",
+            "text": "Mid-weight with a smooth face. Oversized look for every season."
+          }
+        },
+        "g3": {
+          "type": "row",
+          "settings": {
+            "gsm": 190,
+            "title": "Everyday Single Jersey",
+            "text": "Light and breathable. Made for Kerala summers, daily wear and layering."
+          }
+        }
+      },
+      "block_order": [
+        "g1",
+        "g2",
+        "g3"
+      ],
+      "settings": {}
+    },
+    "quotes": {
+      "type": "testimonials",
       "blocks": {
         "q1": {
-          "type": "q",
+          "type": "quote",
           "settings": {
-            "q": "How long does delivery take?",
-            "a": "<p>Confirmed orders are processed within 1–2 working days. Estimated delivery takes 4–7 working days after dispatch across India (excluding Sundays & public holidays). Real-time tracking will be shared on WhatsApp & Email.</p>"
+            "quote": "The 250 GSM black is thick, the drop shoulder sits right, and the collar is still tight after ten washes.",
+            "name": "Arjun M., Kochi",
+            "product": "Oversized 250 GSM",
+            "rating": 5
           }
         },
         "q2": {
-          "type": "q",
+          "type": "quote",
           "settings": {
-            "q": "What size should I choose for fashion apparel?",
-            "a": "<p>All ZEYOV garments are drafted using standard Indian sizing charts (XS to XL) with an ease allowance. If you are between sizes, we recommend ordering one size up or contacting our WhatsApp styling concierge.</p>"
+            "quote": "Bought three colours to get the bundle price. True to the photos.",
+            "name": "Fathima R., Calicut",
+            "product": "Oversized 250 GSM",
+            "rating": 5
           }
         },
         "q3": {
-          "type": "q",
+          "type": "quote",
           "settings": {
-            "q": "Can I return or exchange an item?",
-            "a": "<p>Yes! We offer a 7-day easy exchange and return window for garments in their original unworn condition with tags intact. Please visit our Return & Refund Policy for details.</p>"
-          }
-        },
-        "q4": {
-          "type": "q",
-          "settings": {
-            "q": "How do I pay and is COD available?",
-            "a": "<p>We offer secure prepaid checkout via UPI, Cards, Net Banking, and Wallets with free shipping. Cash on Delivery (COD) is coming soon.</p>"
+            "quote": "Designed my team tees in Zeyov Studio. Puff print came out perfect.",
+            "name": "Nikhil S., Bengaluru",
+            "product": "Zeyov Studio",
+            "rating": 5
           }
         }
       },
       "block_order": [
         "q1",
         "q2",
-        "q3",
-        "q4"
+        "q3"
       ],
-      "settings": {
-        "eyebrow": "Good to know",
-        "heading": "Frequently asked questions"
-      }
+      "settings": {}
     },
-    "newsletter": {
+    "news": {
       "type": "newsletter",
+      "settings": {}
+    },
+    "arrivals": {
+      "type": "new-arrivals",
       "settings": {
-        "heading": "Join the Zeyov list",
-        "text": "New arrivals and offers, straight to your inbox. No spam."
+        "heading": "New Arrivals",
+        "limit": 8
       }
     }
   },
   "order": [
-    "quick_categories",
-    "runway_orbit",
-    "fashion_showcase",
-    "fashion_rail",
-    "fashion_reveal",
+    "hero",
+    "arrivals",
+    "cats",
     "featured",
-    "festive_campaign",
-    "why",
-    "reviews",
-    "banner",
-    "faq",
-    "newsletter"
+    "studio",
+    "gsm",
+    "quotes",
+    "news"
   ]
 }

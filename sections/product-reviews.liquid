@@ -1,189 +1,56 @@
-{%- assign real_rating = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value -%}
-{%- assign real_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0 -%}
-
-<section class="section section--reviews" id="Reviews" data-product-reviews data-product-id="{{ product.id }}">
-  <div class="container">
-    <header class="section__head center">
-      <p class="eyebrow">{{ section.settings.eyebrow | default: 'Customer Feedback' }}</p>
-      <h2>{{ section.settings.heading | default: 'Verified Customer Reviews' }}</h2>
-      <p class="muted">{{ section.settings.subheading | default: 'Real, authentic feedback from verified buyers.' }}</p>
-    </header>
-
-    <!-- App blocks if installed (Judge.me, Loox, etc.) -->
-    {%- for block in section.blocks -%}
-      {%- case block.type -%}
-        {%- when '@app' -%}{% render block %}
-      {%- endcase -%}
-    {%- endfor -%}
-
-    <!-- Rating Summary Dashboard (Only displayed when real reviews exist) -->
-    <div class="reviews-summary"{% if real_count == 0 %} style="display: none;"{% endif %}>
-      <div class="reviews-summary__score">
-        <span class="reviews-summary__number" data-reviews-avg>{{ real_rating | default: '5.0' | round: 1 }}</span>
-        <div class="stars" aria-label="Customer review rating">
-          <span class="on">{% render 'icon', name: 'star' %}</span>
-          <span class="on">{% render 'icon', name: 'star' %}</span>
-          <span class="on">{% render 'icon', name: 'star' %}</span>
-          <span class="on">{% render 'icon', name: 'star' %}</span>
-          <span class="on">{% render 'icon', name: 'star' %}</span>
-        </div>
-        <p class="small muted">Based on <span data-reviews-total-text>{{ real_count }}</span> verified customer {% if real_count == 1 %}review{% else %}reviews{% endif %}</p>
-      </div>
-
-      <div class="reviews-summary__bars">
-        <div class="rating-bar-row">
-          <span class="rating-bar-label">5 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-5 style="width: 100%"></div></div>
-          <span class="rating-bar-count" data-bar-count-5>{{ real_count }}</span>
-        </div>
-        <div class="rating-bar-row">
-          <span class="rating-bar-label">4 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-4 style="width: 0%"></div></div>
-          <span class="rating-bar-count" data-bar-count-4>0</span>
-        </div>
-        <div class="rating-bar-row">
-          <span class="rating-bar-label">3 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-3 style="width: 0%"></div></div>
-          <span class="rating-bar-count" data-bar-count-3>0</span>
-        </div>
-        <div class="rating-bar-row">
-          <span class="rating-bar-label">2 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-2 style="width: 0%"></div></div>
-          <span class="rating-bar-count" data-bar-count-2>0</span>
-        </div>
-        <div class="rating-bar-row">
-          <span class="rating-bar-label">1 ★</span>
-          <div class="rating-bar-track"><div class="rating-bar-fill" data-bar-fill-1 style="width: 0%"></div></div>
-          <span class="rating-bar-count" data-bar-count-1>0</span>
-        </div>
-      </div>
-
-      <div class="reviews-summary__trust">
-        <div class="trust-stat">
-          {% render 'icon', name: 'shield' %}
-          <div>
-            <b>100% Genuine</b>
-            <small class="muted">Verified purchase orders</small>
+{%- assign list = product.metafields.zeyov.reviews.value -%}
+{%- assign total = 0 -%}{%- assign sum = 0 -%}
+{%- assign c5 = 0 -%}{%- assign c4 = 0 -%}{%- assign c3 = 0 -%}{%- assign c2 = 0 -%}{%- assign c1 = 0 -%}
+{%- for r in list -%}
+  {%- assign total = total | plus: 1 -%}{%- assign sum = sum | plus: r.rating -%}
+  {%- case r.rating -%}{%- when 5 -%}{%- assign c5 = c5 | plus: 1 -%}{%- when 4 -%}{%- assign c4 = c4 | plus: 1 -%}{%- when 3 -%}{%- assign c3 = c3 | plus: 1 -%}{%- when 2 -%}{%- assign c2 = c2 | plus: 1 -%}{%- else -%}{%- assign c1 = c1 | plus: 1 -%}{%- endcase -%}
+{%- endfor -%}
+<section class="section" id="Reviews" style="border-top:1px solid var(--line)">
+  <div class="wrap reviews" data-reviews data-handle="{{ product.handle }}">
+    <div class="reviews__aside">
+      <div><span class="eyebrow">Ratings &amp; reviews</span><h2 style="font-size:clamp(26px,5vw,38px);margin-top:6px">{{ section.settings.heading }}</h2></div>
+      <div class="reviews__summary">
+        {%- if total > 0 -%}
+          {%- assign avg = sum | times: 1.0 | divided_by: total -%}
+          <div class="reviews__score"><b class="tabular">{{ avg | round: 1 }}</b><div><span class="stars"><span class="stars__row" style="--pct: {{ avg | times: 20 | round }}%"></span></span><div class="muted" style="font-size:13px">Based on {{ total }} review{% if total != 1 %}s{% endif %}</div></div></div>
+          <div class="bars">
+            {%- assign counts = c5 | append: ',' | append: c4 | append: ',' | append: c3 | append: ',' | append: c2 | append: ',' | append: c1 | split: ',' -%}
+            {%- for n in counts -%}
+              {%- assign star = 6 | minus: forloop.index -%}
+              {%- assign w = n | times: 100 | divided_by: total -%}
+              <div><span>{{ star }} ★</span><i style="--w: {{ w }}%"></i><span class="tabular muted">{{ n }}</span></div>
+            {%- endfor -%}
           </div>
-        </div>
-        <div class="trust-stat">
-          {% render 'icon', name: 'truck' %}
-          <div>
-            <b>Safe Delivery</b>
-            <small class="muted">Damage-free transit across India</small>
-          </div>
-        </div>
-        <button type="button" class="btn btn--small btn--outline btn--block mt-sm" data-open-review-modal>
-          Write a Review
-        </button>
+        {%- else -%}
+          <p>No reviews yet. Reviews come only from customers who bought this product.</p>
+        {%- endif -%}
+        <a href="/pages/orders" class="btn btn--outline-gold btn--block">Review from My Orders</a>
       </div>
+      {%- for block in section.blocks -%}{%- if block.type == '@app' -%}{% render block %}{%- endif -%}{%- endfor -%}
     </div>
 
-    <!-- Review Filter Pills (Only displayed when real reviews exist) -->
-    <div class="reviews-filters" role="tablist"{% if real_count == 0 %} style="display: none;"{% endif %}>
-      <button type="button" class="filter-pill is-active" data-filter-reviews="all">All Reviews (<span data-pill-all>{{ real_count }}</span>)</button>
-      <button type="button" class="filter-pill" data-filter-reviews="verified">Verified Buyers (<span data-pill-verified>{{ real_count }}</span>)</button>
-      <button type="button" class="filter-pill" data-filter-reviews="5star">5 Star Ratings (<span data-pill-5star>{{ real_count }}</span>)</button>
-      <button type="button" class="filter-pill" data-filter-reviews="4star">4 Star Ratings (<span data-pill-4star>0</span>)</button>
-    </div>
+    <div>
+      {%- for r in list limit: 20 -%}
+        <article class="review">
+          <div class="review__top"><span class="stars"><span class="stars__row" style="--pct: {{ r.rating | times: 20 }}%"></span></span><span class="muted">{{ r.date }}</span></div>
+          {%- if r.title != blank -%}<h4>{{ r.title }}</h4>{%- endif -%}
+          <p>{{ r.body }}</p>
+          <div style="display:flex;gap:10px;align-items:center;font-size:13px"><b>{{ r.name }}</b>{%- if r.verified -%}<span class="verified">✓ Verified buyer</span>{%- endif -%}{%- if r.size != blank -%}<span class="muted">Size bought: {{ r.size }}</span>{%- endif -%}</div>
+        </article>
+      {%- endfor -%}
 
-    <!-- Reviews Container for Real Customer Reviews -->
-    <div id="UserSubmittedReviews" class="reviews-list user-reviews"></div>
-
-    <!-- Honest Empty State when zero reviews exist yet -->
-    <div class="reviews-empty-state" id="ReviewsEmptyState"{% if real_count > 0 %} style="display: none;"{% endif %}>
-      <div class="reviews-empty-stars">☆☆☆☆☆</div>
-      <h3 class="reviews-empty-title">No customer reviews yet</h3>
-      <p class="muted small" style="max-width: 480px; margin: 0 auto 20px; line-height: 1.5;">Be the first to share your experience with this piece. Your verified feedback helps fellow shoppers!</p>
-      <button type="button" class="btn btn--gold btn--small" data-open-review-modal>
-        Write the First Review
-      </button>
-    </div>
-
-    <!-- Expand / Collapse All Reviews (Only displayed when multiple reviews exist) -->
-    <div class="reviews-expand-wrap center" id="ReviewsExpandWrap" style="display: none; margin-top: 24px;">
-      <button type="button" class="btn btn--outline btn--expand-reviews" id="ToggleReviewsBtn" data-reviews-expanded="false">
-        <span id="ExpandBtnText">View All Reviews</span>
-        <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Write Review Modal Popup -->
-  <div class="review-modal" id="ReviewModal" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="review-modal__backdrop" data-close-review-modal></div>
-    <div class="review-modal__dialog">
-      <div class="review-modal__header">
-        <div>
-          <span class="review-modal__eyebrow">VERIFIED BUYER FEEDBACK</span>
-          <h3 class="review-modal__title">Write a Customer Review</h3>
-        </div>
-        <button type="button" class="review-modal__close" data-close-review-modal aria-label="Close modal">&times;</button>
+      <div class="review-cta" style="margin-top:20px">
+        <b>Only verified buyers can review</b>
+        <span class="muted">Bought this {{ product.title }}? Write your review from My Orders once it's shipped.</span>
+        <a class="btn btn--sm btn--outline-gold" style="justify-self:start" href="/pages/orders">Go to My Orders</a>
       </div>
-
-      <form id="CustomerReviewForm" class="review-modal__form">
-        {%- comment -%} Bot trap honeypot {%- endcomment -%}
-        <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
-          <label for="RevBotTrap">Leave empty</label>
-          <input type="text" id="RevBotTrap" name="comment_bot_trap" tabindex="-1" autocomplete="off">
-        </div>
-
-        <div class="review-form__group">
-          <label class="review-form__label">Overall Rating <span class="req-star">*</span></label>
-          <div class="star-rating-box">
-            <div class="star-rating-select" id="StarRatingSelect">
-              <button type="button" data-star-val="1" class="star-btn is-active" aria-label="1 star">★</button>
-              <button type="button" data-star-val="2" class="star-btn is-active" aria-label="2 stars">★</button>
-              <button type="button" data-star-val="3" class="star-btn is-active" aria-label="3 stars">★</button>
-              <button type="button" data-star-val="4" class="star-btn is-active" aria-label="4 stars">★</button>
-              <button type="button" data-star-val="5" class="star-btn is-active" aria-label="5 stars">★</button>
-              <input type="hidden" name="rating" id="ReviewStarInput" value="5">
-            </div>
-            <span class="star-rating-text" id="StarRatingHint">5.0 / 5.0 — Outstanding Quality &amp; Fit</span>
-          </div>
-        </div>
-
-        <div class="review-form__grid-row">
-          <div class="review-form__group">
-            <label for="RevName" class="review-form__label">Your Full Name <span class="req-star">*</span></label>
-            <input type="text" id="RevName" name="name" class="review-form__input" placeholder="e.g. Rahul Sharma" maxlength="80" required>
-          </div>
-          <div class="review-form__group">
-            <label for="RevCity" class="review-form__label">Your City <span class="req-star">*</span></label>
-            <input type="text" id="RevCity" name="city" class="review-form__input" placeholder="e.g. Bengaluru, Kochi, Mumbai" maxlength="60" required>
-          </div>
-        </div>
-
-        <div class="review-form__group">
-          <label for="RevTitle" class="review-form__label">Review Headline <span class="req-star">*</span></label>
-          <input type="text" id="RevTitle" name="title" class="review-form__input" placeholder="Summary of your experience (e.g. Exceptional fabric &amp; fast delivery)" maxlength="120" required>
-        </div>
-
-        <div class="review-form__group">
-          <label for="RevBody" class="review-form__label">Your Detailed Review <span class="req-star">*</span></label>
-          <textarea id="RevBody" name="body" rows="4" class="review-form__textarea" placeholder="How was the texture, silhouette drape, packaging, and delivery experience?" maxlength="2000" required></textarea>
-        </div>
-
-        <button type="submit" class="btn btn--luxury-submit btn--block">
-          <span>Submit Verified Review</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
-      </form>
     </div>
   </div>
 </section>
-
 {% schema %}
 {
-  "name": "Customer Reviews",
-  "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Customer Feedback" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Verified Customer Reviews" },
-    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Real, authentic feedback from verified buyers." }
-  ],
-  "blocks": [
-    { "type": "@app" }
-  ],
-  "presets": [{ "name": "Customer Reviews" }]
+  "name": "Product reviews",
+  "settings": [{ "type": "text", "id": "heading", "label": "Heading", "default": "What buyers say" }],
+  "blocks": [{ "type": "@app" }]
 }
 {% endschema %}

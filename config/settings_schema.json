@@ -4,96 +4,246 @@
     "theme_name": "Zeyov",
     "theme_version": "1.0.0",
     "theme_author": "Zeyov",
-    "theme_documentation_url": "https://zeyov.com",
-    "theme_support_url": "https://zeyov.com"
+    "theme_documentation_url": "https://www.zeyov.com",
+    "theme_support_url": "https://www.zeyov.com"
   },
   {
-    "name": "Brand & colours",
+    "name": "Brand",
     "settings": [
-      { "type": "header", "content": "Logo" },
-      { "type": "image_picker", "id": "logo", "label": "Logo image (optional – default Zeyov logo is used if empty)" },
-      { "type": "range", "id": "logo_width", "min": 80, "max": 260, "step": 10, "unit": "px", "label": "Logo width (desktop)", "default": 150 },
-      { "type": "image_picker", "id": "favicon", "label": "Favicon" },
-      { "type": "header", "content": "Colours" },
-      { "type": "color", "id": "color_bg", "label": "Page background (Warm Ivory)", "default": "#FAF8F4" },
-      { "type": "color", "id": "color_surface", "label": "Cards / surface background (Pure White)", "default": "#FFFFFF" },
-      { "type": "color", "id": "color_text", "label": "Text (Rich Charcoal)", "default": "#20201F" },
-      { "type": "color", "id": "color_primary", "label": "Primary brand color (Deep Espresso)", "default": "#33251F" },
-      { "type": "color", "id": "color_secondary_bg", "label": "Secondary background (Soft Sand)", "default": "#EDE5DB" },
-      { "type": "color", "id": "color_muted", "label": "Secondary text (Warm Gray)", "default": "#77716B" },
-      { "type": "color", "id": "color_gold", "label": "Accent color (Muted Champagne Gold)", "default": "#B89B65" },
-      { "type": "color", "id": "color_gold_dark", "label": "Deep gold accent", "default": "#8F7241" },
-      { "type": "color", "id": "color_border", "label": "Borders and dividers", "default": "#E5DED5" },
-      { "type": "color", "id": "color_button", "label": "Primary button (Deep Espresso)", "default": "#33251F" },
-      { "type": "color", "id": "color_button_text", "label": "Primary button text", "default": "#FFFFFF" },
-      { "type": "color", "id": "color_sale", "label": "Sale / savings (Refined Deep Burgundy)", "default": "#9D3535" },
-      { "type": "color", "id": "color_success", "label": "Success state (Muted Forest Green)", "default": "#386B50" }
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo (transparent PNG works best)"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo width (desktop)",
+        "min": 80,
+        "max": 260,
+        "step": 10,
+        "unit": "px",
+        "default": 140
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      },
+      {
+        "type": "text",
+        "id": "tagline",
+        "label": "Tagline",
+        "default": "Style for a brighter you"
+      }
     ]
   },
   {
-    "name": "Typography",
+    "name": "Colours",
     "settings": [
-      { "type": "select", "id": "heading_font", "label": "Heading font", "default": "Cormorant Garamond", "options": [
-        { "value": "Cormorant Garamond", "label": "Cormorant Garamond (luxury serif)" },
-        { "value": "Playfair Display", "label": "Playfair Display" },
-        { "value": "DM Serif Display", "label": "DM Serif Display" }
-      ] },
-      { "type": "select", "id": "body_font", "label": "Body font", "default": "Jost", "options": [
-        { "value": "Jost", "label": "Jost" },
-        { "value": "Poppins", "label": "Poppins" },
-        { "value": "Inter", "label": "Inter" }
-      ] }
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Background",
+        "default": "#FFFCF7"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Surface / cards",
+        "default": "#F7F0E5"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#1B1510"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Muted text",
+        "default": "#6B6158"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Gold accent",
+        "default": "#B98A3E"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale / savings",
+        "default": "#1F8A4C"
+      },
+      {
+        "type": "color",
+        "id": "color_line",
+        "label": "Lines",
+        "default": "#ECE2D3"
+      }
     ]
   },
   {
-    "name": "Store policies & delivery",
+    "name": "Offers & discounts",
     "settings": [
-      { "type": "header", "content": "Delivery estimate (product page)" },
-      { "type": "checkbox", "id": "show_delivery_estimator", "label": "Show pincode delivery estimate box", "default": true },
-      { "type": "range", "id": "delivery_min_days", "min": 1, "max": 14, "step": 1, "label": "Minimum delivery days", "default": 4 },
-      { "type": "range", "id": "delivery_max_days", "min": 2, "max": 21, "step": 1, "label": "Maximum delivery days", "default": 8 },
-      { "type": "header", "content": "Product page assurances (edit so they are TRUE for your store)" },
-      { "type": "text", "id": "assure_1", "label": "Assurance 1", "default": "Secure online payment" },
-      { "type": "text", "id": "assure_2", "label": "Assurance 2", "default": "Easy returns – see Returns Policy" },
-      { "type": "text", "id": "assure_3", "label": "Assurance 3", "default": "Order tracking on every shipment" },
-      { "type": "text", "id": "assure_4", "label": "Assurance 4", "default": "WhatsApp / email support" },
-      { "type": "header", "content": "Low-stock message" },
-      { "type": "checkbox", "id": "show_low_stock", "label": "Show 'Only X left' when real inventory is low", "default": true },
-      { "type": "range", "id": "low_stock_threshold", "min": 1, "max": 30, "step": 1, "label": "Show when stock is at or below", "default": 10 }
+      {
+        "type": "paragraph",
+        "content": "Change offer percentages here: banners, product bundle prices and cart messages update across the store instantly. Then set the same % in Shopify admin → Discounts (the 4 automatic Zeyov discounts) so checkout charges match."
+      },
+      {
+        "type": "header",
+        "content": "Cart offer (total items in cart)"
+      },
+      {
+        "type": "number",
+        "id": "tier1_qty",
+        "label": "Tier 1 – minimum items",
+        "default": 3
+      },
+      {
+        "type": "number",
+        "id": "tier1_pct",
+        "label": "Tier 1 – % off",
+        "default": 3
+      },
+      {
+        "type": "number",
+        "id": "tier2_qty",
+        "label": "Tier 2 – minimum items",
+        "default": 5
+      },
+      {
+        "type": "number",
+        "id": "tier2_pct",
+        "label": "Tier 2 – % off",
+        "default": 5
+      },
+      {
+        "type": "header",
+        "content": "Bundle offer (same product quantity)"
+      },
+      {
+        "type": "number",
+        "id": "bundle2_pct",
+        "label": "2 pieces – % off",
+        "default": 5
+      },
+      {
+        "type": "number",
+        "id": "bundle3_pct",
+        "label": "3+ pieces – % off",
+        "default": 10
+      }
     ]
   },
   {
-    "name": "Customer Support & Notifications",
+    "name": "Products",
     "settings": [
-      { "type": "header", "content": "Official Store Notifications" },
-      { "type": "text", "id": "support_email", "label": "Sender & Support Email (e.g. zeyovofficial@gmail.com)", "default": "zeyovofficial@gmail.com", "info": "Customer notifications, order emails, and support inquiries use this email. Admin can update this anytime." },
-      { "type": "text", "id": "whatsapp_number", "label": "WhatsApp Notification & Support Number (with country code, e.g. 919447873029)", "default": "919447873029", "info": "WhatsApp order confirmations, live tracking updates, and customer chat are linked to this number. Admin can update this anytime." },
-      { "type": "text", "id": "whatsapp_message", "label": "WhatsApp pre-filled message", "default": "Hi Zeyov Atelier, I need assistance with my order." },
-      { "type": "text", "id": "support_phone", "label": "Support phone (optional)" },
-      { "type": "header", "content": "Social Media Channels" },
-      { "type": "url", "id": "social_instagram", "label": "Instagram" },
-      { "type": "url", "id": "social_facebook", "label": "Facebook" },
-      { "type": "url", "id": "social_youtube", "label": "YouTube" }
+      {
+        "type": "textarea",
+        "id": "swatch_colors",
+        "label": "Colour swatches (Name:#hex, one per line)",
+        "default": "Black:#17171A\nWhite:#F4F3F0\nBeige:#DECBAC\nNavy Blue:#1E2846\nRoyal Blue:#2248A8\nLavender:#BAAAD6\nRed:#B22228\nGreen:#34563C\nBrown:#5E3B26"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_second_image",
+        "label": "Show second image on hover",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_rating",
+        "label": "Show star rating on cards",
+        "default": true
+      },
+      {
+        "type": "page",
+        "id": "size_chart_page",
+        "label": "Size chart page (optional)"
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_text",
+        "label": "Shipping note",
+        "default": "Free delivery on online payment · COD +₹80"
+      },
+      {
+        "type": "number",
+        "id": "cod_fee",
+        "label": "COD charge shown in store (₹)",
+        "default": 80
+      },
+      {
+        "type": "product",
+        "id": "studio_product",
+        "label": "Zeyov Studio custom tee product"
+      }
     ]
   },
   {
-    "name": "Cart",
+    "name": "Social & contact",
     "settings": [
-      { "type": "checkbox", "id": "cart_note", "label": "Enable order note on cart page", "default": true },
-      { "type": "range", "id": "free_shipping_threshold", "min": 0, "max": 5000, "step": 50, "unit": "₹", "label": "Free-shipping progress bar threshold (0 = hide)", "info": "Only set this if you have a matching free-shipping rate in Shopify > Settings > Shipping.", "default": 0 }
-    ]
-  },
-  {
-    "name": "Marketing Automation & Retention",
-    "settings": [
-      { "type": "header", "content": "Exit-Intent & Idle Cart Recovery Modal" },
-      { "type": "checkbox", "id": "enable_cart_recovery_modal", "label": "Enable Exit-Intent Cart Recovery Modal", "default": true, "info": "Prompts visitors before abandoning items in their cart with an exclusive discount code." },
-      { "type": "text", "id": "cart_recovery_discount_code", "label": "Recovery Discount Code", "default": "ZEYOV10" },
-      { "type": "range", "id": "cart_recovery_idle_seconds", "min": 20, "max": 180, "step": 10, "unit": "s", "label": "Idle timer before prompt", "default": 60 },
-      { "type": "header", "content": "Back In Stock Notifications" },
-      { "type": "checkbox", "id": "enable_back_in_stock", "label": "Enable 'Notify When Restocked' Modal", "default": true, "info": "Allows shoppers to enter WhatsApp number & email for restock alerts on sold-out products." },
-      { "type": "header", "content": "Personalized Recommendations" },
-      { "type": "checkbox", "id": "enable_personalized_recs", "label": "Enable Dynamic Browsing History & Recs", "default": true, "info": "Shows customer's recently viewed couture and tailored recommendations on cart and product pages." }
+      {
+        "type": "header",
+        "content": "Contact details"
+      },
+      {
+        "type": "text",
+        "id": "contact_email",
+        "label": "Email",
+        "default": "zeyovofficial@gmail.com"
+      },
+      {
+        "type": "text",
+        "id": "contact_phone",
+        "label": "Phone (with +91)",
+        "default": "+91 94478 73029"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp number (country code + number, no +)",
+        "default": "919447873029"
+      },
+      {
+        "type": "text",
+        "id": "contact_hours",
+        "label": "Support hours",
+        "default": "Mon – Sat, 10 AM – 6 PM"
+      },
+      {
+        "type": "text",
+        "id": "contact_city",
+        "label": "Location",
+        "default": "Ernakulam, Kerala, India"
+      },
+      {
+        "type": "header",
+        "content": "Social links (leave blank to hide)"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "YouTube"
+      },
+      {
+        "type": "url",
+        "id": "social_pinterest",
+        "label": "Pinterest"
+      }
     ]
   }
 ]

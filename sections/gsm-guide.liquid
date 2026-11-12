@@ -1,0 +1,40 @@
+<section class="section" style="background:var(--surface)">
+  <div class="wrap gsm-wrap">
+    <div style="display:grid;gap:14px;margin-bottom:22px">
+      <span class="eyebrow">Fabric guide</span>
+      <h2 style="font-size:clamp(28px,5.4vw,44px)">{{ section.settings.heading }}</h2>
+      <p class="muted">{{ section.settings.text }}</p>
+    </div>
+    <div class="gsm">
+      {%- for block in section.blocks -%}
+        <div class="gsm__row" {{ block.shopify_attributes }}>
+          <div class="gsm__num">{{ block.settings.gsm }}<small>GSM</small></div>
+          <div>
+            <h3>{{ block.settings.title }}</h3>
+            <div class="gsm__bar"><i style="width: {{ block.settings.gsm | times: 100 | divided_by: 260 }}%"></i></div>
+            <p>{{ block.settings.text }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "GSM fabric guide",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Pick your weight" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "GSM is grams per square metre. Higher GSM means a thicker, more structured tee that holds the oversized drop." }
+  ],
+  "blocks": [{ "type": "row", "name": "Fabric", "settings": [
+    { "type": "number", "id": "gsm", "label": "GSM", "default": 250 },
+    { "type": "text", "id": "title", "label": "Title", "default": "French Terry" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Heavy, structured drape." }
+  ] }],
+  "presets": [{ "name": "GSM fabric guide", "blocks": [
+    { "type": "row", "settings": { "gsm": 250, "title": "French Terry & Acid Wash", "text": "Heavyweight, loopback inside. Structured oversized drape that keeps its shape." } },
+    { "type": "row", "settings": { "gsm": 230, "title": "Premium Single Jersey", "text": "Mid-weight with a smooth face. Oversized look for every season." } },
+    { "type": "row", "settings": { "gsm": 190, "title": "Everyday Single Jersey", "text": "Light and breathable. Made for Kerala summers, daily wear and layering." } }
+  ] }]
+}
+{% endschema %}

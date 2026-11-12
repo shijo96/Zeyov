@@ -1,0 +1,12 @@
+<div class="wrap">
+  <div class="noorders" style="margin-block:30px 50px">
+    <div class="noorders__art">{% render 'icon', name: 'tee' %}<i></i><i></i></div>
+    <h2>Design it in Zeyov Studio</h2>
+    <p class="muted">{{ product.title }} is made to order from your own design. Opening the Studio…</p>
+    <a class="btn" href="/pages/studio">Open Zeyov Studio {% render 'icon', name: 'arrow' %}</a>
+  </div>
+</div>
+<script>setTimeout(function () { location.replace('/pages/studio'); }, 900);</script>
+{% schema %}
+{ "name": "Studio product redirect" }
+{% endschema %}

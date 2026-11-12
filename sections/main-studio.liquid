@@ -1,0 +1,137 @@
+{%- assign sp = all_products['zeyov-studio-tee'] -%}
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bebas+Neue&family=Black+Ops+One&family=Bungee&family=Caveat:wght@700&family=Graduate&family=Lobster&family=Montserrat:wght@400;800&family=Oswald:wght@600&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:wght@700&family=Shrikhand&family=UnifrakturMaguntia&display=swap" media="print" onload="this.media='all'">
+{{ 'studio.css' | asset_url | stylesheet_tag }}
+<div class="zs wrap" data-zs>
+  <script type="application/json" data-zs-config>
+  {
+    "assetBase": {{ 'x.webp' | asset_url | split: 'x.webp' | first | json }},
+    "routes": { "cartAdd": {{ routes.cart_add_url | json }} },
+    "offers": { "tier1Qty": {{ settings.tier1_qty | default: 3 }}, "tier1Pct": {{ settings.tier1_pct | default: 3 }}, "tier2Qty": {{ settings.tier2_qty | default: 5 }}, "tier2Pct": {{ settings.tier2_pct | default: 5 }} },
+    "swatches": { "Black": "#17171A", "White": "#F4F3F0", "Beige": "#DECBAC", "Navy Blue": "#1E2846", "Royal Blue": "#2248A8", "Lavender": "#BAAAD6", "Red": "#B22228", "Green": "#34563C", "Brown": "#5E3B26" },
+    "bases": [{%- assign bfirst = true -%}
+      {%- if section.settings.os250_on -%}{%- unless bfirst -%},{%- endunless -%}{%- assign bfirst = false -%}{%- assign cl = section.settings.os250_colors | split: ',' -%}
+      { "key": "os250", "style": "Oversized 250 GSM French Terry", "name": {{ section.settings.os250_name | default: "Oversized Tee" | json }}, "spec": {{ section.settings.os250_spec | json }}, "handle": "oversized-tee-250-gsm-french-terry", "fit": "oversized", "colors": [{%- for c in cl -%}{{ c | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}] }{%- endif -%}
+      {%- if section.settings.aw250_on -%}{%- unless bfirst -%},{%- endunless -%}{%- assign bfirst = false -%}{%- assign cl = section.settings.aw250_colors | split: ',' -%}
+      { "key": "aw250", "style": "Acid Wash Oversized 250 GSM", "name": {{ section.settings.aw250_name | default: "Acid Wash Oversized Tee" | json }}, "spec": {{ section.settings.aw250_spec | json }}, "handle": "acid-wash-oversized-tee-250-gsm", "fit": "oversized", "colors": [{%- for c in cl -%}{{ c | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}] }{%- endif -%}
+      {%- if section.settings.fs250_on -%}{%- unless bfirst -%},{%- endunless -%}{%- assign bfirst = false -%}{%- assign cl = section.settings.fs250_colors | split: ',' -%}
+      { "key": "fs250", "style": "Full Sleeve Oversized 250 GSM", "name": {{ section.settings.fs250_name | default: "Full Sleeve Oversized Tee" | json }}, "spec": {{ section.settings.fs250_spec | json }}, "handle": "full-sleeve-oversized-tee-250-gsm", "fit": "oversized", "colors": [{%- for c in cl -%}{{ c | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}] }{%- endif -%}
+      {%- if section.settings.os230_on -%}{%- unless bfirst -%},{%- endunless -%}{%- assign bfirst = false -%}{%- assign cl = section.settings.os230_colors | split: ',' -%}
+      { "key": "os230", "style": "Oversized 230 GSM Single Jersey", "name": {{ section.settings.os230_name | default: "Oversized Tee" | json }}, "spec": {{ section.settings.os230_spec | json }}, "handle": "oversized-tee-230-gsm-single-jersey", "fit": "oversized", "colors": [{%- for c in cl -%}{{ c | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}] }{%- endif -%}
+      {%- if section.settings.os190_on -%}{%- unless bfirst -%},{%- endunless -%}{%- assign bfirst = false -%}{%- assign cl = section.settings.os190_colors | split: ',' -%}
+      { "key": "os190", "style": "Oversized 190 GSM Single Jersey", "name": {{ section.settings.os190_name | default: "Oversized Tee" | json }}, "spec": {{ section.settings.os190_spec | json }}, "handle": "oversized-tee-190-gsm-single-jersey", "fit": "oversized", "colors": [{%- for c in cl -%}{{ c | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}] }{%- endif -%}
+      {%- if section.settings.rf190_on -%}{%- unless bfirst -%},{%- endunless -%}{%- assign bfirst = false -%}{%- assign cl = section.settings.rf190_colors | split: ',' -%}
+      { "key": "rf190", "style": "Regular Fit 190 GSM Single Jersey", "name": {{ section.settings.rf190_name | default: "Regular Fit Tee" | json }}, "spec": {{ section.settings.rf190_spec | json }}, "handle": "regular-fit-tee-190-gsm-single-jersey", "fit": "regular", "colors": [{%- for c in cl -%}{{ c | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}] }{%- endif -%}
+    ],
+    "photos": { {%- for blk in section.blocks -%}{%- if blk.settings.front != blank or blk.settings.back != blank -%}{{ blk.settings.style | append: '|' | append: blk.settings.color | json }}: { "front": {% if blk.settings.front != blank %}{{ blk.settings.front | image_url: width: 1200 | json }}{% else %}null{% endif %}, "back": {% if blk.settings.back != blank %}{{ blk.settings.back | image_url: width: 1200 | json }}{% else %}null{% endif %}, "z": {{ blk.settings.zoom | default: 100 }}, "x": {{ blk.settings.move_x | default: 0 }}, "y": {{ blk.settings.move_y | default: 0 }} },{%- endif -%}{%- endfor -%}"_": null },
+    "studio": {%- if sp != blank -%}{
+      "url": {{ sp.url | json }},
+      "opts": { {%- for o in sp.options_with_values -%}{{ o.name | json }}: { {%- for val in o.values -%}{{ val.name | json }}: { "id": {{ val.id }}, "p": {% if val.variant %}{{ val.variant.price }}{% else %}null{% endif %} }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%} }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%} }
+    }{%- else -%}null{%- endif -%}
+  }
+  </script>
+
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a> / <span>Zeyov Studio</span></nav>
+  <header class="zs-head">
+    <div>{% if section.settings.eyebrow != blank %}<span class="eyebrow">{{ section.settings.eyebrow }}</span>{% endif %}<h1>{{ section.settings.heading }}</h1></div>
+    {% if section.settings.intro != blank %}<p>{{ section.settings.intro }}</p>{% endif %}
+  </header>
+
+  <div class="zs-grid">
+    <!-- LEFT: live mockup -->
+    <div class="zs-left">
+      <div class="zs-sides" role="tablist" aria-label="Side">
+        <button type="button" role="tab" data-side="front" class="is-active" aria-selected="true">Front<i hidden></i></button>
+        <button type="button" role="tab" data-side="back" aria-selected="false">Back<i hidden></i></button>
+      </div>
+      <div class="zs-stage" data-stage>
+        <img data-mock alt="Your T-shirt preview" width="800" height="1000" src="{{ 'st-oversized-tee-250-gsm-french-terry-black-front.webp' | asset_url }}">
+        <div class="zs-area" data-area><span>Print area</span></div>
+        <div class="zs-layers" data-layers></div>
+      </div>
+      <div class="zs-tools">
+        <button type="button" class="zs-icon" data-undo aria-label="Undo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+        <button type="button" class="zs-icon" data-redo aria-label="Redo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+        <label class="zs-check"><input type="checkbox" data-area-toggle checked> Print area</label>
+        <button type="button" class="zs-dl" data-download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>Download mockup</button>
+      </div>
+      <div class="zs-thumbs">
+        <button type="button" class="zs-thumb is-active" data-thumb-side="front" aria-label="Show front"><img alt=""><span class="zs-thumb__layers"></span><small>Front</small></button>
+        <button type="button" class="zs-thumb" data-thumb-side="back" aria-label="Show back"><img alt=""><span class="zs-thumb__layers"></span><small>Back</small></button>
+      </div>
+    </div>
+
+    <!-- RIGHT: steps -->
+    <div class="zs-right">
+      <section class="zs-card">
+        <div class="zs-card__head"><span class="zs-num">1</span><h2>{{ section.settings.step1 }}</h2></div>
+        <div class="zs-tees" data-tees></div>
+        <p class="zs-lbl">Colour: <b data-color-name></b></p>
+        <div class="zs-colors" data-colors></div>
+      </section>
+
+      <section class="zs-card">
+        <div class="zs-card__head"><span class="zs-num">2</span><h2>{{ section.settings.step2 }} <em>· <span data-side-label>Front</span></em></h2></div>
+        <div class="zs-add" data-dropzone>
+          <button type="button" class="zs-addbtn" data-upload><span>+</span><b>Upload image</b><small>PNG, JPG, WEBP, SVG · or drag &amp; drop</small></button>
+          <button type="button" class="zs-addbtn" data-add-text><span>T</span><b>Add text</b><small>Name, slogan, number</small></button>
+        </div>
+        <input type="file" data-file accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+        <div class="zs-list" data-layer-list></div>
+        {% if section.settings.upload_tip != blank %}<p class="zs-note">{{ section.settings.upload_tip }}</p>{% endif %}
+      </section>
+
+      <section class="zs-card" data-adjust hidden></section>
+
+      <section class="zs-card">
+        <div class="zs-card__head"><span class="zs-num">4</span><h2>{{ section.settings.step4 }}</h2></div>
+        <div data-print-rows></div>
+        <p class="zs-lbl">Sizes · <span data-qty-out>1 pc</span></p>
+        <div class="zs-sizes">
+          {%- assign sz = 'XS,S,M,L,XL,XXL' | split: ',' -%}
+          {%- for s in sz -%}
+            <div class="zs-size {% if s == 'M' %}is-on{% endif %}"><b>{{ s }}</b>
+              <input type="number" min="0" inputmode="numeric" value="{% if s == 'M' %}1{% else %}0{% endif %}" data-qty-size="{{ s }}" aria-label="Quantity {{ s }}">
+              <span><button type="button" data-step="{{ s }}|-1" aria-label="Less {{ s }}">−</button><button type="button" data-step="{{ s }}|1" aria-label="More {{ s }}">+</button></span>
+            </div>
+          {%- endfor -%}
+        </div>
+        <div class="zs-tip"><span>%</span><p data-tip></p><button type="button" class="btn btn--sm btn--dark" data-tip-btn hidden></button></div>
+      </section>
+
+      <section class="zs-card zs-quote">
+        <div class="zs-card__head"><span class="zs-num">5</span><h2>{{ section.settings.step5 }}</h2></div>
+        <div class="zs-qrows" data-quote-rows></div>
+        <div class="zs-qsum"><div><span>Per piece</span><b data-per>—</b></div><div class="zs-total"><span>Total</span><b data-total>—</b></div></div>
+        <div class="zs-tip zs-tip--dark"><span>%</span><p data-tip></p><button type="button" class="btn btn--sm" data-tip-btn hidden></button></div>
+        {% if section.settings.price_note != blank %}<p class="zs-small">{{ section.settings.price_note | replace: '[cod]', settings.cod_fee }}</p>{% endif %}
+        <button type="button" class="btn btn--block zs-cta" data-add disabled>{% render 'icon', name: 'cart' %} Add to Cart</button>
+        <p class="zs-small zs-hint" data-add-hint></p>
+        {% if section.settings.order_note != blank %}<p class="zs-small">{{ section.settings.order_note }}</p>{% endif %}
+        <button type="button" class="zs-reset" data-reset>Start a new design</button>
+      </section>
+
+      <div class="zs-done" data-done hidden>
+        <b>Design <span data-done-id></span> added to your cart ✓</b>
+        <p>Want the same design on another style or colour? Change the t-shirt above and add again.</p>
+        <div><a class="btn btn--sm" href="{{ routes.cart_url }}">View cart</a><button type="button" class="btn btn--sm btn--outline-gold" data-keep>Design another</button></div>
+      </div>
+    </div>
+  </div>
+
+  {%- if section.settings.show_tips -%}
+  <section class="zs-tipsgrid">
+    {% if section.settings.tips_eyebrow != blank %}<span class="eyebrow">{{ section.settings.tips_eyebrow }}</span>{% endif %}<h2>{{ section.settings.tips_heading }}</h2>
+    <div>
+      {%- for i in (1..4) -%}
+        {%- capture tk %}tip{{ i }}_title{% endcapture -%}{%- capture tt %}tip{{ i }}_text{% endcapture -%}
+        {%- if section.settings[tk] != blank -%}<article><b>{{ section.settings[tk] }}</b><p>{{ section.settings[tt] }}</p></article>{%- endif -%}
+      {%- endfor -%}
+    </div>
+  </section>
+  {%- endif -%}
+</div>
+<script src="{{ 'studio.js' | asset_url }}" defer></script>
+{% schema %}
+{"name":"Zeyov Studio","max_blocks":50,"blocks":[{"type":"photo","name":"T-shirt photo","settings":[{"type":"text","id":"title","label":"Name (only for you)","default":"T-shirt photo"},{"type":"paragraph","content":"Upload real photos of this T-shirt in this colour. Best: portrait 4:5 (e.g. 1200 × 1500 px), plain background, tee centred, front and back in the same framing. If a colour has no photo, the built-in picture is used."},{"type":"select","id":"style","label":"T-shirt","options":[{"value":"oversized-tee-250-gsm-french-terry","label":"Oversized 250 GSM French Terry"},{"value":"acid-wash-oversized-tee-250-gsm","label":"Acid Wash Oversized 250 GSM"},{"value":"full-sleeve-oversized-tee-250-gsm","label":"Full Sleeve Oversized 250 GSM"},{"value":"oversized-tee-230-gsm-single-jersey","label":"Oversized 230 GSM Single Jersey"},{"value":"oversized-tee-190-gsm-single-jersey","label":"Oversized 190 GSM Single Jersey"},{"value":"regular-fit-tee-190-gsm-single-jersey","label":"Regular Fit 190 GSM Single Jersey"}],"default":"oversized-tee-250-gsm-french-terry"},{"type":"select","id":"color","label":"Colour","options":[{"value":"Black","label":"Black"},{"value":"White","label":"White"},{"value":"Beige","label":"Beige"},{"value":"Brown","label":"Brown"},{"value":"Navy Blue","label":"Navy Blue"},{"value":"Royal Blue","label":"Royal Blue"},{"value":"Lavender","label":"Lavender"},{"value":"Red","label":"Red"},{"value":"Green","label":"Green"}],"default":"Black"},{"type":"image_picker","id":"front","label":"Front photo"},{"type":"image_picker","id":"back","label":"Back photo"},{"type":"header","content":"Line up with the print area"},{"type":"paragraph","content":"Open the Studio preview and adjust until the dashed print area sits on the chest/back."},{"type":"range","id":"zoom","label":"Photo zoom","min":70,"max":150,"step":1,"unit":"%","default":100},{"type":"range","id":"move_x","label":"Move left / right","min":-20,"max":20,"step":1,"unit":"%","default":0},{"type":"range","id":"move_y","label":"Move up / down","min":-20,"max":20,"step":1,"unit":"%","default":0}]}],"settings":[{"type":"header","content":"Page heading"},{"type":"text","id":"eyebrow","label":"Small title","default":"Zeyov Studio"},{"type":"text","id":"heading","label":"Heading","default":"Design your T-shirt"},{"type":"textarea","id":"intro","label":"Intro text","default":"Upload your artwork or add text, place it on the front or back, and see a live mockup with an instant price. Order directly on zeyov.com — every detail of your design reaches our print team."},{"type":"header","content":"Step titles"},{"type":"text","id":"step1","label":"Step 1","default":"Choose your t-shirt"},{"type":"text","id":"step2","label":"Step 2","default":"Add your design"},{"type":"text","id":"step4","label":"Step 4","default":"Print type & quantity"},{"type":"text","id":"step5","label":"Step 5","default":"Your quote"},{"type":"header","content":"Notes"},{"type":"textarea","id":"upload_tip","label":"Upload tip","default":"Tip: a PNG with a transparent background gives the cleanest print. Use at least 2000 px wide for big prints."},{"type":"textarea","id":"price_note","label":"Price note","info":"[cod] shows the COD charge from Theme settings.","default":"Prices include taxes. Free delivery on online payment · COD +₹[cod]."},{"type":"textarea","id":"order_note","label":"Order note","default":"Your artwork, print files, sizes and exact placement are attached to your order. Our team checks every design before printing."},{"type":"header","content":"Oversized 250 GSM French Terry"},{"type":"checkbox","id":"os250_on","label":"Show in Studio","default":true},{"type":"text","id":"os250_name","label":"Card name","default":"Oversized Tee"},{"type":"text","id":"os250_spec","label":"Card details","default":"250 GSM · French Terry"},{"type":"text","id":"os250_colors","label":"Colours","info":"Comma separated. Available: Black, White, Beige, Brown, Navy Blue, Royal Blue, Lavender, Red, Green","default":"Black, White, Beige, Brown, Navy Blue, Royal Blue, Lavender, Red, Green"},{"type":"header","content":"Acid Wash Oversized 250 GSM"},{"type":"checkbox","id":"aw250_on","label":"Show in Studio","default":true},{"type":"text","id":"aw250_name","label":"Card name","default":"Acid Wash Oversized Tee"},{"type":"text","id":"aw250_spec","label":"Card details","default":"250 GSM · Acid Wash"},{"type":"text","id":"aw250_colors","label":"Colours","info":"Comma separated. Available: Black, White, Beige, Brown, Navy Blue, Royal Blue, Lavender, Red, Green","default":"Black, Green, Royal Blue"},{"type":"header","content":"Full Sleeve Oversized 250 GSM"},{"type":"checkbox","id":"fs250_on","label":"Show in Studio","default":true},{"type":"text","id":"fs250_name","label":"Card name","default":"Full Sleeve Oversized Tee"},{"type":"text","id":"fs250_spec","label":"Card details","default":"250 GSM · French Terry"},{"type":"text","id":"fs250_colors","label":"Colours","info":"Comma separated. Available: Black, White, Beige, Brown, Navy Blue, Royal Blue, Lavender, Red, Green","default":"Black"},{"type":"header","content":"Oversized 230 GSM Single Jersey"},{"type":"checkbox","id":"os230_on","label":"Show in Studio","default":true},{"type":"text","id":"os230_name","label":"Card name","default":"Oversized Tee"},{"type":"text","id":"os230_spec","label":"Card details","default":"230 GSM · Single Jersey"},{"type":"text","id":"os230_colors","label":"Colours","info":"Comma separated. Available: Black, White, Beige, Brown, Navy Blue, Royal Blue, Lavender, Red, Green","default":"Black, White"},{"type":"header","content":"Oversized 190 GSM Single Jersey"},{"type":"checkbox","id":"os190_on","label":"Show in Studio","default":true},{"type":"text","id":"os190_name","label":"Card name","default":"Oversized Tee"},{"type":"text","id":"os190_spec","label":"Card details","default":"190 GSM · Single Jersey"},{"type":"text","id":"os190_colors","label":"Colours","info":"Comma separated. Available: Black, White, Beige, Brown, Navy Blue, Royal Blue, Lavender, Red, Green","default":"Black, White"},{"type":"header","content":"Regular Fit 190 GSM Single Jersey"},{"type":"checkbox","id":"rf190_on","label":"Show in Studio","default":true},{"type":"text","id":"rf190_name","label":"Card name","default":"Regular Fit Tee"},{"type":"text","id":"rf190_spec","label":"Card details","default":"190 GSM · Single Jersey"},{"type":"text","id":"rf190_colors","label":"Colours","info":"Comma separated. Available: Black, White, Beige, Brown, Navy Blue, Royal Blue, Lavender, Red, Green","default":"Black, White, Red"},{"type":"header","content":"Tips section"},{"type":"checkbox","id":"show_tips","label":"Show tips section","default":true},{"type":"text","id":"tips_eyebrow","label":"Small title","default":"Good to know"},{"type":"text","id":"tips_heading","label":"Heading","default":"Design Studio tips"},{"type":"text","id":"tip1_title","label":"Tip 1 title","default":"Best file types"},{"type":"textarea","id":"tip1_text","label":"Tip 1 text","default":"Transparent PNG or SVG at 300 DPI. A 12\" wide print needs about 3600 px."},{"type":"text","id":"tip2_title","label":"Tip 2 title","default":"Real print sizes"},{"type":"textarea","id":"tip2_text","label":"Tip 2 text","default":"Sizes are measured on a size M tee. We scale prints sensibly for other sizes."},{"type":"text","id":"tip3_title","label":"Tip 3 title","default":"Price by print size"},{"type":"textarea","id":"tip3_text","label":"Tip 3 text","default":"Each print is priced as Logo, A6, A5, A4, A3 or A2 DTF by its actual size — or embroidery by size."},{"type":"text","id":"tip4_title","label":"Tip 4 title","default":"We check every design"},{"type":"textarea","id":"tip4_text","label":"Tip 4 text","default":"Our team reviews your artwork and contacts you if anything needs fixing before printing."}]}
+{% endschema %}

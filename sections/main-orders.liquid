@@ -1,0 +1,119 @@
+<div class="wrap">
+  <div class="orders" data-orders>
+    <div class="coll-hero" style="padding-top:6px"><span class="eyebrow">Orders</span><h1>My Orders</h1><p class="muted">Track every order and review the products you've received.</p></div>
+    {%- if customer -%}
+      {%- paginate customer.orders by 10 -%}
+      {%- for order in customer.orders -%}
+        {%- liquid
+          assign shipped = false
+          if order.fulfillment_status == 'fulfilled' or order.fulfillment_status == 'partial'
+            assign shipped = true
+          endif
+          assign confirmed = false
+          if order.financial_status == 'paid' or order.financial_status == 'partially_paid' or order.financial_status == 'pending' or order.financial_status == 'authorized'
+            assign confirmed = true
+          endif
+          assign delivered = false
+          for li in order.line_items
+            if li.fulfillment.shipment_status == 'delivered'
+              assign delivered = true
+            endif
+          endfor
+        -%}
+        <article class="ordercard step">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:start">
+            <div><b style="font-size:15px">Order {{ order.name }}</b><div class="muted" style="font-size:12.5px">{{ order.created_at | date: '%d %b %Y' }} · {{ order.item_count }} item{% if order.item_count != 1 %}s{% endif %}</div></div>
+            <div style="text-align:right"><b>{{ order.total_price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</b><br>
+              {%- if order.cancelled -%}<span class="status-pill bad">Cancelled</span>
+              {%- elsif delivered -%}<span class="status-pill ok">Delivered</span>
+              {%- elsif shipped -%}<span class="status-pill ok">Shipped</span>
+              {%- else -%}<span class="status-pill">{{ order.financial_status_label }}</span>{%- endif -%}
+            </div>
+          </div>
+          {%- unless order.cancelled -%}
+          <div class="steps4">
+            <div class="done"><i></i>Placed</div>
+            <div class="{% if confirmed %}done{% endif %}"><i></i>Confirmed</div>
+            <div class="{% if shipped %}done{% endif %}"><i></i>Shipped</div>
+            <div class="{% if delivered %}done{% endif %}"><i></i>Delivered</div>
+          </div>
+          {%- endunless -%}
+          {%- for li in order.line_items -%}
+            <div class="oitem">
+              {%- if li.image -%}{{ li.image | image_url: width: 160 | image_tag: alt: li.title, loading: 'lazy' }}{%- else -%}<img src="{{ 'oversized-tee-250-gsm-french-terry-black.webp' | asset_url }}" alt="">{%- endif -%}
+              <div class="oitem__t">
+                <b>{{ li.product.title | default: li.title }}</b>
+                <span class="muted">{% unless li.variant.title == 'Default Title' %}{{ li.variant.title }} · {% endunless %}Qty {{ li.quantity }} · {{ li.final_line_price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}</span>
+                {%- for p in li.properties -%}{%- unless p.first contains '_' or p.last == blank -%}<span class="muted" style="font-size:12px">{{ p.first }}: {% if p.last contains '/uploads/' %}Uploaded{% else %}{{ p.last }}{% endif %}</span>{%- endunless -%}{%- endfor -%}
+              </div>
+              <div class="oitem__act">
+                {%- if li.fulfillment.tracking_url != blank -%}<a class="btn btn--sm btn--outline-gold" href="{{ li.fulfillment.tracking_url }}" target="_blank" rel="noopener">Track shipment</a>{%- endif -%}
+                {%- if shipped and li.fulfillment and li.product -%}
+                  <button type="button" class="btn btn--sm" data-review-open data-product="{{ li.product.title | escape }}" data-handle="{{ li.product.handle }}" data-order="{{ order.name }}" data-variant="{{ li.variant.title | escape }}">★ Write a review</button>
+                {%- elsif li.product -%}
+                  <span class="muted" style="font-size:12px">You can review this after it's shipped.</span>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endfor -%}
+          <div class="oactions">
+            <a class="btn btn--sm" href="{{ order.order_status_url | default: order.customer_url }}">{% render 'icon', name: 'box' %} Track order</a>
+            <a class="btn btn--sm btn--outline-gold" href="{{ order.customer_url }}">Details &amp; invoice</a>
+            <a class="btn btn--sm btn--outline-gold" href="/pages/contact">Need help?</a>
+          </div>
+        </article>
+      {%- else -%}
+        <div class="noorders">
+          <div class="noorders__art">{% render 'icon', name: 'bag' %}<i></i><i></i></div>
+          <h2>No orders yet</h2>
+          <p class="muted">Looks like you haven't placed an order. Your orders, live tracking and reviews will appear here.</p>
+          <div class="noorders__perks"><span>{% render 'icon', name: 'truck' %}Free delivery on online pay</span><span>{% render 'icon', name: 'return' %}7-day replace</span></div>
+          <a class="btn" href="{{ routes.all_products_collection_url }}?sort_by=created-descending">Shop New Arrivals {% render 'icon', name: 'arrow' %}</a>
+          <a class="remove" href="{{ routes.collections_url }}">Browse all collections</a>
+        </div>
+      {%- endfor -%}
+      {%- if paginate.pages > 1 -%}<nav class="pagination">{{ paginate | default_pagination }}</nav>{%- endif -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="noorders" style="padding-block:20px 6px">
+        <div class="noorders__art">{% render 'icon', name: 'orders' %}<i></i><i></i></div>
+      </div>
+      <div class="step">
+        <h3>{% render 'icon', name: 'user' %} Sign in to see your orders</h3>
+        <p class="muted" style="font-size:13.5px">Use the email you ordered with. You'll get a one-time code, then see every order, its tracking and review options.</p>
+        <a class="btn btn--block" href="{{ routes.account_login_url }}?return_url=/pages/orders">Sign in</a>
+      </div>
+      <div class="step"><h3>{% render 'icon', name: 'box' %} Have your order email?</h3><p class="muted" style="font-size:13.5px">Open the confirmation email from Zeyov and tap <b>View your order</b> to see live status without signing in.</p></div>
+    {%- endif -%}
+  </div>
+
+  {%- if customer -%}
+  <div class="modal" id="ReviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="ReviewModalTitle">
+    <div class="scrim" data-close-modal></div>
+    <div class="modal__panel">
+      {%- form 'contact', id: 'OrderReviewForm', class: 'review-form' -%}
+        <div style="display:flex;justify-content:space-between;align-items:center"><h3 id="ReviewModalTitle" style="font:600 18px var(--font-body)">Review <span data-rv-title></span></h3><button type="button" class="icon-btn" data-close-modal aria-label="Close">{% render 'icon', name: 'close' %}</button></div>
+        {%- if form.posted_successfully? -%}<p class="notice">Thank you! Your review was sent and will appear on the product after approval.</p>{%- endif -%}
+        <input type="hidden" name="contact[Type]" value="Verified product review">
+        <input type="hidden" name="contact[Product]" data-rv-product>
+        <input type="hidden" name="contact[Product handle]" data-rv-handle>
+        <input type="hidden" name="contact[Order]" data-rv-order>
+        <input type="hidden" name="contact[Size bought]" data-rv-variant>
+        <input type="hidden" name="contact[name]" value="{{ customer.first_name }} {{ customer.last_name | slice: 0 }}.">
+        <input type="hidden" name="contact[email]" value="{{ customer.email }}">
+        <div class="form-row"><span>Your rating</span>
+          <div class="star-input" role="radiogroup" aria-label="Rating">
+            {%- for i in (1..5) -%}{%- assign s = 6 | minus: i -%}<input type="radio" id="orv-{{ s }}" name="contact[Rating]" value="{{ s }}" {% if s == 5 %}checked{% endif %}><label for="orv-{{ s }}" title="{{ s }} stars">★</label>{%- endfor -%}
+          </div>
+        </div>
+        <div class="form-row"><label for="orv-title">Title</label><input class="input" id="orv-title" name="contact[Review title]" required placeholder="Great fit, thick fabric"></div>
+        <div class="form-row"><label for="orv-body">Your review</label><textarea class="input" id="orv-body" name="contact[body]" required placeholder="How was the fit, fabric and colour?"></textarea></div>
+        <button class="btn btn--block" type="submit">Submit review</button>
+      {%- endform -%}
+    </div>
+  </div>
+  {%- endif -%}
+</div>
+{% schema %}
+{ "name": "My orders" }
+{% endschema %}

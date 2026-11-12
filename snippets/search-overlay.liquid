@@ -1,0 +1,20 @@
+<div class="search-ov" id="SearchOverlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true">
+  <div class="wrap">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-ov__bar">
+      {% render 'icon', name: 'search' %}
+      <input type="search" id="SearchInput" name="q" placeholder="Search tees, colours, GSM, price…" autocomplete="off" aria-label="Search">
+      <input type="hidden" name="type" value="product">
+      <button type="button" class="icon-btn" data-close aria-label="Close search">{% render 'icon', name: 'close' %}</button>
+    </form>
+    <div class="search-ov__body">
+      <div data-search-default>
+        <p class="eyebrow" style="margin-bottom:10px">Popular searches</p>
+        <div class="search-tags">
+          {%- assign tags = 'Oversized,Black,Acid wash,Full sleeve,250 GSM,Lavender,Regular fit,Under 600' | split: ',' -%}
+          {%- for t in tags -%}<button type="button" class="pill" data-search-term="{{ t }}">{{ t }}</button>{%- endfor -%}
+        </div>
+      </div>
+      <div data-search-results></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+{%- comment -%}
+  Star rating for a product. Reads reviews saved in the product metafield zeyov.reviews (JSON list),
+  falling back to the standard reviews.rating / reviews.rating_count metafields used by review apps.
+{%- endcomment -%}
+{%- assign _sum = 0 -%}{%- assign _count = 0 -%}
+{%- assign _list = product.metafields.zeyov.reviews.value -%}
+{%- if _list != blank -%}
+  {%- for r in _list -%}{%- assign _sum = _sum | plus: r.rating -%}{%- assign _count = _count | plus: 1 -%}{%- endfor -%}
+{%- endif -%}
+{%- if _count > 0 -%}
+  {%- assign _avg = _sum | times: 1.0 | divided_by: _count -%}
+{%- elsif product.metafields.reviews.rating.value != blank -%}
+  {%- assign _avg = product.metafields.reviews.rating.value.rating | times: 1.0 -%}
+  {%- assign _count = product.metafields.reviews.rating_count.value | default: 0 -%}
+{%- endif -%}
+{%- if _count > 0 -%}
+  {%- assign _pct = _avg | times: 20 | round -%}
+  <span class="stars" aria-label="Rated {{ _avg | round: 1 }} out of 5 from {{ _count }} reviews">
+    <span class="stars__row" style="--pct: {{ _pct }}%"></span>
+    {%- unless compact -%}<span class="tabular">{{ _avg | round: 1 }}</span>{%- endunless -%}
+    <span>({{ _count }})</span>
+  </span>
+{%- endif -%}

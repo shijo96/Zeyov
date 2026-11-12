@@ -1,0 +1,23 @@
+<section class="section" style="background:var(--surface)">
+  <div class="wrap" style="display:grid;gap:22px">
+    <div class="section-head" style="margin:0"><div><span class="eyebrow">Zeyov Studio</span><h2>{{ section.settings.heading }}</h2></div></div>
+    <div style="display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));align-items:center">
+      <div class="workflow">
+        <div class="wf">{% render 'icon', name: 'tee' %}<p><b>Choose T-Shirt</b><span>Fabric, fit, GSM</span></p></div>
+        <div class="wf">{% render 'icon', name: 'upload' %}<p><b>Design Your T-Shirt</b><span>Upload, add text, logo</span></p></div>
+        <div class="wf">{% render 'icon', name: 'layers' %}<p><b>Print Type &amp; Placement</b><span>DTF, Puff, HD, Embroidery</span></p></div>
+        <div class="wf">{% render 'icon', name: 'size' %}<p><b>Select Size &amp; Quantity</b><span>S to XXL, bundle offers apply</span></p></div>
+        <div class="wf">{% render 'icon', name: 'cart' %}<p><b>Add to Cart &amp; Checkout</b><span>Pay via Razorpay or COD</span></p></div>
+      </div>
+      <div style="display:grid;gap:14px">
+        <div style="border-radius:22px;overflow:hidden;aspect-ratio:16/10;background:#e9dcc4">
+          {%- if section.settings.image != blank -%}{{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', style: 'width:100%;height:100%;object-fit:cover' }}{%- else -%}<img src="{{ 'z-studio-label.webp' | asset_url }}" alt="Zeyov label" loading="lazy" style="width:100%;height:100%;object-fit:cover">{%- endif -%}
+        </div>
+        <a class="btn btn--block" href="/pages/studio">Start designing {% render 'icon', name: 'arrow' %}</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{ "name": "Studio workflow", "settings": [{ "type": "text", "id": "heading", "label": "Heading", "default": "Design your own tee" }, { "type": "image_picker", "id": "image", "label": "Image" }], "presets": [{ "name": "Studio workflow" }] }
+{% endschema %}

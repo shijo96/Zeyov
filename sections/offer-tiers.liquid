@@ -1,0 +1,28 @@
+<section class="section" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Offers</span><h2>{{ section.settings.heading }}</h2></div></div>
+    <div class="offers">
+      <div class="offer">
+        <span class="offer__tag">Cart offer</span>
+        <span class="offer__pct">{{ settings.tier1_pct }}<small>% off</small></span>
+        <h3>Buy any {{ settings.tier1_qty }}</h3>
+        <p>Mix fits, colours and fabrics. {{ settings.tier1_qty }} or more tees in your bag unlock {{ settings.tier1_pct }}% off.</p>
+      </div>
+      <div class="offer offer--dark">
+        <span class="offer__tag">Best value</span>
+        <span class="offer__pct">{{ settings.tier2_pct }}<small>% off</small></span>
+        <h3>Buy any {{ settings.tier2_qty }}</h3>
+        <p>5% plus an extra 10% when your bag has {{ settings.tier2_qty }} or more tees.</p>
+      </div>
+      <div class="offer">
+        <span class="offer__tag">Bundle</span>
+        <span class="offer__pct">{{ settings.bundle3_pct }}<small>% off</small></span>
+        <h3>Same tee, more pieces</h3>
+        <p>1 piece at full price · 2 pieces save {{ settings.bundle2_pct }}% · 3 pieces save {{ settings.bundle3_pct }}% on that tee.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{ "name": "Offer tiers", "settings": [{ "type": "text", "id": "heading", "label": "Heading", "default": "The more you pick, the more you save" }], "presets": [{ "name": "Offer tiers" }] }
+{% endschema %}

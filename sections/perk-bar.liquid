@@ -1,0 +1,13 @@
+<div class="wrap">
+  <div class="perkbar">
+    <div>{% render 'icon', name: 'truck' %}<p><b>Free Delivery</b>Online Payment Only</p></div>
+    <div>{% render 'icon', name: 'box' %}<p><b>COD Available</b>+ ₹{{ settings.cod_fee | default: 80 }} Extra</p></div>
+    <div>{% render 'icon', name: 'percent' %}<p><b>Cart Discount</b>{{ settings.tier1_qty }}+ = {{ settings.tier1_pct }}% · {{ settings.tier2_qty }}+ = {{ settings.tier2_pct }}%</p></div>
+    <div>{% render 'icon', name: 'tag' %}<p><b>Bundle Offer</b>2 pcs = {{ settings.bundle2_pct }}% · 3 pcs = {{ settings.bundle3_pct }}%</p></div>
+    <div>{% render 'icon', name: 'shield' %}<p><b>Secure Payment</b>via Razorpay</p></div>
+    <div>{% render 'icon', name: 'return' %}<p><b>7-Day Replace</b>Easy replacement</p></div>
+  </div>
+</div>
+{% schema %}
+{ "name": "Perks bar" }
+{% endschema %}

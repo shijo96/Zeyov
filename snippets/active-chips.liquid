@@ -1,0 +1,14 @@
+{%- assign has_active = false -%}
+{%- capture chips -%}
+  {%- for filter in results.filters -%}
+    {%- for v in filter.active_values -%}{%- assign has_active = true -%}
+      <a class="chip" href="{{ v.url_to_remove }}" data-facet-link>{{ filter.label }}: {{ v.label }} {% render 'icon', name: 'close' %}</a>
+    {%- endfor -%}
+    {%- if filter.type == 'price_range' and filter.min_value.value != nil or filter.type == 'price_range' and filter.max_value.value != nil -%}{%- assign has_active = true -%}
+      <a class="chip" href="{{ filter.url_to_remove }}" data-facet-link>Price: {{ filter.min_value.value | default: 0 | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }} – {% if filter.max_value.value %}{{ filter.max_value.value | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }}{% else %}any{% endif %} {% render 'icon', name: 'close' %}</a>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- if has_active -%}
+  <div class="chips">{{ chips }}<a class="chip chip--clear" href="{{ url }}{% if terms != blank %}?q={{ terms | url_encode }}&type=product{% endif %}" data-facet-link>Clear all</a></div>
+{%- endif -%}

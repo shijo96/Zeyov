@@ -1,49 +1,6 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
-  "current": {
-    "logo_width": 150,
-    "color_bg": "#FAF8F4",
-    "color_surface": "#FFFFFF",
-    "color_text": "#20201F",
-    "color_primary": "#33251F",
-    "color_secondary_bg": "#EDE5DB",
-    "color_muted": "#77716B",
-    "color_gold": "#B89B65",
-    "color_gold_dark": "#8F7241",
-    "color_border": "#E5DED5",
-    "color_button": "#33251F",
-    "color_button_text": "#FFFFFF",
-    "color_sale": "#9D3535",
-    "color_success": "#386B50",
-    "heading_font": "Playfair Display",
-    "body_font": "Inter",
-    "show_delivery_estimator": false,
-    "delivery_min_days": 4,
-    "delivery_max_days": 7,
-    "assure_1": "Free Delivery on Prepaid Orders",
-    "assure_2": "Cash on Delivery (COD) Coming Soon",
-    "assure_3": "7-Day Easy Exchange & Return Policy",
-    "assure_4": "Tracked Pan-India Delivery (4–7 Days)",
-    "whatsapp_message": "Hi Zeyov Atelier, I need assistance with my order.",
-    "support_email": "zeyovofficial@gmail.com",
-    "cart_note": true,
-    "free_shipping_threshold": 0,
-    "social_instagram": "#",
-    "social_facebook": "#",
-    "social_youtube": "#",
-    "whatsapp_number": "919447873029",
-    "enable_cart_recovery_modal": true,
-    "cart_recovery_discount_code": "ZEYOV10",
-    "cart_recovery_idle_seconds": 60,
-    "enable_back_in_stock": true,
-    "enable_personalized_recs": true
+  "current": "Default",
+  "presets": {
+    "Default": {}
   }
 }

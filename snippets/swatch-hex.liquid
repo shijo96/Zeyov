@@ -1,0 +1,10 @@
+{%- comment -%} Outputs a hex colour for a colour name using theme settings. Usage: {% render 'swatch-hex', name: value %} {%- endcomment -%}
+{%- assign _hex = '#cfc6b8' -%}
+{%- assign _needle = name | downcase | strip -%}
+{%- assign _lines = settings.swatch_colors | newline_to_br | split: '<br />' -%}
+{%- for _l in _lines -%}
+  {%- assign _parts = _l | strip | split: ':' -%}
+  {%- assign _n = _parts.first | downcase | strip -%}
+  {%- if _n == _needle -%}{%- assign _hex = _parts.last | strip -%}{%- break -%}{%- endif -%}
+{%- endfor -%}
+{{- _hex -}}

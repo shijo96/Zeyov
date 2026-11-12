@@ -1,0 +1,48 @@
+<aside class="drawer drawer--left" id="MenuDrawer" aria-label="Menu" aria-hidden="true" tabindex="-1">
+  <div class="drawer__head">
+    <img src="{{ 'zeyov-logo.png' | asset_url }}" alt="{{ shop.name }}" width="388" height="140" style="height:34px;width:auto">
+    <button class="icon-btn" data-close aria-label="Close menu">{% render 'icon', name: 'close' %}</button>
+  </div>
+  <div class="drawer__body">
+    <a class="drawer-account" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">
+      <span class="tab-ic">{% render 'icon', name: 'user' %}</span>
+      <span><b>{% if customer %}Hi {{ customer.first_name | default: 'there' }}{% else %}Sign in{% endif %}</b><small>{% if customer %}Orders, addresses &amp; profile{% else %}Track orders &amp; save addresses{% endif %}</small></span>
+      {% render 'icon', name: 'arrow' %}
+    </a>
+    <ul class="menu-list">
+      {%- assign menu = linklists['main-menu'] -%}
+      {%- if menu.links.size > 0 -%}
+        {%- for link in menu.links -%}
+          <li>
+            {%- if link.links.size > 0 -%}
+              <details><summary>{{ link.title }}{% render 'icon', name: 'chev' %}</summary>
+                <div class="sub">{%- for c in link.links -%}<a href="{{ c.url }}">{{ c.title }}</a>{%- endfor -%}</div>
+              </details>
+            {%- elsif link.type == 'collections_link' -%}
+              <details><summary>{{ link.title }}{% render 'icon', name: 'chev' %}</summary>
+                <div class="sub">
+                  {%- for c in collections limit: 12 -%}{%- unless c.handle == 'frontpage' -%}<a href="{{ c.url }}">{{ c.title }}</a>{%- endunless -%}{%- endfor -%}
+                  <a href="{{ routes.collections_url }}">View all collections</a>
+                </div>
+              </details>
+            {%- else -%}
+              <a href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title }}{% render 'icon', name: 'arrow' %}</a>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        <li><a href="{{ routes.root_url }}">Home{% render 'icon', name: 'arrow' %}</a></li>
+        <li><a href="{{ routes.all_products_collection_url }}">Shop All{% render 'icon', name: 'arrow' %}</a></li>
+        <li><a href="/pages/studio">Zeyov Studio{% render 'icon', name: 'arrow' %}</a></li>
+        <li><a href="/pages/orders">My Orders{% render 'icon', name: 'arrow' %}</a></li>
+        <li><a href="/pages/wishlist">Wishlist{% render 'icon', name: 'arrow' %}</a></li>
+        <li><a href="/pages/contact">Contact Us{% render 'icon', name: 'arrow' %}</a></li>
+      {%- endif -%}
+    </ul>
+    <div class="drawer-help">
+      {%- if settings.whatsapp_number != blank -%}<a href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener">{% render 'icon', name: 'whatsapp' %}WhatsApp support</a>{%- endif -%}
+      {%- if settings.contact_email != blank -%}<a href="mailto:{{ settings.contact_email }}">{% render 'icon', name: 'mail' %}{{ settings.contact_email }}</a>{%- endif -%}
+    </div>
+    {% render 'socials' %}
+  </div>
+</aside>

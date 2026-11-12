@@ -1,9 +1,9 @@
 {
   "general": {
-    "skip": "Skip to content",
-    "cart": "Cart",
-    "search": "Search",
-    "menu": "Menu",
-    "close": "Close"
-  }
+    "password_page": { "login_form_heading": "Enter store using password", "login_form_password_label": "Password", "login_form_submit": "Enter" },
+    "404": { "title": "Page not found" }
+  },
+  "products": { "add_to_cart": "Add to cart", "sold_out": "Sold out", "buy_now": "Buy it now" },
+  "cart": { "title": "Your bag", "empty": "Your bag is empty", "checkout": "Checkout" },
+  "customer": { "login": "Login", "register": "Create account", "logout": "Log out", "orders": "Orders" }
 }

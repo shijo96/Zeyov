@@ -1,272 +1,90 @@
 {%- paginate collection.products by section.settings.per_page -%}
-<section class="section collection-page">
-  <div class="container">
-    <!-- Breadcrumbs -->
-    <nav class="breadcrumbs" aria-label="Breadcrumbs">
-      <a href="{{ routes.root_url }}">Home</a>
-      <span class="sep" aria-hidden="true">/</span>
-      <a href="{{ routes.all_products_collection_url }}">Collections</a>
-      <span class="sep" aria-hidden="true">/</span>
-      <span class="cur" aria-current="page">{{ collection.title }}</span>
-    </nav>
-
-    <!-- Collection Editorial Header -->
-    <header class="section__head collection-head center">
-      <span class="eyebrow">ZEYOV ATELIER &bull; READY-TO-WEAR</span>
-      <h1 class="collection-title">{{ collection.title }}</h1>
-      <div class="collection-desc rte muted">
-        {%- if collection.description != blank -%}
-          {{ collection.description }}
-        {%- else -%}
-          <p>Precision-tailored garments, sculpted silhouettes, and handcrafted luxury accessories designed for modern distinction.</p>
-        {%- endif -%}
-      </div>
-
-      <!-- Quick Category Navigation Pills (Active Collections) -->
-      <div class="collection-nav-pills" role="navigation" aria-label="Collection Categories">
-        <a href="{{ routes.all_products_collection_url }}" class="cat-pill{% if collection.handle == 'all' or collection.handle == blank %} is-active{% endif %}">
-          All Creations
-        </a>
-        <a href="{{ routes.collections_url }}/new-arrivals" class="cat-pill{% if collection.handle == 'new-arrivals' %} is-active{% endif %}">
-          New Arrivals
-        </a>
-        <a href="{{ routes.collections_url }}/womens-wear" class="cat-pill{% if collection.handle == 'womens-wear' %} is-active{% endif %}">
-          Women's Edit
-        </a>
-        <a href="{{ routes.collections_url }}/mens-wear" class="cat-pill{% if collection.handle == 'mens-wear' or collection.handle == 'mens-collection' %} is-active{% endif %}">
-          Men's Edit
-        </a>
-        <a href="{{ routes.collections_url }}/accessories" class="cat-pill{% if collection.handle == 'accessories' or collection.handle == 'womens-accessories' or collection.handle == 'mens-accessories' %} is-active{% endif %}">
-          Accessories
-        </a>
-        <a href="{{ routes.collections_url }}/western-wear" class="cat-pill{% if collection.handle == 'western-wear' %} is-active{% endif %}">
-          Western Wear
-        </a>
-        <a href="{{ routes.collections_url }}/womens-dresses" class="cat-pill{% if collection.handle == 'womens-dresses' %} is-active{% endif %}">
-          Dresses &amp; Gowns
-        </a>
-        <a href="{{ routes.collections_url }}/womens-tops-tshirts" class="cat-pill{% if collection.handle == 'womens-tops-tshirts' %} is-active{% endif %}">
-          Tops &amp; Tees
-        </a>
-        <a href="{{ routes.collections_url }}/womens-bottomwear" class="cat-pill{% if collection.handle == 'womens-bottomwear' %} is-active{% endif %}">
-          Bottomwear
-        </a>
-        <a href="{{ routes.collections_url }}/kidswear" class="cat-pill{% if collection.handle == 'kidswear' %} is-active{% endif %}">
-          Kidswear
-        </a>
-      </div>
-    </header>
-
-    <!-- Collection Toolbar -->
-    <div class="collection-toolbar">
-      <div class="toolbar__count">
-        <span class="toolbar__count-num">{{ collection.products_count }}</span>
-        <span class="toolbar__count-text">Piece{% if collection.products_count != 1 %}s{% endif %} available</span>
-      </div>
-
-      <div class="toolbar__actions-wrap">
-        {%- if collection.filters.size > 0 or collection.all_tags.size > 0 -%}
-          <button type="button" class="btn btn--small btn--outline mobile-filter-btn" data-open-filters aria-label="Open Filters">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
-            <span>Filters</span>
-            {%- if total_active_filters > 0 -%}
-              <span class="active-filter-badge">{{ total_active_filters }}</span>
-            {%- endif -%}
-          </button>
-        {%- endif -%}
-
-        <div class="toolbar__sort-wrap">
-          {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-          <label for="CollectionSort" class="sort-label">Sort By</label>
-          <div class="sort-select-box">
-            <select id="CollectionSort" class="sort-select" onchange="location.href='?sort_by='+this.value">
-              <option value="manual" {% if sort_by == 'manual' %}selected{% endif %}>Featured Runway</option>
-              <option value="best-selling" {% if sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
-              <option value="price-ascending" {% if sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
-              <option value="price-descending" {% if sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
-              <option value="created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Newest Additions</option>
-            </select>
-            <span class="sort-chevron" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Online Store 2.0 Facets & Filtering Form (Bottom Sheet on Mobile) -->
-    <div class="filters-backdrop" data-close-filters></div>
-    {%- if collection.filters.size > 0 -%}
-      <div class="collection-facets-wrap" id="CollectionFacets">
-        <div class="facets__header">
-          <h3 class="facets__title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
-            Refine &amp; Filter Collection
-          </h3>
-          <div class="facets__summary-bar">
-            <span>Showing {{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}</span>
-            {%- if total_active_filters > 0 -%}
-              <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="active-filters__clear-all">Reset All ({{ total_active_filters }})</a>
-            {%- endif -%}
-            <button type="button" class="icon-btn facets__close-btn" data-close-filters aria-label="Close filters">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-          </div>
-        </div>
-
-        <form class="facets__form" id="FacetFiltersForm" method="get" action="{{ collection.url }}">
-          <input type="hidden" name="sort_by" value="{{ sort_by }}">
-
-          {%- for filter in collection.filters -%}
-            <div class="facet-group">
-              <span class="facet-group__title">{{ filter.label }}</span>
-              {%- case filter.type -%}
-                {%- when 'list' -%}
-                  <ul class="facet-group__list">
-                    {%- for value in filter.values -%}
-                      <li>
-                        <label class="facet-checkbox-label">
-                          <input type="checkbox"
-                                 name="{{ value.param_name }}"
-                                 value="{{ value.value }}"
-                                 id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
-                                 {% if value.active %}checked{% endif %}
-                                 {% if value.count == 0 and value.active == false %}disabled{% endif %}
-                                 onchange="this.closest('form').submit();">
-                          <span>{{ value.label }}</span>
-                          <span class="facet-checkbox-count">({{ value.count }})</span>
-                        </label>
-                      </li>
-                    {%- endfor -%}
-                  </ul>
-                {%- when 'price_range' -%}
-                  <div class="facet-price-range">
-                    <div class="facet-price-input-wrap">
-                      <span class="facet-price-currency">{{ cart.currency.symbol }}</span>
-                      <input class="facet-price-input"
-                             name="{{ filter.min_value.param_name }}"
-                             id="Filter-{{ filter.min_value.param_name }}"
-                             {%- if filter.min_value.value -%}
-                               value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
-                             {%- endif -%}
-                             type="number"
-                             placeholder="Min"
-                             min="0"
-                             max="{{ filter.range_max | money_without_currency | replace: ',', '' }}">
-                    </div>
-                    <span class="facet-price-sep">&ndash;</span>
-                    <div class="facet-price-input-wrap">
-                      <span class="facet-price-currency">{{ cart.currency.symbol }}</span>
-                      <input class="facet-price-input"
-                             name="{{ filter.max_value.param_name }}"
-                             id="Filter-{{ filter.max_value.param_name }}"
-                             {%- if filter.max_value.value -%}
-                               value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
-                             {%- endif -%}
-                             type="number"
-                             placeholder="Max"
-                             min="0"
-                             max="{{ filter.range_max | money_without_currency | replace: ',', '' }}">
-                    </div>
-                    <button type="submit" class="facet-price-apply" aria-label="Apply price filter">Go</button>
-                  </div>
-              {%- endcase -%}
-            </div>
-          {%- endfor -%}
-        </form>
-
-        {%- if total_active_filters > 0 -%}
-          <div class="active-filters">
-            <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:600">Active Filters:</span>
-            {%- for filter in collection.filters -%}
-              {%- for value in filter.active_values -%}
-                <a href="{{ value.url_to_remove }}" class="active-filter-chip">
-                  <span>{{ filter.label }}: {{ value.label }}</span>
-                  <span class="active-filter-chip__remove" aria-hidden="true">&times;</span>
-                </a>
-              {%- endfor -%}
-              {%- if filter.type == 'price_range' -%}
-                {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
-                  <a href="{{ filter.url_to_remove }}" class="active-filter-chip">
-                    <span>
-                      {{ cart.currency.symbol }}{{ filter.min_value.value | default: 0 | money_without_currency }} &ndash;
-                      {{ cart.currency.symbol }}{{ filter.max_value.value | default: filter.range_max | money_without_currency }}
-                    </span>
-                    <span class="active-filter-chip__remove" aria-hidden="true">&times;</span>
-                  </a>
-                {%- endif -%}
-              {%- endif -%}
-            {%- endfor -%}
-            <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="active-filters__clear-all">Clear All</a>
-          </div>
-        {%- endif -%}
-      </div>
-    {%- elsif collection.all_tags.size > 0 -%}
-      <!-- Fallback Tag Filtering when OS 2.0 Facets are not configured yet in Shopify Admin -->
-      <div class="collection-facets-wrap" id="CollectionTagFilters">
-        <div class="facets__header">
-          <h3 class="facets__title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
-            Filter by Department &amp; Style
-          </h3>
-          <div class="facets__summary-bar">
-            <span>Showing {{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}</span>
-            {%- if current_tags -%}
-              <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="active-filters__clear-all">Clear Filter</a>
-            {%- endif -%}
-          </div>
-        </div>
-        <div class="active-filters" style="border:none;margin:0;padding-top:14px">
-          {%- for tag in collection.all_tags -%}
-            {%- if current_tags contains tag -%}
-              <span class="active-filter-chip" style="background:var(--gold-dark);color:#fff">
-                {{ tag }}
-                <a href="{{ collection.url }}" style="color:#fff;margin-left:4px;text-decoration:none">&times;</a>
-              </span>
-            {%- else -%}
-              <a href="{{ collection.url }}/{{ tag | handleize }}?sort_by={{ sort_by }}" class="active-filter-chip">
-                + {{ tag }}
-              </a>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-      </div>
-    {%- endif -%}
-
-    <!-- Product Grid -->
-    <div class="grid grid--products grid--fashion-catalog">
-      {%- for product in collection.products -%}
-        {% render 'product-card', product: product %}
-      {%- else -%}
-        <div class="empty-state" style="grid-column:1/-1;text-align:center;padding:40px 20px 20px">
-          <span class="badge badge--gold mb-xs">ATELIER DROP IN PREPARATION</span>
-          <h2 style="font-family:var(--font-heading);font-size:1.4rem;margin:8px 0 10px;">The {{ collection.title }} Capsule Is Being Curated</h2>
-          <p class="muted" style="max-width:540px;margin:0 auto 18px;font-size:0.92rem;">
-            Our designers are currently hand-finishing the next limited pieces for this curation. In the meantime, explore our signature creations below or inquire for bespoke sizing on WhatsApp.
-          </p>
-          {%- if settings.whatsapp_number != blank -%}
-            {%- assign wa_num = settings.whatsapp_number | replace: '+', '' | replace: ' ', '' -%}
-            <a class="btn btn--small btn--gold" href="https://wa.me/{{ wa_num }}?text=Hi%20Zeyov%20Atelier%2C%20I%20would%20like%20to%20inquire%20about%20{{ collection.title | url_encode }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;">
-              {% render 'icon', name: 'whatsapp' %} Inquire on WhatsApp
-            </a>
-          {%- endif -%}
-        </div>
-
-        {%- assign all_creations = collections.all.products -%}
-        {%- if all_creations.size > 0 -%}
-          {%- for prod in all_creations limit: 8 -%}
-            {% render 'product-card', product: prod %}
-          {%- endfor -%}
-        {%- endif -%}
-      {%- endfor -%}
-    </div>
-    {% render 'pagination', paginate: paginate %}
+<div class="wrap" data-facet-root data-section-id="{{ section.id }}">
+  <div class="coll-hero">
+    {%- assign is_new = false -%}{%- if collection.handle == 'new-arrivals' or collection.handle == 'all' and collection.sort_by == 'created-descending' -%}{%- assign is_new = true -%}{%- endif -%}
+    <span class="eyebrow">{% if is_new %}Just dropped{% else %}Collection{% endif %}</span>
+    <h1>{% if is_new %}New Arrivals{% else %}{{ collection.title }}{% endif %}</h1>
+    {%- if collection.description != blank -%}<div class="muted rte" style="max-width:60ch">{{ collection.description }}</div>{%- endif -%}
   </div>
-</section>
+  {%- assign new_c = collections['new-arrivals'] -%}
+  {%- if new_c.products_count > 0 -%}{%- assign new_url = new_c.url -%}{%- else -%}{%- assign new_url = routes.all_products_collection_url | append: '?sort_by=created-descending' -%}{%- endif -%}
+  <nav class="pills" aria-label="Collections">
+    <a class="pill {% if collection.handle == 'all' and is_new == false %}is-active{% endif %}" href="{{ routes.all_products_collection_url }}">All Products</a>
+    <a class="pill {% if is_new %}is-active{% endif %}" href="{{ new_url }}">New Arrivals</a>
+    {%- assign menu = linklists[section.settings.pill_menu] -%}
+    {%- if menu.links.size > 0 -%}
+      {%- for link in menu.links -%}<a class="pill {% if link.active %}is-active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+    {%- else -%}
+      {%- for c in collections limit: 12 -%}
+        {%- if c.handle == 'all' or c.handle == 'frontpage' or c.handle == 'home' or c.handle == 'new-arrivals' or c.products_count == 0 -%}{%- continue -%}{%- endif -%}
+        <a class="pill {% if c.handle == collection.handle %}is-active{% endif %}" href="{{ c.url }}">{{ c.title }}</a>
+      {%- endfor -%}
+    {%- endif -%}
+  </nav>
+
+  {%- assign chip_list = section.settings.chips | split: ',' -%}
+  {%- capture chips_html -%}
+    {%- for c in chip_list -%}{%- assign t = c | strip -%}
+      {%- if collection.all_tags contains t -%}<a href="{{ collection.url }}/{{ t | handleize }}" class="{% if current_tags contains t %}is-active{% endif %}">{{ t }}</a>{%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- if chips_html != blank -%}
+  <nav class="chiprow" aria-label="Styles"><a href="{{ collection.url }}" class="{% if current_tags == blank %}is-active{% endif %}">All styles</a>{{ chips_html }}</nav>
+  {%- endif -%}
+
+  {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+  {%- assign sort_opts = 'manual|Featured;best-selling|Best selling;created-descending|Newest first;price-ascending|Price: Low to High;price-descending|Price: High to Low;title-ascending|Name: A to Z;title-descending|Name: Z to A' | split: ';' -%}
+  {%- assign current_label = 'Featured' -%}
+  {%- for o in sort_opts -%}{%- assign kv = o | split: '|' -%}{%- if kv[0] == current_sort -%}{%- assign current_label = kv[1] -%}{%- endif -%}{%- endfor -%}
+  <div class="toolbar">
+    <span class="toolbar__count tabular" data-facet-count>{{ collection.products_count }} {% if collection.products_count == 1 %}product{% else %}products{% endif %}</span>
+    <div class="toolbar__actions">
+      <button type="button" class="toolbar__btn js-open-filters" data-open-filters>{% render 'icon', name: 'filter' %}Filter</button>
+      <div class="sortbox" data-sortbox>
+        <button type="button" class="toolbar__btn" data-sort-toggle aria-haspopup="listbox" aria-expanded="false">{% render 'icon', name: 'size' %}<span data-sort-label>{{ current_label }}</span>{% render 'icon', name: 'chev' %}</button>
+        <div class="sortmenu" role="listbox" aria-label="Sort by" data-sort-menu hidden>
+          <p class="sortmenu__title">Sort by</p>
+          {%- for o in sort_opts -%}{%- assign kv = o | split: '|' -%}
+            <button type="button" role="option" class="sortmenu__opt {% if kv[0] == current_sort %}is-active{% endif %}" aria-selected="{% if kv[0] == current_sort %}true{% else %}false{% endif %}" data-sort-value="{{ kv[0] }}">{{ kv[1] }}{% render 'icon', name: 'check' %}</button>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="coll-layout">
+    <div data-facet-filters>{% render 'facets', results: collection, url: collection.url, section_id: section.id %}</div>
+    <div class="results" data-facet-results>
+      {% render 'active-chips', results: collection, url: collection.url %}
+      {%- if collection.products.size > 0 -%}
+        <div class="grid">
+          {%- for product in collection.products -%}{% render 'product-card', product: product, collection: collection %}{%- endfor -%}
+        </div>
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="Pages">
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}<a href="{{ part.url }}" data-facet-link>{{ part.title }}</a>
+              {%- elsif part.title == paginate.current_page -%}<span class="current" aria-current="page">{{ part.title }}</span>
+              {%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+            {%- endfor -%}
+          </nav>
+        {%- endif -%}
+      {%- elsif collection.all_products_count == 0 -%}
+        <div class="grid">{% render 'placeholder-cards', limit: 8 %}</div>
+      {%- else -%}
+        <div class="empty"><h2>No tees match these filters</h2><p class="muted">Try removing a colour or widening the price range.</p><a class="btn" href="{{ collection.url }}" data-facet-link>Clear filters</a></div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
 {%- endpaginate -%}
 {% schema %}
 {
-  "name": "Collection",
-  "settings": [{ "type": "range", "id": "per_page", "min": 5, "max": 50, "step": 5, "label": "Products per page", "default": 15 }]
+  "name": "Collection grid",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "link_list", "id": "pill_menu", "label": "Collection pills menu (optional)" },
+    { "type": "text", "id": "chips", "label": "Style chips (product tags, comma separated)", "default": "Plain,Printed,Graphic,Pocket" }
+  ]
 }
 {% endschema %}

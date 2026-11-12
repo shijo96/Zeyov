@@ -1,0 +1,261 @@
+{
+ "sections": {
+  "main": {
+   "type": "main-studio",
+   "blocks": {
+    "p-oversized-tee-250--black": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 Black",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Black",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-250--white": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 White",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "White",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-250--beige": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 Beige",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Beige",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-250--navy-blue": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 Navy Blue",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Navy Blue",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-250--royal-blue": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 Royal Blue",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Royal Blue",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-250--lavender": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 Lavender",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Lavender",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-250--red": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 Red",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Red",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-250--green": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 Green",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Green",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-acid-wash-oversize-black": {
+     "type": "photo",
+     "settings": {
+      "title": "Acid Wash 250 GSM \u00b7 Black",
+      "style": "acid-wash-oversized-tee-250-gsm",
+      "color": "Black",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-acid-wash-oversize-green": {
+     "type": "photo",
+     "settings": {
+      "title": "Acid Wash 250 GSM \u00b7 Green",
+      "style": "acid-wash-oversized-tee-250-gsm",
+      "color": "Green",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-acid-wash-oversize-royal-blue": {
+     "type": "photo",
+     "settings": {
+      "title": "Acid Wash 250 GSM \u00b7 Royal Blue",
+      "style": "acid-wash-oversized-tee-250-gsm",
+      "color": "Royal Blue",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-full-sleeve-oversi-black": {
+     "type": "photo",
+     "settings": {
+      "title": "Full Sleeve 250 GSM \u00b7 Black",
+      "style": "full-sleeve-oversized-tee-250-gsm",
+      "color": "Black",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-230--black": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 230 GSM \u00b7 Black",
+      "style": "oversized-tee-230-gsm-single-jersey",
+      "color": "Black",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-230--white": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 230 GSM \u00b7 White",
+      "style": "oversized-tee-230-gsm-single-jersey",
+      "color": "White",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-oversized-tee-190--black": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 190 GSM \u00b7 Black",
+      "style": "oversized-tee-190-gsm-single-jersey",
+      "color": "Black",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-regular-fit-tee-19-black": {
+     "type": "photo",
+     "settings": {
+      "title": "Regular Fit 190 GSM \u00b7 Black",
+      "style": "regular-fit-tee-190-gsm-single-jersey",
+      "color": "Black",
+      "zoom": 92,
+      "move_x": 0,
+      "move_y": 0,
+      "front": "shopify://shop_images/download.png",
+      "back": "shopify://shop_images/download_1.png"
+     }
+    },
+    "p-regular-fit-tee-19-white": {
+     "type": "photo",
+     "settings": {
+      "title": "Regular Fit 190 GSM \u00b7 White",
+      "style": "regular-fit-tee-190-gsm-single-jersey",
+      "color": "White",
+      "zoom": 92,
+      "move_x": 0,
+      "move_y": 0,
+      "front": "shopify://shop_images/download_2.png",
+      "back": "shopify://shop_images/download_3.png"
+     }
+    },
+    "p-regular-fit-tee-19-red": {
+     "type": "photo",
+     "settings": {
+      "title": "Regular Fit 190 GSM \u00b7 Red",
+      "style": "regular-fit-tee-190-gsm-single-jersey",
+      "color": "Red",
+      "zoom": 92,
+      "move_x": 0,
+      "move_y": 0,
+      "front": "shopify://shop_images/download_4.png",
+      "back": "shopify://shop_images/download_5.png"
+     }
+    },
+    "p-os250-brown": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 250 GSM \u00b7 Brown",
+      "style": "oversized-tee-250-gsm-french-terry",
+      "color": "Brown",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    },
+    "p-os190-white": {
+     "type": "photo",
+     "settings": {
+      "title": "Oversized 190 GSM \u00b7 White",
+      "style": "oversized-tee-190-gsm-single-jersey",
+      "color": "White",
+      "zoom": 100,
+      "move_x": 0,
+      "move_y": 0
+     }
+    }
+   },
+   "block_order": [
+    "p-oversized-tee-250--black",
+    "p-oversized-tee-250--white",
+    "p-oversized-tee-250--beige",
+    "p-os250-brown",
+    "p-oversized-tee-250--navy-blue",
+    "p-oversized-tee-250--royal-blue",
+    "p-oversized-tee-250--lavender",
+    "p-oversized-tee-250--red",
+    "p-oversized-tee-250--green",
+    "p-acid-wash-oversize-black",
+    "p-acid-wash-oversize-green",
+    "p-acid-wash-oversize-royal-blue",
+    "p-full-sleeve-oversi-black",
+    "p-oversized-tee-230--black",
+    "p-oversized-tee-230--white",
+    "p-oversized-tee-190--black",
+    "p-os190-white",
+    "p-regular-fit-tee-19-black",
+    "p-regular-fit-tee-19-white",
+    "p-regular-fit-tee-19-red"
+   ],
+   "settings": {}
+  }
+ },
+ "order": [
+  "main"
+ ]
+}

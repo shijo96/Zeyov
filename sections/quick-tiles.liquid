@@ -1,0 +1,14 @@
+<section class="wrap" style="padding-block:16px 4px">
+  <div class="qtiles">
+    <a class="qtile" href="{{ section.settings.shop_link | default: routes.collections_url }}">{% render 'icon', name: 'bag' %}<span>Shop<br>Collection</span></a>
+    <a class="qtile qtile--gold" href="{{ section.settings.studio_link | default: '/pages/studio' }}">{% render 'icon', name: 'tee' %}<span>Zeyov<br>Studio</span><small>Design Your Own</small></a>
+  </div>
+  <div class="perks3">
+    <div>{% render 'icon', name: 'truck' %}Free Delivery<small>(Online Payment)</small></div>
+    <div>{% render 'icon', name: 'cod' %}COD<small>(+ ₹{{ settings.cod_fee | default: 80 }})</small></div>
+    <div>{% render 'icon', name: 'return' %}7-Day Replace<small>Easy replacement</small></div>
+  </div>
+</section>
+{% schema %}
+{ "name": "Shop & Studio tiles", "settings": [{ "type": "url", "id": "shop_link", "label": "Shop link" }, { "type": "url", "id": "studio_link", "label": "Studio link" }], "presets": [{ "name": "Shop & Studio tiles" }] }
+{% endschema %}

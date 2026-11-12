@@ -1,0 +1,10 @@
+{%- assign current = results.sort_by | default: results.default_sort_by -%}
+{%- assign opts = 'manual|Featured,best-selling|Best selling,created-descending|Newest first,price-ascending|Price: Low to High,price-descending|Price: High to Low,title-ascending|Name: A to Z,title-descending|Name: Z to A' | split: ',' -%}
+{%- if search_mode -%}{%- assign opts = 'relevance|Relevance,created-descending|Newest first,price-ascending|Price: Low to High,price-descending|Price: High to Low,title-ascending|Name: A to Z,title-descending|Name: Z to A' | split: ',' -%}{%- endif -%}
+<label for="SortBy" class="visually-hidden">Sort by</label>
+<select id="SortBy" data-sort>
+  {%- for o in opts -%}
+    {%- assign kv = o | split: '|' -%}
+    <option value="{{ kv[0] }}" {% if kv[0] == current %}selected{% endif %}>{{ kv[1] }}</option>
+  {%- endfor -%}
+</select>

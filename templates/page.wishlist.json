@@ -1,0 +1,1 @@
+{ "sections": { "main": { "type": "main-wishlist", "settings": {} }, "featured": { "type": "featured-products", "settings": { "eyebrow": "Pick up where you left off", "heading": "You might like", "limit": 4 } } }, "order": ["main", "featured"] }
