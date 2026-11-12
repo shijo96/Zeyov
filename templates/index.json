@@ -400,9 +400,11 @@
     "source": "collection",
     "collection": "new-arrivals",
     "limit": 12,
-    "top_up": true,
+    "top_up": false,
     "min_items": 10,
-    "strip_text": ""
+    "cta": "View details",
+    "add_label": "Add to cart",
+    "buy_label": "Buy now"
    }
   }
  },

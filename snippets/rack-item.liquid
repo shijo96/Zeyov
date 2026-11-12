@@ -1,6 +1,6 @@
 {%- comment -%}
   One garment on the clothing rack.
-  Params: idx, title, sub, price, url, group, tag, front, back (image objects), hanger (svg), attrs, variants (json string)
+  Params: product (optional), idx, title, sub, price, url, group, tag, front, back (image objects), hanger (svg), attrs, variants (json string)
 {%- endcomment -%}
 <div class="rack__slot" role="listitem" {{ attrs }}>
   <button type="button" class="rack__item" data-item="{{ idx }}"
@@ -9,6 +9,10 @@
     {% if front != blank %}data-front="{{ front | image_url: width: 1000 }}" data-thumb="{{ front | image_url: width: 600 }}"{% endif %}
     {% if back != blank %}data-back="{{ back | image_url: width: 1000 }}"{% endif %}
     {% if variants != blank %}data-variants="{{ variants | escape }}"{% endif %}
+    {%- if product != blank -%}
+      {%- capture pj -%}{"h":{{ product.handle | json }},"o":{{ product.options | json }},"v":[{%- for v in product.variants limit: 100 -%}{"id":{{ v.id }},"o":{{ v.options | json }},"a":{{ v.available }},"p":{{ v.price }}{% if v.featured_image %},"i":{{ v.featured_image | image_url: width: 1000 | json }}{% endif %}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}{%- endcapture -%}
+      data-product="{{ pj | escape }}"
+    {%- endif %}
     aria-label="{{ title | escape }}{% if sub != blank %}, {{ sub | escape }}{% endif %}">
     <span class="rack__hanger" aria-hidden="true">{{ hanger }}</span>
     <span class="rack__garment">

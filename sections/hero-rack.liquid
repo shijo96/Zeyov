@@ -65,7 +65,7 @@
                 endif
               endfor
             -%}
-            {%- render 'rack-item', idx: n, title: p.title, sub: sub, price: price, url: p.url, group: '', tag: '', front: p.featured_image, back: back, hanger: hanger, attrs: '', variants: variants -%}
+            {%- render 'rack-item', product: p, idx: n, title: p.title, sub: sub, price: price, url: p.url, group: '', tag: '', front: p.featured_image, back: back, hanger: hanger, attrs: '', variants: variants -%}
             {%- assign n = n | plus: 1 -%}
           {%- endfor -%}
         {%- endif -%}
@@ -98,7 +98,7 @@
                 assign back = p.images[1]
               endif
             -%}
-            {%- render 'rack-item', idx: n, title: title, sub: block.settings.subtitle, price: price, url: url, group: block.settings.group, tag: block.settings.tag_color, front: front, back: back, hanger: hanger, attrs: block.shopify_attributes, variants: '' -%}
+            {%- render 'rack-item', product: block.settings.product, idx: n, title: title, sub: block.settings.subtitle, price: price, url: url, group: block.settings.group, tag: block.settings.tag_color, front: front, back: back, hanger: hanger, attrs: block.shopify_attributes, variants: '' -%}
             {%- assign n = n | plus: 1 -%}
           {%- endfor -%}
         {%- endif -%}
@@ -136,7 +136,17 @@
         <button type="button" role="tab" class="is-on" aria-selected="true" data-view="front">{{ section.settings.front_label }}</button>
         <button type="button" role="tab" aria-selected="false" data-view="back">{{ section.settings.back_label }}</button>
       </div>
-      <a class="rack__btn rack__btn--wide" href="#" data-link>{{ section.settings.cta }} <span aria-hidden="true">↗</span></a>
+      <div class="rack__sizes" data-sizes hidden>
+        <span class="rack__label">Size</span>
+        <div class="rack__size-row" data-size-row></div>
+      </div>
+      <div class="rack__buy" data-buy hidden>
+        <button type="button" class="rack__btn rack__btn--ghost rack__cart" data-add>{{ section.settings.add_label }}</button>
+        <button type="button" class="rack__btn rack__now" data-now>{{ section.settings.buy_label }}</button>
+        <button type="button" class="rack__heart" data-wish="" aria-label="Save to wishlist" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.4-7.5-10.1A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.6C19.5 15.6 12 20 12 20z"/></svg></button>
+      </div>
+      <p class="rack__msg" data-msg aria-live="polite"></p>
+      <a class="rack__link" href="#" data-link>{{ section.settings.cta }} <span aria-hidden="true">↗</span></a>
     </div>
   </div>
 
@@ -203,7 +213,7 @@
    "type": "checkbox",
    "id": "top_up",
    "label": "Fill the rack with the garments below when the collection is small",
-   "default": true
+   "default": false
   },
   {
    "type": "range",
@@ -242,7 +252,19 @@
    "type": "text",
    "id": "cta",
    "label": "Link button",
-   "default": "See availability"
+   "default": "View details"
+  },
+  {
+   "type": "text",
+   "id": "add_label",
+   "label": "Add to cart button",
+   "default": "Add to cart"
+  },
+  {
+   "type": "text",
+   "id": "buy_label",
+   "label": "Buy now button",
+   "default": "Buy now"
   },
   {
    "type": "text",

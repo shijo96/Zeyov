@@ -49,6 +49,7 @@
     const detail = $('[data-detail]'), big = $('[data-big]'), title = $('[data-title]'), link = $('[data-link]');
     const tags = $('[data-tags]'), chips = $('[data-chips]'), dSub = $('[data-d-sub]'), dPrice = $('[data-d-price]');
     const views = [...root.querySelectorAll('[data-view]')];
+    const portal = () => { if (mobile() && detail.parentNode !== document.body) { detail.style.cssText = root.style.cssText; detail.classList.add('rack__detail--portal'); document.body.appendChild(detail); } };
     const total = root.querySelector('[data-total]'); if (total) total.textContent = pad(items.length);
     const mobile = () => matchMedia('(max-width: 899px)').matches;
     const hint = nameOut.textContent;
@@ -77,9 +78,52 @@
 
     // detail view
     let vsel = -1; // chosen colour of a collection product
+    const buy = $('[data-buy]'), sizes = $('[data-sizes]'), sizeRow = $('[data-size-row]'), msg = $('[data-msg]'), heart = root.querySelector('[data-detail] [data-wish]');
+    const money = (c) => '₹' + (c / 100).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    const prod = (x) => { try { return x.product ? JSON.parse(x.product) : null; } catch (e) { return null; } };
+    const optIdx = (P, names) => P.o.findIndex((o) => names.includes(String(o).toLowerCase()));
+    let pick = { c: null, s: null };
+    function current(P) {
+      const ci = optIdx(P, ['color', 'colour']), si = optIdx(P, ['size']);
+      return P.v.find((v) => (ci < 0 || v.o[ci] === pick.c) && (si < 0 || v.o[si] === pick.s)) || null;
+    }
+    function renderBuy(x) {
+      const P = prod(x); msg.textContent = '';
+      buy.hidden = !P; sizes.hidden = true;
+      if (!P) return;
+      const ci = optIdx(P, ['color', 'colour']), si = optIdx(P, ['size']);
+      if (ci >= 0 && !pick.c) pick.c = (P.v.find((v) => v.a) || P.v[0]).o[ci];
+      if (si >= 0) {
+        const vals = [...new Set(P.v.map((v) => v.o[si]))];
+        sizes.hidden = false;
+        sizeRow.innerHTML = vals.map((val) => { const ok = P.v.some((v) => v.o[si] === val && v.a && (ci < 0 || v.o[ci] === pick.c)); return `<button type="button" class="rack__size ${pick.s === val ? 'is-on' : ''}" data-size="${esc(val)}" ${ok ? '' : 'disabled'} aria-pressed="${pick.s === val}">${esc(val)}</button>`; }).join('');
+      }
+      const v = current(P);
+      if (v) dPrice.textContent = money(v.p);
+      heart.dataset.wish = P.h;
+      let w = []; try { w = JSON.parse(localStorage.getItem('zeyov:wishlist') || '[]'); } catch (e) { w = []; }
+      heart.classList.toggle('is-active', w.includes(P.h)); heart.setAttribute('aria-pressed', w.includes(P.h));
+    }
+    async function addSelected(now) {
+      const x = d(open), P = prod(x); if (!P) return;
+      const si = optIdx(P, ['size']);
+      if (si >= 0 && !pick.s) { msg.textContent = 'Please choose a size'; sizes.classList.remove('shake'); void sizes.offsetWidth; sizes.classList.add('shake'); return; }
+      const v = current(P) || (P.v.length === 1 ? P.v[0] : null);
+      if (!v || !v.a) { msg.textContent = 'This option is sold out'; return; }
+      const btn = detail.querySelector(now ? '[data-now]' : '[data-add]'); btn.classList.add('is-loading'); btn.disabled = true;
+      try {
+        const r = await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: [{ id: v.id, quantity: 1 }] }) });
+        const j = await r.json(); if (!r.ok) { msg.textContent = j.description || 'Could not add to cart'; return; }
+        if (now) { location.href = '/checkout'; return; }
+        msg.textContent = 'Added to your cart ✓';
+        if (window.ZeyovTheme && ZeyovTheme.refreshCart) ZeyovTheme.refreshCart();
+        setTimeout(() => { closeDetail(); const o = document.querySelector('[data-open-cart]'); if (o) o.click(); }, 650);
+      } catch (e) { msg.textContent = 'Network error, please try again'; }
+      finally { btn.classList.remove('is-loading'); btn.disabled = false; }
+    }
     const vars = (x) => { try { return x.variants ? JSON.parse(x.variants) : []; } catch (e) { return []; } };
     function show(i, keepVar) {
-      if (open !== i || !keepVar) vsel = -1;
+      if (open !== i || !keepVar) { vsel = -1; pick = { c: null, s: null }; }
       open = i; const x = d(i), vl = vars(x);
       const front = vsel >= 0 && vl[vsel] ? vl[vsel].i : x.front;
       const src = view === 'back' && x.back ? x.back : front;
@@ -97,9 +141,10 @@
         tags.innerHTML = useTags ? grp.map(([it, k], n) => { const c = col(it); return `<button type="button" class="rack__tag ${k === i ? 'is-on' : ''} ${isLight(c) ? 'is-light' : ''}" style="--tc:${c};--drop:${26 + (n % 3) * 16}px" data-goto="${k}" aria-label="${esc(it.dataset.sub)}"><span>${esc(it.dataset.sub)}</span></button>`; }).join('') : '';
         chips.innerHTML = grp.length > 1 && !useTags ? grp.map(([it, k]) => `<button type="button" class="rack__chip ${k === i ? 'is-on' : ''}" style="--tc:${col(it)}" data-goto="${k}" aria-label="${esc(it.dataset.sub)}" title="${esc(it.dataset.sub)}"></button>`).join('') : '';
       }
+      renderBuy(x);
       if (x.back) cutout(x.back); // warm up the back view
     }
-    function openDetail(i) { view = 'front'; show(i); detail.hidden = false; root.classList.add('is-open'); if (mobile()) document.documentElement.style.overflow = 'hidden'; $('[data-close]').focus({ preventScroll: true }); }
+    function openDetail(i) { portal(); view = 'front'; show(i); detail.hidden = false; root.classList.add('is-open'); if (mobile()) document.documentElement.style.overflow = 'hidden'; detail.querySelector('[data-close]').focus({ preventScroll: true }); }
     function closeDetail() { detail.hidden = true; root.classList.remove('is-open'); document.documentElement.style.overflow = ''; const k = open; open = -1; if (k >= 0) { goTo(k, false); items[k].focus({ preventScroll: true }); } }
 
     // desktop: hover brings a garment forward
@@ -130,11 +175,15 @@
 
     detail.addEventListener('click', (e) => {
       const t = e.target.closest('[data-goto]'); if (t) { show(+t.dataset.goto); setActive(+t.dataset.goto); return; }
-      const vr = e.target.closest('[data-var]'); if (vr) { vsel = +vr.dataset.var; view = 'front'; show(open, true); return; }
+      const vr = e.target.closest('[data-var]'); if (vr) { vsel = +vr.dataset.var; const vv = vars(d(open))[vsel]; if (vv) { pick.c = vv.n; pick.s = null; } view = 'front'; show(open, true); return; }
+      const sz = e.target.closest('[data-size]'); if (sz && !sz.disabled) { pick.s = sz.dataset.size; msg.textContent = ''; renderBuy(d(open)); return; }
+      if (e.target.closest('[data-add]')) { addSelected(false); return; }
+      if (e.target.closest('[data-now]')) { addSelected(true); return; }
+      if (e.target.closest('[data-wish]')) { setTimeout(() => renderBuy(d(open)), 30); return; }
       const v = e.target.closest('[data-view]'); if (v && !v.disabled) { view = v.dataset.view; show(open, true); return; }
       if (e.target.closest('[data-close]') || e.target === detail) closeDetail();
     });
-    root.addEventListener('keydown', (e) => { if (e.key === 'Escape' && open >= 0) closeDetail(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && open >= 0) closeDetail(); });
     // swipe left/right on the large view to change colour
     let sx = null;
     detail.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });

@@ -97,6 +97,27 @@
 .rack__toggle button:disabled { opacity: .35; cursor: default; }
 .rack__btn--wide { margin-top: 10px; min-width: 240px; }
 
+/* buying controls */
+.rack__detail--portal { --ease: cubic-bezier(.22,.8,.2,1); color: var(--rack-text, #1b1510); }
+.rack__label { font: 600 10.5px/1 var(--font-body, sans-serif); letter-spacing: .22em; text-transform: uppercase; color: color-mix(in srgb, var(--rack-text) 55%, transparent); }
+.rack__sizes { display: grid; gap: 8px; margin-top: 4px; }
+.rack__sizes[hidden], .rack__buy[hidden] { display: none; }
+.rack__size-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.rack__size { min-width: 46px; height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--rack-text) 22%, transparent); background: color-mix(in srgb, #fff 70%, transparent); color: var(--rack-text); font: 600 12.5px/1 var(--font-body, sans-serif); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.rack__size:hover:not(:disabled) { border-color: var(--rack-text); }
+.rack__size.is-on { background: var(--rack-text); color: var(--rack-a, #fff); border-color: var(--rack-text); }
+.rack__size:disabled { opacity: .35; text-decoration: line-through; cursor: not-allowed; }
+.rack__sizes.shake { animation: rack-shake .45s; }
+@keyframes rack-shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+.rack__buy { display: grid; grid-template-columns: 1fr 1fr 48px; gap: 8px; width: 100%; max-width: 420px; margin-top: 8px; }
+.rack__buy .rack__btn { width: 100%; padding: 0 12px; height: 50px; }
+.rack__btn.is-loading { opacity: .6; pointer-events: none; }
+.rack__heart { width: 48px; height: 50px; border-radius: 999px; border: 1.5px solid var(--rack-text); background: transparent; display: grid; place-items: center; cursor: pointer; color: var(--rack-text); transition: background .2s; }
+.rack__heart svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.rack__heart.is-active svg { fill: #c0392b; stroke: #c0392b; }
+.rack__msg { margin: 0; min-height: 1.2em; font: 500 12.5px/1.3 var(--font-body, sans-serif); color: var(--rack-accent); }
+.rack__link { font: 600 11px/1 var(--font-body, sans-serif); letter-spacing: .18em; text-transform: uppercase; color: var(--rack-text); text-decoration: none; padding-bottom: 4px; border-bottom: 1.5px solid currentColor; }
+
 /* ===== strip ===== */
 .rack__strip { position: relative; z-index: 12; height: 48px; display: flex; align-items: center; overflow: hidden; background: var(--strip-bg, #1b1510); color: var(--strip-fg, #d9b26f); }
 .rack__track { display: flex; width: max-content; animation: rack-marquee 42s linear infinite; }
@@ -123,15 +144,18 @@
   .rack__info { padding-top: 8px; }
   .rack__actions { margin-top: 12px; }
   .rack__btn { height: 44px; padding: 0 20px; font-size: 10.5px; }
-  .rack__detail { position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: max(64px, env(safe-area-inset-top, 0px)) 20px max(24px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; background: color-mix(in srgb, var(--rack-a, #fffdf9) 86%, transparent); backdrop-filter: blur(18px) saturate(1.1); -webkit-backdrop-filter: blur(18px) saturate(1.1); }
+  .rack__detail { position: fixed; inset: 0; z-index: 2147483000; display: flex; flex-direction: column; justify-content: safe center; gap: 10px; padding: max(64px, env(safe-area-inset-top, 0px)) 20px max(24px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; background: color-mix(in srgb, var(--rack-a, #fffdf9) 86%, transparent); backdrop-filter: blur(18px) saturate(1.1); -webkit-backdrop-filter: blur(18px) saturate(1.1); }
   .rack__close { position: fixed; top: max(16px, env(safe-area-inset-top, 0px)); right: 16px; }
-  .rack__big img { width: min(300px, 70vw); margin-top: calc(min(300px, 70vw) * -.11); }
+  .rack__big img { width: min(270px, 64vw); margin-top: calc(min(270px, 64vw) * -.11); }
   .rack__hanger--big { width: 52px; height: 30px; }
   .rack__tags { display: none; }
   .rack__panel { justify-items: center; text-align: center; gap: 8px; }
   .rack__chips { display: flex; justify-content: center; }
   .rack__toggle { margin-top: 2px; }
   .rack__btn--wide { min-width: 0; width: 100%; max-width: 320px; }
+  .rack__sizes { justify-items: center; }
+  .rack__size-row { justify-content: center; }
+  .rack__buy { margin: 6px auto 0; }
   .rack__strip { height: 44px; }
 }
 @media (max-width: 899px) and (max-height: 700px) { .rack__big img { width: min(230px, 60vw); } }
