@@ -102,7 +102,7 @@
 /* ===== phones & small tablets: swipe carousel ===== */
 @media (max-width: 899px) {
   .rack { --gw: 250px; }
-  .rack__stage { min-height: 640px; justify-content: flex-start; padding: 18px 0 26px; }
+  .rack__stage { min-height: 610px; justify-content: flex-start; padding: 18px 0 26px; }
   .rack__top { padding: 0 18px; margin-bottom: 12px; }
   .rack__rail { margin: 0 8px; }
   .rack__items { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; height: 290px; padding: 0 calc(50% - 75px); margin-top: -6px; }

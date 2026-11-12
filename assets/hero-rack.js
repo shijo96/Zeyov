@@ -6,16 +6,16 @@
 
   /* ---- remove plain white photo backgrounds so garments look like real cut-outs ---- */
   const cache = new Map();
-  function cutout(url) {
+  function cutout(url, maxW = 1000) {
     if (!url) return Promise.resolve('');
-    if (cache.has(url)) return cache.get(url);
+    const key = url + '|' + maxW; if (cache.has(key)) return cache.get(key);
     const job = new Promise((resolve) => {
       const img = new Image(); img.crossOrigin = 'anonymous'; img.decoding = 'async';
       img.onload = () => {
         try {
-          const w = img.naturalWidth, h = img.naturalHeight;
+          const sc = Math.min(1, maxW / img.naturalWidth), w = Math.round(img.naturalWidth * sc), h = Math.round(img.naturalHeight * sc);
           const c = document.createElement('canvas'); c.width = w; c.height = h;
-          const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(img, 0, 0);
+          const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
           const id = g.getImageData(0, 0, w, h), d = id.data;
           const bgLike = (i) => d[i] > 244 && d[i + 1] > 244 && d[i + 2] > 244 && Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]) < 10;
           const seen = new Uint8Array(w * h), stack = [];
@@ -36,7 +36,7 @@
       img.onerror = () => resolve(url);
       img.src = url;
     });
-    cache.set(url, job); return job;
+    cache.set(key, job); return job;
   }
 
   function init(root) {
@@ -56,7 +56,8 @@
 
     // cut-out every thumbnail (lazy-ish: visible first)
     const thumbs = items.map((it) => it.querySelector('img.rack__img'));
-    const cutThumb = (k) => { const im = thumbs[k]; if (!im || im.dataset.cut) return; im.dataset.cut = '1'; cutout(items[k].dataset.thumb || im.src).then((u) => { if (u) im.src = u; im.classList.add('is-cut'); }); };
+    const cutThumb = (k) => { const im = thumbs[k]; if (!im || im.dataset.cut) return; im.dataset.cut = '1'; cutout(items[k].dataset.thumb || im.src, 440).then((u) => { if (u) im.src = u; im.classList.add('is-cut'); }); };
+    const mid0 = Math.floor(items.length / 2); [mid0, mid0 - 1, mid0 + 1].filter((k) => k >= 0 && k < items.length).forEach(cutThumb);
     if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { cutThumb(slots.indexOf(e.target)); io.unobserve(e.target); } }), { root: null, rootMargin: '200px' }); slots.forEach((s) => io.observe(s)); }
     else items.forEach((_, k) => cutThumb(k));
 
