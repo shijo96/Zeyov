@@ -401,7 +401,8 @@
     "collection": "new-arrivals",
     "limit": 12,
     "top_up": true,
-    "min_items": 10
+    "min_items": 10,
+    "strip_text": ""
    }
   }
  },

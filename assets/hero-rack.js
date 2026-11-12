@@ -99,8 +99,8 @@
       }
       if (x.back) cutout(x.back); // warm up the back view
     }
-    function openDetail(i) { view = 'front'; show(i); detail.hidden = false; root.classList.add('is-open'); $('[data-close]').focus({ preventScroll: true }); }
-    function closeDetail() { detail.hidden = true; root.classList.remove('is-open'); const k = open; open = -1; if (k >= 0) { goTo(k, false); items[k].focus({ preventScroll: true }); } }
+    function openDetail(i) { view = 'front'; show(i); detail.hidden = false; root.classList.add('is-open'); if (mobile()) document.documentElement.style.overflow = 'hidden'; $('[data-close]').focus({ preventScroll: true }); }
+    function closeDetail() { detail.hidden = true; root.classList.remove('is-open'); document.documentElement.style.overflow = ''; const k = open; open = -1; if (k >= 0) { goTo(k, false); items[k].focus({ preventScroll: true }); } }
 
     // desktop: hover brings a garment forward
     slots.forEach((s, i) => {

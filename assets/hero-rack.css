@@ -108,7 +108,7 @@
 /* ===== phones & small tablets: swipe carousel ===== */
 @media (max-width: 899px) {
   .rack { --gw: 250px; }
-  .rack__stage { min-height: 610px; justify-content: flex-start; padding: 18px 0 26px; }
+  .rack__stage { min-height: 0; justify-content: flex-start; padding: 18px 0 24px; }
   .rack__top { padding: 0 18px; margin-bottom: 12px; }
   .rack__rail { margin: 0 8px; }
   .rack__items { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; height: 290px; padding: 0 calc(50% - 75px); margin-top: -6px; }
@@ -123,7 +123,8 @@
   .rack__info { padding-top: 8px; }
   .rack__actions { margin-top: 12px; }
   .rack__btn { height: 44px; padding: 0 20px; font-size: 10.5px; }
-  .rack__detail { inset: 0 0 44px; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 64px 20px 20px; overflow-y: auto; }
+  .rack__detail { position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: max(64px, env(safe-area-inset-top, 0px)) 20px max(24px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; background: color-mix(in srgb, var(--rack-a, #fffdf9) 86%, transparent); backdrop-filter: blur(18px) saturate(1.1); -webkit-backdrop-filter: blur(18px) saturate(1.1); }
+  .rack__close { position: fixed; top: max(16px, env(safe-area-inset-top, 0px)); right: 16px; }
   .rack__big img { width: min(300px, 70vw); margin-top: calc(min(300px, 70vw) * -.11); }
   .rack__hanger--big { width: 52px; height: 30px; }
   .rack__tags { display: none; }
