@@ -17,7 +17,7 @@
     <span class="rack__hanger" aria-hidden="true">{{ hanger }}</span>
     <span class="rack__garment">
       {%- if front != blank -%}
-        <img class="rack__img" src="{{ front | image_url: width: 600 }}" alt="" width="600" height="680" {% if idx > 5 %}loading="lazy"{% endif %} draggable="false">
+        <img class="rack__img" crossorigin="anonymous" src="{{ front | image_url: width: 600 }}" alt="" width="600" height="680" {% if idx > 5 %}loading="lazy"{% endif %} draggable="false">
       {%- else -%}
         {{ 'product-1' | placeholder_svg_tag: 'rack__img rack__img--ph' }}
       {%- endif -%}

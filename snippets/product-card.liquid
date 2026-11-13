@@ -11,9 +11,10 @@
   <div class="card__media">
     <a href="{{ product.url | within: collection }}" aria-label="{{ product.title | escape }}">
       {%- if img1 -%}
-        {{ img1 | image_url: width: 720 | image_tag: loading: 'lazy', widths: '360, 540, 720', sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw', alt: product.title }}
+        {{ img1 | image_url: width: 720 | image_tag: loading: 'lazy', decoding: 'async', widths: '360, 540, 720', sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw', alt: product.title }}
         {%- if settings.show_second_image and img2 -%}
-          {{ img2 | image_url: width: 720 | image_tag: loading: 'lazy', class: 'alt', widths: '360, 540, 720', sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw', alt: '' }}
+          {%- comment -%} hover photo loads only when a mouse hovers the card (saves data on phones) {%- endcomment -%}
+          <img class="alt" alt="" width="{{ img2.preview_image.width | default: 720 }}" height="{{ img2.preview_image.height | default: 900 }}" decoding="async" data-hover-src="{{ img2 | image_url: width: 540 }}" data-hover-srcset="{{ img2 | image_url: width: 360 }} 360w, {{ img2 | image_url: width: 540 }} 540w, {{ img2 | image_url: width: 720 }} 720w" sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw">
         {%- endif -%}
       {%- else -%}
         {{ 'product-apparel-1' | placeholder_svg_tag }}

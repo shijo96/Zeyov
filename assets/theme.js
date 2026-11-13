@@ -438,10 +438,11 @@
       const ok = await addToCart(current.id, qtyInput.value, atc);
       if (ok) { openPanel($('#CartDrawer')); }
     });
-    buyNow && buyNow.addEventListener('click', async () => {
-      if (!current) return;
-      const ok = await addToCart(current.id, qtyInput.value, buyNow);
-      if (ok) location.href = url('checkout');
+    // Buy now checks out only this product (cart permalink), the rest of the cart stays untouched
+    buyNow && buyNow.addEventListener('click', () => {
+      if (!current) return toast('Pick a size and colour');
+      buyNow.classList.add('is-loading');
+      location.href = url(`cart/${current.id}:${Math.max(1, parseInt(qtyInput.value, 10) || 1)}`);
     });
     const sticky = rootEl.querySelector('[data-sticky-atc]');
     const buy = rootEl.querySelector('[data-buy]');
@@ -703,5 +704,13 @@
     $$('[data-hero]').forEach(initHero); $$('[data-studio]').forEach(initStudio);
     if ($('[data-cart-page]') || $('#CartDrawer')) refreshCart();
   });
+  // product cards: fetch the second (hover) photo only on devices that can hover, on first hover
+  if (matchMedia('(hover: hover)').matches) document.addEventListener('pointerover', (e) => {
+    const card = e.target.closest && e.target.closest('[data-product-card]'); if (!card) return;
+    const im = card.querySelector('img[data-hover-src]'); if (!im) return;
+    im.srcset = im.dataset.hoverSrcset; im.src = im.dataset.hoverSrc; im.removeAttribute('data-hover-src');
+  }, { passive: true });
+  // returning with the back button: clear spinners left on Buy now / Add buttons
+  addEventListener('pageshow', (e) => { if (e.persisted) document.querySelectorAll('.is-loading').forEach((b) => b.classList.remove('is-loading')); });
   window.ZeyovTheme = { money, calcOffers, refreshCart, openQuickAdd };
 })();

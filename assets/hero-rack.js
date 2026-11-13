@@ -4,47 +4,88 @@
   const esc = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const pad = (n) => String(n).padStart(2, '0');
 
-  /* ---- remove plain white photo backgrounds so garments look like real cut-outs ---- */
-  const cache = new Map(); const photos = new Set(); // photos whose background could not be removed
-  const tops = new Map(); // where the garment starts (as a share of the image width) so it hangs right under the hook
+  /* ---- background removal ----------------------------------------------------------
+     Runs in a Web Worker (no jank on the main thread) and keeps results in the Cache API,
+     so each photo is processed once per device. Transparent PNGs pass straight through. */
+  const cache = new Map(); const photos = new Set(); const tops = new Map();
+  const CACHE = 'zeyov-rack-v2';
+  const PROC = `
+    const proc = (d, w, h) => {
+      const topRow = () => { for (let y = 0; y < h; y++) { let n = 0; for (let x = 0; x < w; x += 2) if (d[(y * w + x) * 4 + 3] > 60) n++; if (n > 3) return y; } return 0; };
+      let clear = 0, edge = 0;
+      for (let x = 0; x < w; x += 3) { edge += 2; if (d[x * 4 + 3] < 20) clear++; if (d[((h - 1) * w + x) * 4 + 3] < 20) clear++; }
+      for (let y = 0; y < h; y += 3) { edge += 2; if (d[(y * w) * 4 + 3] < 20) clear++; if (d[(y * w + w - 1) * 4 + 3] < 20) clear++; }
+      if (clear > edge * .4) return { kind: 'clear', top: topRow() / w };
+      const bg = (i) => d[i] > 244 && d[i + 1] > 244 && d[i + 2] > 244 && Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]) < 10;
+      const seen = new Uint8Array(w * h), st = [];
+      const push = (x, y) => { const p = y * w + x; if (!seen[p] && bg(p * 4)) { seen[p] = 1; st.push(p); } };
+      for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
+      for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
+      if (st.length < w + h) return { kind: 'photo' };
+      while (st.length) { const p = st.pop(), x = p % w, y = (p - x) / w; d[p * 4 + 3] = 0; if (x > 0) push(x - 1, y); if (x < w - 1) push(x + 1, y); if (y > 0) push(x, y - 1); if (y < h - 1) push(x, y + 1); }
+      for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const p = y * w + x; if (seen[p]) continue; if (seen[p - 1] || seen[p + 1] || seen[p - w] || seen[p + w]) { const i = p * 4, l = (d[i] + d[i + 1] + d[i + 2]) / 3; if (l > 205) d[i + 3] = Math.max(40, 255 - (l - 205) * 4.2); } }
+      return { kind: 'cut', top: topRow() / w };
+    };`;
+  let worker = null, wid = 0; const waiting = new Map();
+  try {
+    if (window.Worker && window.OffscreenCanvas && window.createImageBitmap) {
+      const src = PROC + `
+        self.onmessage = async (e) => {
+          const { id, url, maxW } = e.data;
+          try {
+            const r = await fetch(url, { mode: 'cors', credentials: 'omit' }); const bmp = await createImageBitmap(await r.blob());
+            const sc = Math.min(1, maxW / bmp.width), w = Math.round(bmp.width * sc), h = Math.round(bmp.height * sc);
+            const c = new OffscreenCanvas(w, h), g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(bmp, 0, 0, w, h);
+            const id2 = g.getImageData(0, 0, w, h), res = proc(id2.data, w, h);
+            if (res.kind === 'cut') { g.putImageData(id2, 0, 0); res.blob = await c.convertToBlob({ type: 'image/webp', quality: .92 }); }
+            self.postMessage({ id, ...res });
+          } catch (err) { self.postMessage({ id, kind: 'error' }); }
+        };`;
+      worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+      worker.onmessage = (e) => { const f = waiting.get(e.data.id); if (f) { waiting.delete(e.data.id); f(e.data); } };
+      worker.onerror = () => { worker = null; waiting.forEach((f) => f({ kind: 'error' })); waiting.clear(); };
+    }
+  } catch (e) { worker = null; }
+  const mainThread = (url, maxW) => new Promise((resolve) => {
+    const img = new Image(); img.crossOrigin = 'anonymous';
+    img.onload = () => { try {
+      const sc = Math.min(1, maxW / img.naturalWidth), w = Math.round(img.naturalWidth * sc), h = Math.round(img.naturalHeight * sc);
+      const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
+      const id = g.getImageData(0, 0, w, h), res = (new Function(PROC + 'return proc;'))()(id.data, w, h);
+      if (res.kind !== 'cut') return resolve(res);
+      g.putImageData(id, 0, 0); c.toBlob((b) => resolve({ ...res, blob: b }), 'image/webp', .92);
+    } catch (e) { resolve({ kind: 'error' }); } };
+    img.onerror = () => resolve({ kind: 'error' }); img.src = url;
+  });
+  const idle = (fn) => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 600 }) : setTimeout(fn, 1));
   function cutout(url, maxW = 1000) {
     if (!url) return Promise.resolve('');
     const key = url + '|' + maxW; if (cache.has(key)) return cache.get(key);
-    const job = new Promise((resolve) => {
-      const img = new Image(); img.crossOrigin = 'anonymous'; img.decoding = 'async';
-      img.onload = () => {
-        try {
-          const sc = Math.min(1, maxW / img.naturalWidth), w = Math.round(img.naturalWidth * sc), h = Math.round(img.naturalHeight * sc);
-          const c = document.createElement('canvas'); c.width = w; c.height = h;
-          const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
-          const id = g.getImageData(0, 0, w, h), d = id.data;
-          const topRow = () => { for (let y = 0; y < h; y++) { let n = 0; for (let x = 0; x < w; x += 2) if (d[(y * w + x) * 4 + 3] > 60) n++; if (n > 3) return y; } return 0; };
-          // already a transparent PNG? keep it as it is
-          let clear = 0, edge = 0;
-          for (let x = 0; x < w; x += 3) { edge += 2; if (d[x * 4 + 3] < 20) clear++; if (d[((h - 1) * w + x) * 4 + 3] < 20) clear++; }
-          for (let y = 0; y < h; y += 3) { edge += 2; if (d[(y * w) * 4 + 3] < 20) clear++; if (d[(y * w + w - 1) * 4 + 3] < 20) clear++; }
-          if (clear > edge * .4) { tops.set(url, topRow() / w); resolve(url); return; }
-          const bgLike = (i) => d[i] > 244 && d[i + 1] > 244 && d[i + 2] > 244 && Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]) < 10;
-          const seen = new Uint8Array(w * h), stack = [];
-          const push = (x, y) => { const p = y * w + x; if (!seen[p] && bgLike(p * 4)) { seen[p] = 1; stack.push(p); } };
-          for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
-          for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
-          if (stack.length < (w + h)) { photos.add(url); resolve(url); return; } // not a white-background photo
-          while (stack.length) { const p = stack.pop(), x = p % w, y = (p - x) / w; d[p * 4 + 3] = 0; if (x > 0) push(x - 1, y); if (x < w - 1) push(x + 1, y); if (y > 0) push(x, y - 1); if (y < h - 1) push(x, y + 1); }
-          // soften the edge: partially fade very light pixels that touch the removed background
-          for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
-            const p = y * w + x; if (seen[p]) continue;
-            if (seen[p - 1] || seen[p + 1] || seen[p - w] || seen[p + w]) { const i = p * 4, l = (d[i] + d[i + 1] + d[i + 2]) / 3; if (l > 205) d[i + 3] = Math.max(40, 255 - (l - 205) * 4.2); }
-          }
-          g.putImageData(id, 0, 0); tops.set(url, topRow() / w);
-          c.toBlob((b) => resolve(b ? URL.createObjectURL(b) : url), 'image/png');
-        } catch (e) { resolve(url); }
-      };
-      img.onerror = () => resolve(url);
-      img.src = url;
-    });
+    const job = (async () => {
+      let store = null;
+      try { store = window.caches ? await caches.open(CACHE) : null; } catch (e) { store = null; }
+      const ck = `/__rack/${encodeURIComponent(key)}`;
+      if (store) { // processed before on this device?
+        const hit = await store.match(ck).catch(() => null);
+        if (hit) { const kind = hit.headers.get('x-kind'), top = parseFloat(hit.headers.get('x-top')); if (!isNaN(top)) tops.set(url, top);
+          if (kind === 'photo') { photos.add(url); return url; } if (kind === 'clear') return url; return URL.createObjectURL(await hit.blob()); }
+      }
+      const res = await new Promise((resolve) => {
+        if (worker) { const id = ++wid; waiting.set(id, resolve); worker.postMessage({ id, url: new URL(url, location.href).href, maxW }); }
+        else idle(() => mainThread(url, maxW).then(resolve));
+      });
+      if (res.top != null) tops.set(url, res.top);
+      if (res.kind === 'photo') photos.add(url);
+      if (store && res.kind !== 'error') {
+        const h = { 'x-kind': res.kind, 'x-top': String(res.top != null ? res.top : '') };
+        store.put(ck, new Response(res.blob || '', { headers: h })).catch(() => {});
+      }
+      return res.kind === 'cut' && res.blob ? URL.createObjectURL(res.blob) : url;
+    })();
     cache.set(key, job); return job;
   }
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const EASE = 'cubic-bezier(.2,.85,.2,1)';
 
   function init(root) {
     if (root.dataset.ready) return; root.dataset.ready = '1';
@@ -72,9 +113,10 @@
 
     function setActive(i) {
       if (i === active) return; active = i; if (i >= 0) lastActive = i;
-      slots.forEach((s, k) => { s.classList.toggle('is-active', k === i); s.classList.toggle('is-near', i >= 0 && Math.abs(k - i) === 1); });
+      slots.forEach((s, k) => { s.classList.toggle('is-active', k === i); s.classList.toggle('is-near', i >= 0 && Math.abs(k - i) === 1); s.classList.toggle('is-left', i >= 0 && k < i); s.classList.toggle('is-right', i >= 0 && k > i); });
       if (i < 0) { nameOut.textContent = hint; meta.innerHTML = '&nbsp;'; return; }
-      const x = d(i); nameOut.textContent = x.name; meta.innerHTML = [esc(x.sub), x.price ? `<em>${esc(x.price)}</em>` : ''].filter(Boolean).join(' · ') || '&nbsp;';
+      const x = d(i); const put = () => { nameOut.textContent = x.name; meta.innerHTML = [esc(x.sub), x.price ? `<em>${esc(x.price)}</em>` : ''].filter(Boolean).join(' · ') || '&nbsp;'; root.classList.remove('is-switching'); };
+      if (reduce || nameOut.textContent === hint) put(); else { root.classList.add('is-switching'); clearTimeout(root._sw); root._sw = setTimeout(put, 170); }
       pill.href = x.url; count.textContent = pad(i + 1);
     }
     function goTo(i, smooth = true) {
@@ -117,11 +159,13 @@
       if (si >= 0 && !pick.s) { msg.textContent = 'Please choose a size'; sizes.classList.remove('shake'); void sizes.offsetWidth; sizes.classList.add('shake'); return; }
       const v = current(P) || (P.v.length === 1 ? P.v[0] : null);
       if (!v || !v.a) { msg.textContent = 'This option is sold out'; return; }
-      const btn = detail.querySelector(now ? '[data-now]' : '[data-add]'); btn.classList.add('is-loading'); btn.disabled = true;
+      const btn = detail.querySelector(now ? '[data-now]' : '[data-add]');
+      // Buy now: straight to checkout with only this product (Shopify cart permalink)
+      if (now) { btn.classList.add('is-loading'); location.href = `${(window.Shopify && Shopify.routes && Shopify.routes.root) || '/'}cart/${v.id}:1`; return; }
+      btn.classList.add('is-loading'); btn.disabled = true;
       try {
         const r = await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: [{ id: v.id, quantity: 1 }] }) });
         const j = await r.json(); if (!r.ok) { msg.textContent = j.description || 'Could not add to cart'; return; }
-        if (now) { location.href = '/checkout'; return; }
         msg.textContent = 'Added to your cart ✓';
         if (window.ZeyovTheme && ZeyovTheme.refreshCart) ZeyovTheme.refreshCart();
         setTimeout(() => { closeDetail(); const o = document.querySelector('[data-open-cart]'); if (o) o.click(); }, 650);
@@ -129,12 +173,12 @@
       finally { btn.classList.remove('is-loading'); btn.disabled = false; }
     }
     const vars = (x) => { try { return x.variants ? JSON.parse(x.variants) : []; } catch (e) { return []; } };
-    function show(i, keepVar) {
+    function show(i, keepVar, opening) {
       if (open !== i || !keepVar) { vsel = -1; pick = { c: null, s: null }; }
       open = i; const x = d(i), vl = vars(x);
       const front = vsel >= 0 && vl[vsel] ? vl[vsel].i : x.front;
       const src = view === 'back' && x.back ? x.back : front;
-      big.classList.add('is-swap');
+      if (!opening) big.classList.add('is-swap');
       cutout(src).then((u) => { big.src = u || src || ''; big.classList.toggle('is-photo', photos.has(src)); if (tops.has(src)) big.style.setProperty('--t', tops.get(src).toFixed(3)); else big.style.removeProperty('--t'); big.alt = `${x.name} ${x.sub || ''} — ${view}`; requestAnimationFrame(() => big.classList.remove('is-swap')); });
       title.textContent = x.name; dSub.textContent = vsel >= 0 && vl[vsel] ? vl[vsel].n : x.sub || ''; dPrice.textContent = x.price || ''; dPrice.hidden = !x.price; link.href = x.url;
       views.forEach((b) => { const on = b.dataset.view === view; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', on); b.disabled = b.dataset.view === 'back' && !x.back; });
@@ -151,8 +195,45 @@
       renderBuy(x);
       if (x.back) cutout(x.back); // warm up the back view
     }
-    function openDetail(i) { portal(); view = 'front'; show(i); detail.hidden = false; root.classList.add('is-open'); if (mobile()) document.documentElement.style.overflow = 'hidden'; detail.querySelector('[data-close]').focus({ preventScroll: true }); }
-    function closeDetail() { detail.hidden = true; root.classList.remove('is-open'); document.documentElement.style.overflow = ''; const k = open; open = -1; if (k >= 0) { goTo(k, false); items[k].focus({ preventScroll: true }); } }
+    const panelBits = () => [...detail.querySelectorAll('.rack__panel > *:not([hidden]), .rack__tags')];
+    function fly(fromEl, toEl, back) {
+      if (reduce || !fromEl || !toEl) return null;
+      const a = fromEl.getBoundingClientRect(), b = toEl.getBoundingClientRect();
+      if (!a.width || !b.width) return null;
+      const dx = a.left + a.width / 2 - (b.left + b.width / 2), dy = a.top - b.top, s = a.width / b.width;
+      const from = { transform: `translate(${dx}px, ${dy}px) scale(${s})`, filter: 'drop-shadow(0 8px 10px rgba(40,28,15,.12))' };
+      const to = { transform: 'translate(0,0) scale(1)', filter: 'drop-shadow(0 30px 30px rgba(40,28,15,.22))' };
+      return toEl.animate(back ? [to, from] : [from, to], { duration: back ? 460 : 720, easing: EASE, fill: 'both' });
+    }
+    function openDetail(i) {
+      portal(); view = 'front';
+      const thumb = thumbs[i];
+      if (thumb && thumb.classList.contains('is-cut')) { big.src = thumb.src; big.classList.toggle('is-photo', slots[i].classList.contains('is-photo')); big.style.setProperty('--t', thumb.style.getPropertyValue('--t') || '.11'); }
+      show(i, false, true);
+      detail.hidden = false; root.classList.add('is-open'); if (mobile()) document.documentElement.style.overflow = 'hidden';
+      detail.classList.remove('is-leaving'); detail.classList.add('is-entering');
+      if (!reduce) {
+        detail.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 380, easing: 'ease-out' });
+        if (thumb) thumb.style.visibility = 'hidden';
+        const f = fly(thumb, big.closest('.rack__big'));
+        const done = () => { if (thumb) thumb.style.visibility = ''; detail.classList.remove('is-entering'); };
+        f ? f.finished.then(() => { f.cancel(); done(); }) : done();
+        panelBits().forEach((el, k) => el.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 560, delay: 180 + k * 55, easing: EASE, fill: 'backwards' }));
+      } else detail.classList.remove('is-entering');
+      detail.querySelector('[data-close]').focus({ preventScroll: true });
+    }
+    function closeDetail() {
+      const k = open; open = -1;
+      const finish = () => { detail.hidden = true; detail.classList.remove('is-leaving'); root.classList.remove('is-open'); document.documentElement.style.overflow = ''; if (k >= 0) { thumbs[k] && (thumbs[k].style.visibility = ''); items[k].focus({ preventScroll: true }); } };
+      if (reduce || k < 0) return finish();
+      detail.classList.add('is-leaving');
+      if (k >= 0) goTo(k, false);
+      const thumb = thumbs[k], f = fly(thumb, big.closest('.rack__big'), true);
+      if (thumb) thumb.style.visibility = 'hidden';
+      panelBits().forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(8px)' }], { duration: 200, easing: 'ease-in', fill: 'forwards' }).finished.then((a) => a.cancel && a.cancel()).catch(() => {}));
+      const fade = detail.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 460, easing: 'ease-in', fill: 'forwards' });
+      fade.finished.then(() => { fade.cancel(); f && f.cancel(); panelBits().forEach((el) => el.getAnimations().forEach((a) => a.cancel())); finish(); });
+    }
 
     // desktop: hover brings a garment forward
     slots.forEach((s, i) => {
