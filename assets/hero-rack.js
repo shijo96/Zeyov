@@ -161,9 +161,10 @@
       if (!v || !v.a) { msg.textContent = 'This option is sold out'; return; }
       const btn = detail.querySelector(now ? '[data-now]' : '[data-add]');
       // Buy now: straight to checkout with only this product (Shopify cart permalink)
-      if (now) { btn.classList.add('is-loading'); location.href = `${(window.Shopify && Shopify.routes && Shopify.routes.root) || '/'}cart/${v.id}:1`; return; }
+      if (now) { if (window.ZeyovTheme && ZeyovTheme.buyNow) ZeyovTheme.buyNow(v.id, 1, btn); else { btn.classList.add('is-loading'); location.href = `${(window.Shopify && Shopify.routes && Shopify.routes.root) || '/'}cart/${v.id}:1`; } return; }
       btn.classList.add('is-loading'); btn.disabled = true;
       try {
+        if (window.ZeyovTheme && ZeyovTheme.restoreCart) await ZeyovTheme.restoreCart();
         const r = await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: [{ id: v.id, quantity: 1 }] }) });
         const j = await r.json(); if (!r.ok) { msg.textContent = j.description || 'Could not add to cart'; return; }
         msg.textContent = 'Added to your cart ✓';

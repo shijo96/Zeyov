@@ -136,6 +136,41 @@
     cartCache = await r.json();
     return cartCache;
   }
+  /* ---------- Buy now, kept separate from the cart ----------
+     Shopify's quick checkout link (/cart/ID:QTY) swaps the cart for that one product.
+     So before Buy now we save the shopper's cart, and the next time they are back on the
+     store (order placed or checkout abandoned) we put their cart back exactly as it was. */
+  const SNAP = 'zeyov:cart-snapshot';
+  async function buyNowCheckout(id, qty, btn) {
+    btn && btn.classList.add('is-loading');
+    try {
+      const cart = await getCart();
+      if (cart.item_count > 0) store.set(SNAP, { t: Date.now(), note: cart.note || '', attributes: cart.attributes || {}, items: cart.items.map((i) => ({ id: i.variant_id, quantity: i.quantity, properties: i.properties || {} })) });
+    } catch (e) { /* offline: just continue */ }
+    location.href = url(`cart/${id}:${Math.max(1, parseInt(qty, 10) || 1)}`);
+  }
+  let restoring = null;
+  function restoreCart() {
+    if (restoring) return restoring;
+    const snap = store.get(SNAP, null);
+    if (!snap || !snap.items || !snap.items.length) return (restoring = Promise.resolve(false));
+    if (Date.now() - snap.t > 14 * 864e5) { try { localStorage.removeItem(SNAP); } catch (e) { /* ignore */ } return (restoring = Promise.resolve(false)); }
+    restoring = (async () => {
+      try {
+        const j = { 'Content-Type': 'application/json', Accept: 'application/json' };
+        await fetch(url('cart/clear.js'), { method: 'POST', headers: j });
+        for (let k = 0; k < snap.items.length; k += 20) {
+          const r = await fetch(url('cart/add.js'), { method: 'POST', headers: j, body: JSON.stringify({ items: snap.items.slice(k, k + 20) }) });
+          if (!r.ok) for (const it of snap.items.slice(k, k + 20)) await fetch(url('cart/add.js'), { method: 'POST', headers: j, body: JSON.stringify({ items: [it] }) }); // skip anything now sold out
+        }
+        await fetch(url('cart/update.js'), { method: 'POST', headers: j, body: JSON.stringify({ note: snap.note, attributes: snap.attributes }) });
+        try { localStorage.removeItem(SNAP); } catch (e) { /* ignore */ }
+        return true;
+      } catch (e) { return false; }
+    })();
+    return restoring;
+  }
+
   function setCounts(n) {
     $$('[data-cart-count]').forEach((b) => { b.textContent = n > 0 ? n : ''; b.dataset.count = n; });
     $$('[data-cart-count-text]').forEach((b) => { b.textContent = `(${n})`; });
@@ -217,6 +252,7 @@
 
   async function addToCart(id, quantity, btn) {
     btn && btn.classList.add('is-loading');
+    await restoreCart(); // never add on top of a cart that is still being put back
     try {
       const r = await fetch(url('cart/add.js'), { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: [{ id: Number(id), quantity: Number(quantity) || 1 }] }) });
       const data = await r.json();
@@ -441,8 +477,7 @@
     // Buy now checks out only this product (cart permalink), the rest of the cart stays untouched
     buyNow && buyNow.addEventListener('click', () => {
       if (!current) return toast('Pick a size and colour');
-      buyNow.classList.add('is-loading');
-      location.href = url(`cart/${current.id}:${Math.max(1, parseInt(qtyInput.value, 10) || 1)}`);
+      buyNowCheckout(current.id, qtyInput.value, buyNow);
     });
     const sticky = rootEl.querySelector('[data-sticky-atc]');
     const buy = rootEl.querySelector('[data-buy]');
@@ -702,7 +737,7 @@
     $$('[data-facet-root]').forEach(initFacets);
     initSearch(); initReviews(); initRecs(); renderWishlist();
     $$('[data-hero]').forEach(initHero); $$('[data-studio]').forEach(initStudio);
-    if ($('[data-cart-page]') || $('#CartDrawer')) refreshCart();
+    restoreCart().then((back) => { if (back || $('[data-cart-page]') || $('#CartDrawer')) refreshCart(); });
   });
   // product cards: fetch the second (hover) photo only on devices that can hover, on first hover
   if (matchMedia('(hover: hover)').matches) document.addEventListener('pointerover', (e) => {
@@ -711,6 +746,6 @@
     im.srcset = im.dataset.hoverSrcset; im.src = im.dataset.hoverSrc; im.removeAttribute('data-hover-src');
   }, { passive: true });
   // returning with the back button: clear spinners left on Buy now / Add buttons
-  addEventListener('pageshow', (e) => { if (e.persisted) document.querySelectorAll('.is-loading').forEach((b) => b.classList.remove('is-loading')); });
-  window.ZeyovTheme = { money, calcOffers, refreshCart, openQuickAdd };
+  addEventListener('pageshow', (e) => { if (!e.persisted) return; document.querySelectorAll('.is-loading').forEach((b) => b.classList.remove('is-loading')); restoring = null; restoreCart().then((back) => back && refreshCart()); });
+  window.ZeyovTheme = { money, calcOffers, refreshCart, openQuickAdd, buyNow: buyNowCheckout, restoreCart };
 })();

@@ -559,6 +559,7 @@
   async function addToCart(btn) {
     if (btn.disabled) return;
     const sizes = SIZES.filter((s) => st.qty[s] > 0);
+    if (window.ZeyovTheme && ZeyovTheme.restoreCart) await ZeyovTheme.restoreCart();
     if (!SO) { toast('Zeyov Studio is not set up yet. Please contact us.'); return; }
     btn.classList.add('is-loading'); btn.disabled = true;
     try {
