@@ -48,42 +48,48 @@
     "c1": {
      "type": "cat",
      "settings": {
-      "title": "T-Shirts",
+      "collection": "oversized-230-gsm",
+      "title": "Car Designs",
       "fallback": "z-cat-tshirts"
      }
     },
     "c2": {
      "type": "cat",
      "settings": {
-      "title": "Oversized",
+      "collection": "oversized-190-gsm",
+      "title": "Minimal & Typography",
       "fallback": "z-cat-oversized"
      }
     },
     "c3": {
      "type": "cat",
      "settings": {
-      "title": "Polos",
+      "collection": "regular-fit-190-gsm",
+      "title": "Gaming Culture",
       "fallback": "z-cat-polos"
      }
     },
     "c4": {
      "type": "cat",
      "settings": {
-      "title": "Hoodies & Sweatshirts",
+      "collection": "oversized-french-terry-250-gsm",
+      "title": "Anime Designs",
       "fallback": "z-cat-hoodies"
      }
     },
     "c5": {
      "type": "cat",
      "settings": {
-      "title": "Bottomwear",
+      "collection": "oversized-full-sleeve-250-gsm",
+      "title": "F1 Designs",
       "fallback": "z-cat-bottomwear"
      }
     },
     "c6": {
      "type": "cat",
      "settings": {
-      "title": "Accessories",
+      "collection": "oversized-acid-wash-250-gsm",
+      "title": "Street Wear designs",
       "fallback": "z-cat-accessories"
      }
     }
@@ -96,7 +102,9 @@
     "c5",
     "c6"
    ],
-   "settings": {}
+   "settings": {
+    "heading": "Shop by Category"
+   }
   },
   "featured": {
    "type": "featured-products",
@@ -404,7 +412,8 @@
     "min_items": 10,
     "cta": "View details",
     "add_label": "Add to cart",
-    "buy_label": "Buy now"
+    "buy_label": "Buy now",
+    "strip_text": ""
    }
   }
  },

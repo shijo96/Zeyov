@@ -24,9 +24,10 @@
       { "key": "rf190", "style": "Regular Fit 190 GSM Single Jersey", "name": {{ section.settings.rf190_name | default: "Regular Fit Tee" | json }}, "spec": {{ section.settings.rf190_spec | json }}, "handle": "regular-fit-tee-190-gsm-single-jersey", "fit": "regular", "colors": [{%- for c in cl -%}{{ c | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}] }{%- endif -%}
     ],
     "photos": { {%- for blk in section.blocks -%}{%- if blk.settings.front != blank or blk.settings.back != blank -%}{{ blk.settings.style | append: '|' | append: blk.settings.color | json }}: { "front": {% if blk.settings.front != blank %}{{ blk.settings.front | image_url: width: 1200 | json }}{% else %}null{% endif %}, "back": {% if blk.settings.back != blank %}{{ blk.settings.back | image_url: width: 1200 | json }}{% else %}null{% endif %}, "z": {{ blk.settings.zoom | default: 100 }}, "x": {{ blk.settings.move_x | default: 0 }}, "y": {{ blk.settings.move_y | default: 0 }} },{%- endif -%}{%- endfor -%}"_": null },
-    "studio": {%- if sp != blank -%}{
+    "print_prices": { "Logo DTF": 49, "A6 DTF": 69, "A5 DTF": 99, "A4 DTF": 129, "A3 DTF": 179, "A2 DTF": 249, "Embroidery up to 4 in": 149, "Embroidery up to 7 in": 249, "Embroidery up to 10 in": 349 },
+    "studio": {%- if sp != blank and sp.variants.size > 0 -%}{
       "url": {{ sp.url | json }},
-      "opts": { {%- for o in sp.options_with_values -%}{{ o.name | json }}: { {%- for val in o.values -%}{{ val.name | json }}: { "id": {{ val.id }}, "p": {% if val.variant %}{{ val.variant.price }}{% else %}null{% endif %} }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%} }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%} }
+      "vmap": { {%- for v in sp.variants -%}{{ v.option1 | append: '|' | append: v.option2 | json }}: [{{ v.id }}, {{ v.price }}, {{ v.available }}]{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%} }
     }{%- else -%}null{%- endif -%}
   }
   </script>

@@ -385,24 +385,24 @@
   function renderTees() {
     $('[data-tees]').innerHTML = CFG.bases.map((b) => `<button type="button" class="zs-tee ${b.key === st.base ? 'is-on' : ''}" data-base="${b.key}" aria-pressed="${b.key === st.base}">
       <span class="zs-tee__img"><img src="${teePhoto(b.handle, tileColor(b), 'front')}" alt="${esc(b.name)}" loading="lazy"></span>
-      <b>${esc(b.name)}</b><small>${esc(b.spec)}</small><strong>from ${money(priceOf(b))}</strong></button>`).join('');
+      <b>${esc(b.name)}</b><small>${esc(b.spec)}</small><strong>${SO ? `from ${money(priceOf(b))}` : 'Price on request'}</strong></button>`).join('');
     $('[data-colors]').innerHTML = base().colors.map((c) => `<button type="button" class="zs-color ${c === st.color ? 'is-on' : ''}" data-color="${esc(c)}"><i style="background:${SWATCH[c] || '#ccc'}"></i>${esc(c)}</button>`).join('');
     $('[data-color-name]').textContent = st.color;
   }
   // Single product "zeyov-studio-tee": Style × Front print × Back print. Size is a line-item property.
-  const SO = (CFG.studio && CFG.studio.opts) || null;
-  const BASE0 = SO ? Object.values(SO.Style)[0].p : 0;
-  function priceOf(b) { const v = SO && SO.Style[b.style]; return v && v.p != null ? v.p : 0; }
-  function printPrice(side, name) { const o = SO && SO[side === 'front' ? 'Front' : 'Back'][name]; return o && o.p != null ? Math.max(0, o.p - BASE0) : 0; }
+  // Pricing comes from the hidden product "zeyov-studio-tee": Style × Print total (front + back), size is a line property.
+  const SO = (CFG.studio && CFG.studio.vmap) || null;
+  const PP = CFG.print_prices || {};
+  const printKey = (sum) => (sum > 0 ? `Print ₹${sum}` : 'No print');
+  function priceOf(b) { const v = SO && SO[`${b.style}|No print`]; return v ? v[1] : 0; }
+  function printPrice(side, name) { return (PP[name] || 0) * 100; } // rupees → paise, same unit as variant prices
   function optName(side) { const pc = printClass(side); return pc ? pc.name : 'None'; }
   async function resolveVariant() {
-    const ids = [SO.Style[base().style], SO.Front[optName('front')], SO.Back[optName('back')]];
-    if (ids.some((x) => !x)) throw new Error('This print option is not available yet. Please contact us.');
-    const r = await fetch(`${CFG.studio.url}?view=studio-variant&option_values=${ids.map((x) => x.id).join(',')}`, { headers: { Accept: 'text/html' } });
-    const t = await r.text(); let v = null;
-    try { v = JSON.parse(t.trim()); } catch (e) { v = null; }
-    if (!r.ok || !v || !v.id) throw new Error('Could not load this design option. Please refresh and try again.');
-    return v;
+    const sum = (printPrice("front", optName("front")) + printPrice("back", optName("back"))) / 100;
+    const v = SO && SO[`${base().style}|${printKey(sum)}`];
+    if (!v) throw new Error('This print option is not available yet. Please contact us.');
+    if (!v[2]) throw new Error('This option is not available right now.');
+    return { id: v[0], price: v[1] };
   }
 
   /* ---------- print classification & quote ---------- */
@@ -456,9 +456,9 @@
         <div class="zs-seg2"><button type="button" data-ptype="${side}|DTF" class="${st.print[side] === 'DTF' ? 'is-on' : ''}">DTF print</button><button type="button" data-ptype="${side}|Embroidery" class="${st.print[side] === 'Embroidery' ? 'is-on' : ''}">Embroidery</button></div>
         ${pc.over ? '<p class="zs-note bad">Embroidery is max 10 × 10 in. Make the design smaller or choose DTF.</p>' : '<p class="zs-note">Embroidery: max 10 × 10 in per design.</p>'}</div>`;
     }).join('') || '<p class="muted zs-empty">Add a design to choose DTF print or embroidery.</p>';
-    const ok = q > 0 && st.layers.length > 0 && !['front', 'back'].some((s) => (printClass(s) || {}).over);
+    const ok = !!SO && q > 0 && st.layers.length > 0 && !['front', 'back'].some((s) => (printClass(s) || {}).over);
     $('[data-add]').disabled = !ok;
-    $('[data-add-hint]').textContent = !st.layers.length ? 'Add an image or text to your tee first.' : !q ? 'Choose at least 1 piece.' : '';
+    $('[data-add-hint]').textContent = !SO ? 'Studio pricing is being updated — please try again shortly or contact us.' : !st.layers.length ? 'Add an image or text to your tee first.' : !q ? 'Choose at least 1 piece.' : '';
     $$('[data-qty-size]').forEach((i) => { if (document.activeElement !== i) i.value = st.qty[i.dataset.qtySize]; i.closest('.zs-size').classList.toggle('is-on', st.qty[i.dataset.qtySize] > 0); });
   }
 
