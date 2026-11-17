@@ -147,7 +147,15 @@
 .zs-quote { background: linear-gradient(180deg, var(--dark), #120b06); color: #F3E3C4; border: 0; }
 .zs-quote .zs-num { background: #F0D49A; color: var(--dark); }
 .zs-qrows { display: grid; gap: 8px; font-size: 13.5px; }
-.zs-qrows div { display: flex; justify-content: space-between; gap: 12px; }
+.zs-qrows > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.zs-qline > span { font-weight: 700; color: #fff; }
+.zs-qline b { color: #fff; }
+.zs-qline--muted > span, .zs-qline--muted b { color: #BFA77F; font-weight: 500; }
+.zs-qsub { padding-left: 12px; border-left: 2px solid rgba(240,212,154,.3); font-size: 12.5px; color: #E6D2AE; }
+.zs-qsub b { font-weight: 600; }
+.zs-qrows .zs-qeq { display: block; margin-top: 2px; padding: 8px 10px; border-radius: 10px; background: rgba(240,212,154,.1); font-size: 12.5px; color: #E6D2AE; text-align: center; }
+.zs-qeq b { color: #F0D49A; }
+.zs-tee strong em { font-style: normal; font-weight: 500; opacity: .65; font-size: .9em; }
 .zs-qrows small { display: block; font-size: 11px; color: #BFA77F; }
 .zs-qsum { display: grid; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(240,212,154,.2); font-size: 14px; }
 .zs-qsum div { display: flex; justify-content: space-between; }

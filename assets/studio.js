@@ -385,7 +385,7 @@
   function renderTees() {
     $('[data-tees]').innerHTML = CFG.bases.map((b) => `<button type="button" class="zs-tee ${b.key === st.base ? 'is-on' : ''}" data-base="${b.key}" aria-pressed="${b.key === st.base}">
       <span class="zs-tee__img"><img src="${teePhoto(b.handle, tileColor(b), 'front')}" alt="${esc(b.name)}" loading="lazy"></span>
-      <b>${esc(b.name)}</b><small>${esc(b.spec)}</small><strong>${SO ? `from ${money(priceOf(b))}` : 'Price on request'}</strong></button>`).join('');
+      <b>${esc(b.name)}</b><small>${esc(b.spec)}</small><strong>${SO ? `${money(priceOf(b))} <em>+ print</em>` : 'Price on request'}</strong></button>`).join('');
     $('[data-colors]').innerHTML = base().colors.map((c) => `<button type="button" class="zs-color ${c === st.color ? 'is-on' : ''}" data-color="${esc(c)}"><i style="background:${SWATCH[c] || '#ccc'}"></i>${esc(c)}</button>`).join('');
     $('[data-color-name]').textContent = st.color;
   }
@@ -434,14 +434,22 @@
   function renderQuote() {
     const q = totalQty();
     const basePrice = priceOf(base());
-    const rows = []; let per = basePrice;
-    rows.push([`${esc(base().name)} ${esc(base().spec.split(' · ')[0])} · ${esc(st.color)}`, money(basePrice)]);
+    const prints = [];
     ['front', 'back'].forEach((side) => {
       const pc = printClass(side); if (!pc) return;
-      const pp = printPrice(side, pc.name); per += pp;
-      rows.push([`${side === 'front' ? 'Front' : 'Back'} · ${esc(pc.label)}<small>${fmt(pc.box.w)} × ${fmt(pc.box.h)} in</small>`, '+' + money(pp)]);
+      prints.push({ side, pc, pp: printPrice(side, pc.name) });
     });
-    $('[data-quote-rows]').innerHTML = rows.map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join('');
+    const printSum = prints.reduce((a, p) => a + p.pp, 0);
+    const per = basePrice + printSum;
+    let html = `<div class="zs-qline"><span>T-shirt<small>${esc(base().name)} · ${esc(base().spec)} · ${esc(st.color)}</small></span><b>${money(basePrice)}</b></div>`;
+    if (prints.length) {
+      html += `<div class="zs-qline"><span>Printing</span><b>${money(printSum)}</b></div>`;
+      html += prints.map((p) => `<div class="zs-qsub"><span>${p.side === 'front' ? 'Front' : 'Back'} · ${esc(p.pc.label)}<small>${fmt(p.pc.box.w)} × ${fmt(p.pc.box.h)} in</small></span><b>${money(p.pp)}</b></div>`).join('');
+    } else {
+      html += `<div class="zs-qline zs-qline--muted"><span>Printing<small>Add a design to see the print cost</small></span><b>—</b></div>`;
+    }
+    html += `<div class="zs-qeq">${money(basePrice)} T-shirt + ${money(printSum)} printing = <b>${money(per)}</b></div>`;
+    $('[data-quote-rows]').innerHTML = html;
     $('[data-per]').textContent = money(per);
     $('[data-qty-out]').textContent = `${q} pc${q === 1 ? '' : 's'}`;
     $('[data-total]').textContent = money(per * q);
