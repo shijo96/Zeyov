@@ -1,0 +1,101 @@
+{{ 'hero-christmas.css' | asset_url | stylesheet_tag }}
+<section class="xh wrap" data-hero data-autoplay="{{ section.settings.autoplay }}">
+  {%- if section.settings.offer != blank -%}
+    <p class="xh__offer"><span aria-hidden="true">✦</span> {{ section.settings.offer }} <span aria-hidden="true">✦</span></p>
+  {%- endif -%}
+  <div class="xh__track" data-hero-track>
+    {%- for block in section.blocks -%}
+      <div class="xh__slide xh--{{ block.settings.mood }}" {{ block.shopify_attributes }}>
+        {%- if section.settings.lights -%}
+          <svg class="xh__lights" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,8 Q150,58 300,14 T600,14 T900,14 T1200,8" fill="none" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <div class="xh__bulbs" aria-hidden="true">{%- for i in (1..14) -%}<i></i>{%- endfor -%}</div>
+        {%- endif -%}
+        {%- if section.settings.snow -%}<div class="xh__snow" aria-hidden="true"></div>{%- endif -%}
+
+        <div class="xh__copy">
+          {%- if block.settings.eyebrow != blank -%}
+            <p class="xh__eyebrow">{{ block.settings.eyebrow }}{% if section.settings.countdown %}<span data-xmas-days></span>{% endif %}</p>
+          {%- endif -%}
+          <h1>
+            {{- block.settings.heading | newline_to_br -}}
+            {%- if block.settings.highlight != blank -%}<br><em>{{ block.settings.highlight }}</em>{%- endif -%}
+          </h1>
+          {%- if block.settings.text != blank -%}<p class="xh__text">{{ block.settings.text }}</p>{%- endif -%}
+          <div class="xh__actions">
+            <a href="{{ block.settings.link | default: routes.collections_url }}" class="xh__btn">{{ block.settings.cta }} {% render 'icon', name: 'arrow' %}</a>
+            {%- if block.settings.note != blank -%}<span class="xh__note">{{ block.settings.note }}</span>{%- endif -%}
+          </div>
+        </div>
+
+        <div class="xh__art">
+          <span class="xh__halo" aria-hidden="true"></span>
+          <span class="xh__bauble xh__bauble--a" aria-hidden="true"></span>
+          <span class="xh__bauble xh__bauble--b" aria-hidden="true"></span>
+          {%- if block.settings.image != blank -%}
+            {%- if forloop.first -%}
+              {{ block.settings.image | image_url: width: 1000 | image_tag: class: 'xh__tee', loading: 'eager', fetchpriority: 'high', widths: '400, 600, 800, 1000', sizes: '(min-width: 990px) 40vw, 50vw', alt: block.settings.highlight | default: block.settings.heading }}
+            {%- else -%}
+              {{ block.settings.image | image_url: width: 1000 | image_tag: class: 'xh__tee', loading: 'lazy', decoding: 'async', widths: '400, 600, 800, 1000', sizes: '(min-width: 990px) 40vw, 50vw', alt: block.settings.highlight | default: block.settings.heading }}
+            {%- endif -%}
+          {%- else -%}
+            <img class="xh__tee" src="{{ block.settings.fallback | append: '.webp' | asset_url }}" alt="{{ block.settings.highlight | default: 'Christmas T-shirt' | escape }}" width="820" height="902" {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
+          {%- endif -%}
+          {%- if block.settings.tag != blank -%}
+            <span class="xh__tag"><b>{{ block.settings.tag }}</b>{% if block.settings.tag_sub != blank %}<small>{{ block.settings.tag_sub }}</small>{% endif %}</span>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+  {%- if section.blocks.size > 1 -%}<div class="xh__dots hero2__dots" data-hero-dots>{%- for b in section.blocks -%}<i class="{% if forloop.first %}is-active{% endif %}"></i>{%- endfor -%}</div>{%- endif -%}
+</section>
+{%- if section.settings.countdown -%}
+<script>
+  (() => {
+    const now = new Date(); const y = now.getMonth() === 11 && now.getDate() > 25 ? now.getFullYear() + 1 : now.getFullYear();
+    const d = Math.ceil((new Date(y, 11, 25) - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 864e5);
+    const t = d === 0 ? 'Merry Christmas!' : `${d} day${d === 1 ? '' : 's'} to go`;
+    document.querySelectorAll('[data-xmas-days]').forEach((el) => { el.textContent = t; });
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Christmas hero slideshow",
+  "class": "section-xmas-hero",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "range", "id": "autoplay", "label": "Auto-rotate (seconds, 0 = off)", "min": 0, "max": 10, "step": 1, "default": 5 },
+    { "type": "text", "id": "offer", "label": "Offer strip (top)", "info": "Leave empty to hide. Example: Christmas Sale · Extra 10% off with code XMAS10" },
+    { "type": "checkbox", "id": "countdown", "label": "Show days to Christmas", "default": true },
+    { "type": "checkbox", "id": "snow", "label": "Falling snow", "default": true },
+    { "type": "checkbox", "id": "lights", "label": "Twinkling lights", "default": true }
+  ],
+  "blocks": [{ "type": "slide", "name": "Slide", "settings": [
+    { "type": "select", "id": "mood", "label": "Colour theme", "default": "pine", "options": [
+      { "value": "pine", "label": "Pine green & gold" }, { "value": "berry", "label": "Berry red & gold" }, { "value": "night", "label": "Midnight blue & silver" }
+    ] },
+    { "type": "image_picker", "id": "image", "label": "T-shirt / model photo", "info": "A PNG with a transparent background looks best. Leave empty to use the built-in Christmas tee." },
+    { "type": "select", "id": "fallback", "label": "Built-in Christmas tee", "default": "xmas-tee-nakshatram", "options": [
+      { "value": "xmas-tee-nakshatram", "label": "Black tee – Nakshatram star" }, { "value": "xmas-tee-merry-tree", "label": "Red tee – Merry Everything" }, { "value": "xmas-tee-winter-club", "label": "Cream tee – Winter Club" }
+    ] },
+    { "type": "text", "id": "eyebrow", "label": "Small title", "default": "Christmas Drop '26" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Wear the\nSeason" },
+    { "type": "text", "id": "highlight", "label": "Gold highlight line", "default": "in Style" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Festive prints on premium 250 GSM cotton — made for Christmas nights." },
+    { "type": "text", "id": "cta", "label": "Button", "default": "Shop Christmas" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "text", "id": "note", "label": "Small note next to button", "default": "Free delivery on prepaid" },
+    { "type": "text", "id": "tag", "label": "Gift-tag text", "default": "From ₹849" },
+    { "type": "text", "id": "tag_sub", "label": "Gift-tag small text", "default": "Limited edition" }
+  ] }],
+  "presets": [{ "name": "Christmas hero slideshow", "blocks": [
+    { "type": "slide", "settings": { "mood": "pine", "fallback": "xmas-tee-nakshatram" } },
+    { "type": "slide", "settings": { "mood": "berry", "fallback": "xmas-tee-merry-tree", "eyebrow": "Secret Santa Approved", "heading": "Merry\nEverything", "highlight": "Gift a Tee", "text": "The easiest gift this season. Oversized fits in every size, delivered before Christmas.", "cta": "Shop Gifts", "tag": "Gift ready", "tag_sub": "Order by 20 Dec" } },
+    { "type": "slide", "settings": { "mood": "night", "fallback": "xmas-tee-winter-club", "eyebrow": "Winter Club", "heading": "Cosy Nights,\nHeavy Cotton", "highlight": "Full Sleeve 250", "text": "French Terry full-sleeve tees for December evenings.", "cta": "Shop Full Sleeve", "tag": "From ₹999", "tag_sub": "250 GSM" } }
+  ] }]
+}
+{% endschema %}

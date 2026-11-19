@@ -642,7 +642,8 @@
     let i = 0; let timer;
     const go = (n) => { i = (n + dots.length) % dots.length; tr.scrollTo({ left: tr.clientWidth * i, behavior: 'smooth' }); };
     tr.addEventListener('scroll', () => { const k = Math.round(tr.scrollLeft / tr.clientWidth); i = k; dots.forEach((d, j) => d.classList.toggle('is-active', j === k)); }, { passive: true });
-    const play = () => { clearInterval(timer); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(() => go(i + 1), 5000); };
+    const secs = el.dataset.autoplay === undefined ? 5 : Number(el.dataset.autoplay);
+    const play = () => { clearInterval(timer); if (secs > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(() => go(i + 1), secs * 1000); };
     tr.addEventListener('pointerdown', () => clearInterval(timer)); play();
   }
 

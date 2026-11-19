@@ -415,10 +415,75 @@
     "buy_label": "Buy now",
     "strip_text": ""
    }
+  },
+  "xmas": {
+   "type": "hero-christmas",
+   "blocks": {
+    "x1": {
+     "type": "slide",
+     "settings": {
+      "mood": "pine",
+      "fallback": "xmas-tee-nakshatram",
+      "eyebrow": "Christmas Drop '26",
+      "heading": "Wear the\nSeason",
+      "highlight": "in Style",
+      "text": "Festive prints on premium 250 GSM cotton — made for Christmas nights.",
+      "cta": "Shop Christmas",
+      "link": "/collections/new-arrivals",
+      "note": "Free delivery on prepaid",
+      "tag": "From ₹849",
+      "tag_sub": "Limited edition"
+     }
+    },
+    "x2": {
+     "type": "slide",
+     "settings": {
+      "mood": "berry",
+      "fallback": "xmas-tee-merry-tree",
+      "eyebrow": "Secret Santa Approved",
+      "heading": "Merry\nEverything",
+      "highlight": "Gift a Tee",
+      "text": "The easiest gift this season. Oversized fits in every size, delivered before Christmas.",
+      "cta": "Shop Gifts",
+      "link": "/collections/all",
+      "note": "Free delivery on prepaid",
+      "tag": "Gift ready",
+      "tag_sub": "Order by 20 Dec"
+     }
+    },
+    "x3": {
+     "type": "slide",
+     "settings": {
+      "mood": "night",
+      "fallback": "xmas-tee-winter-club",
+      "eyebrow": "Winter Club",
+      "heading": "Cosy Nights,\nHeavy Cotton",
+      "highlight": "Full Sleeve 250",
+      "text": "French Terry full-sleeve tees for December evenings.",
+      "cta": "Shop Full Sleeve",
+      "link": "/collections/oversized-full-sleeve-250-gsm",
+      "note": "Free delivery on prepaid",
+      "tag": "From ₹999",
+      "tag_sub": "250 GSM"
+     }
+    }
+   },
+   "block_order": [
+    "x1",
+    "x2",
+    "x3"
+   ],
+   "settings": {
+    "autoplay": 5,
+    "countdown": true,
+    "snow": true,
+    "lights": true
+   }
   }
  },
  "order": [
   "rack",
+  "xmas",
   "hero",
   "arrivals",
   "cats",
