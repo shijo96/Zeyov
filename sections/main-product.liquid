@@ -9,7 +9,7 @@
   <script type="application/json" data-product-json>
     {"id":{{ product.id }},"title":{{ product.title | json }},"handle":{{ product.handle | json }},"image":{{ product.featured_media | image_url: width: 200 | json }},
      "options":{{ product.options | json }},
-     "variants":[{%- for x in product.variants -%}{"id":{{ x.id }},"options":{{ x.options | json }},"price":{{ x.price }},"compare":{{ x.compare_at_price | default: 0 }},"available":{{ x.available }},"media":{{ x.featured_media.id | default: 0 }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+     "variants":[{%- for x in product.variants -%}{"id":{{ x.id }},"options":{{ x.options | json }},"price":{{ x.price }},"compare":{{ x.compare_at_price | default: 0 }},"available":{{ x.available }},"pre":{% if x.inventory_management == 'shopify' and x.inventory_quantity <= 0 and x.inventory_policy == 'continue' %}true{% else %}false{% endif %},"media":{{ x.featured_media.id | default: 0 }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
   </script>
   <div class="pdp">
     <div class="gallery">
@@ -109,12 +109,58 @@
           <button type="button" class="btn btn--dark" data-buy-now {% unless v.available %}disabled{% endunless %}>Buy it now</button>
         </div>
       </form>
+
+      {%- if section.settings.prebook -%}
+        {%- assign adv = section.settings.advance_product -%}
+        {%- assign advv = adv.selected_or_first_available_variant -%}
+        <div class="prebook" data-prebook {% if v.available %}hidden{% endif %}>
+          <div class="prebook__head"><span class="prebook__tag">Out of stock</span><b>Pre-book <span data-prebook-size>this size</span></b></div>
+          <p class="prebook__text">{{ section.settings.prebook_text }}</p>
+          <div class="prebook__actions">
+            {%- if adv != blank and advv -%}
+              <button type="button" class="btn btn--gold btn--block" data-prebook-advance="{{ advv.id }}">Pay {{ advv.price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' }} advance &amp; pre-book</button>
+              <p class="prebook__fine">{{ section.settings.advance_note }}</p>
+            {%- endif -%}
+            <button type="button" class="btn btn--outline-gold btn--block" data-prebook-open aria-expanded="false" aria-controls="PrebookForm-{{ section.id }}">Pre-book without payment</button>
+          </div>
+          {%- form 'contact', id: 'PrebookForm', class: 'prebook__form' -%}
+            {%- if form.posted_successfully? -%}
+              <p class="notice" data-prebook-done>Thank you! Your pre-booking request is in. We'll confirm on WhatsApp or email within 24 hours.</p>
+            {%- else -%}
+              {%- if form.errors -%}<p class="notice notice--err">{{ form.errors | default_errors }}</p>{%- endif -%}
+              <div id="PrebookForm-{{ section.id }}" data-prebook-fields {% unless form.errors %}hidden{% endunless %} class="prebook__fields">
+                <input type="hidden" name="contact[Type]" value="Pre-booking request">
+                <input type="hidden" name="contact[Product]" value="{{ product.title | escape }}">
+                <input type="hidden" name="contact[Product link]" value="{{ shop.url }}{{ product.url }}">
+                <input type="hidden" name="contact[Option]" data-prebook-variant value="{{ v.title | escape }}">
+                <div class="prebook__grid">
+                  <label class="form-row"><span>Name</span><input class="input" name="contact[name]" autocomplete="name" required value="{% if customer %}{{ customer.name }}{% endif %}"></label>
+                  <label class="form-row"><span>WhatsApp / phone</span><input class="input" name="contact[phone]" type="tel" autocomplete="tel" inputmode="tel" required pattern="[0-9+ ]{10,15}" placeholder="+91 98765 43210"></label>
+                </div>
+                <label class="form-row"><span>Email</span><input class="input" name="contact[email]" type="email" autocomplete="email" required value="{% if customer %}{{ customer.email }}{% endif %}"></label>
+                <label class="form-row"><span>Quantity</span><input class="input" name="contact[Quantity]" type="number" min="1" max="20" value="1"></label>
+                <button class="btn btn--block" type="submit">Send pre-booking request</button>
+                <p class="prebook__fine">No payment now. We'll confirm availability and the dispatch date before you pay.</p>
+              </div>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+      {%- endif -%}
+
+      <div class="eta" data-eta data-min="{{ section.settings.eta_min }}" data-max="{{ section.settings.eta_max }}">
+        {% render 'icon', name: 'truck' %}
+        <div>
+          <b>Get it by <span data-eta-date>{{ section.settings.eta_min }}–{{ section.settings.eta_max }} days</span></b>
+          <span class="muted">Printed to order in 24–48 hrs, then shipped across India.</span>
+        </div>
+      </div>
+
       <p class="muted" style="font-size:13px">Cart offer: {{ settings.tier1_qty }}+ items = extra {{ settings.tier1_pct }}% off · {{ settings.tier2_qty }}+ items = extra {{ settings.tier2_pct }}% off.</p>
 
       <div class="perks">
         <div>{% render 'icon', name: 'truck' %}Free delivery (online pay)</div>
         <div>{% render 'icon', name: 'cod' %}COD +₹{{ settings.cod_fee | default: 80 }}</div>
-        <div>{% render 'icon', name: 'return' %}7-day replace</div>
+        <div>{% render 'icon', name: 'return' %}7-day easy returns</div>
       </div>
 
       <div class="acc">
@@ -123,7 +169,15 @@
           {%- if product.metafields.zeyov.fabric_details != blank -%}{{ product.metafields.zeyov.fabric_details | metafield_tag }}{%- else -%}
           <ul><li>100% combed cotton, bio-washed for a soft hand-feel</li><li>Rib collar with double-needle stitched hems</li><li>Oversized: drop shoulder, boxy body. Take your usual size for the oversized look, one size down for a relaxed fit.</li><li>Wash cold inside out, dry in shade, do not iron on print</li></ul>{%- endif -%}
         </div></details>
-        <details><summary>Shipping &amp; replacement{% render 'icon', name: 'chev' %}</summary><div class="rte"><p>Dispatched in 24–48 hours. Delivery in 3–7 days across India. Free delivery on online payment; cash on delivery available for ₹{{ settings.cod_fee | default: 80 }} extra. 7-day replace: if your item arrives damaged, defective or in the wrong size, we replace it within 7 days of delivery.</p></div></details>
+        <details><summary>Delivery &amp; returns{% render 'icon', name: 'chev' %}</summary><div class="rte">
+          <ul>
+            <li><b>Printed to order</b> in 24–48 hours, dispatched from day 2.</li>
+            <li><b>Delivered in {{ section.settings.eta_min }}–{{ section.settings.eta_max }} days</b> from your order across India.</li>
+            <li><b>Free delivery</b> on online payment · Cash on delivery ₹{{ settings.cod_fee | default: 80 }} extra.</li>
+            <li><b>7-day returns:</b> return or exchange within 7 days of delivery, unworn, unwashed and with the Zeyov tag attached and unbroken.</li>
+          </ul>
+          <p><a href="/pages/replacement-policy">Read the full returns policy</a> · <a href="/pages/faq">FAQ</a></p>
+        </div></details>
       </div>
       {%- for block in section.blocks -%}{%- case block.type -%}{%- when '@app' -%}{% render block %}{%- endcase -%}{%- endfor -%}
     </div>
@@ -161,6 +215,15 @@
 {
   "name": "Product",
   "blocks": [{ "type": "@app" }],
-  "settings": []
+  "settings": [
+    { "type": "header", "content": "Delivery estimate" },
+    { "type": "range", "id": "eta_min", "label": "Delivery from (days after order)", "min": 2, "max": 15, "step": 1, "default": 7 },
+    { "type": "range", "id": "eta_max", "label": "Delivery up to (days after order)", "min": 3, "max": 20, "step": 1, "default": 8 },
+    { "type": "header", "content": "Pre-booking", "info": "Shown when the chosen size is out of stock. To take full-payment pre-orders on a product, turn on \"Continue selling when out of stock\" for its variants in Shopify admin." },
+    { "type": "checkbox", "id": "prebook", "label": "Show pre-booking when out of stock", "default": true },
+    { "type": "textarea", "id": "prebook_text", "label": "Pre-booking message", "default": "Every Zeyov tee is printed to order. Reserve this size now and we'll ship it the moment it's back. We confirm the dispatch date on WhatsApp within 24 hours." },
+    { "type": "product", "id": "advance_product", "label": "Advance payment product", "info": "Optional. Pick the \"Pre-booking Advance\" product to let customers pay an advance online." },
+    { "type": "text", "id": "advance_note", "label": "Advance note", "default": "The advance is adjusted in your final bill. Pay the balance before dispatch, online or on delivery." }
+  ]
 }
 {% endschema %}

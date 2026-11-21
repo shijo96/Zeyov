@@ -1,25 +1,84 @@
 <div class="wrap">
   <div class="track">
-    <div class="coll-hero" style="text-align:center;justify-items:center"><span class="eyebrow">Orders</span><h1>Track your order</h1><p class="muted">See live status, delivery updates and invoices for every order.</p></div>
-    {%- if customer -%}
-      <a class="btn btn--block" href="{{ routes.account_url }}">{% render 'icon', name: 'orders' %} View my orders</a>
-    {%- else -%}
-      <div class="step">
-        <h3>{% render 'icon', name: 'user' %} Sign in with your email</h3>
-        <p class="muted" style="font-size:13.5px">Use the email or phone you ordered with. You'll get a one-time code, then see every order and its live tracking.</p>
-        <a class="btn btn--block" href="{{ routes.account_login_url }}">Sign in to track</a>
-      </div>
-      <div class="step">
-        <h3>{% render 'icon', name: 'box' %} Have your order email?</h3>
-        <p class="muted" style="font-size:13.5px">Open the confirmation email from Zeyov and tap <b>View your order</b> for live status without signing in.</p>
-      </div>
-    {%- endif -%}
-    <div class="step">
-      <h3>{% render 'icon', name: 'truck' %} Delivery times</h3>
-      <p class="muted" style="font-size:13.5px">Dispatch in 24–48 hours. Delivery in 3–7 days across India. Studio orders ship in 4–6 days after design approval.</p>
+    <div class="coll-hero" style="text-align:center;justify-items:center">
+      <span class="eyebrow">Orders</span>
+      <h1>{{ section.settings.heading }}</h1>
+      <p class="muted">No account needed. Pick whichever is easiest for you.</p>
     </div>
+
+    <ol class="track__timeline" aria-label="How your order travels">
+      <li><i>1</i><b>Order placed</b><span>Confirmation by email &amp; SMS</span></li>
+      <li><i>2</i><b>Printing</b><span>24–48 hours</span></li>
+      <li><i>3</i><b>Dispatched</b><span>From day 2 · tracking sent</span></li>
+      <li><i>4</i><b>Delivered</b><span>{{ section.settings.eta }}</span></li>
+    </ol>
+
+    <div class="step">
+      <h3><i>1</i> Use your order email</h3>
+      <p class="muted" style="font-size:13.5px">Open the order confirmation or shipping email from Zeyov and tap <b>View your order</b>. You'll see live status and courier tracking without signing in.</p>
+    </div>
+
+    {%- if section.settings.tracking_url != blank -%}
+      <form class="step" data-awb-form>
+        <h3><i>2</i> Have a tracking number?</h3>
+        <p class="muted" style="font-size:13.5px">Enter the AWB / tracking number from your shipping SMS or email.</p>
+        <div class="track__row">
+          <input class="input" name="awb" required inputmode="text" autocomplete="off" placeholder="e.g. 1234567890" aria-label="Tracking number">
+          <button class="btn" type="submit">Track</button>
+        </div>
+      </form>
+      <script>
+        (() => {
+          const f = document.querySelector('[data-awb-form]'); if (!f) return;
+          const pattern = {{ section.settings.tracking_url | json }};
+          f.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const n = encodeURIComponent(f.awb.value.trim()); if (!n) return;
+            const u = pattern.includes('{awb}') ? pattern.replace('{awb}', n) : pattern + n;
+            window.open(u, '_blank', 'noopener');
+          });
+        })();
+      </script>
+    {%- endif -%}
+
+    {%- form 'contact', id: 'TrackHelp', class: 'step' -%}
+      <h3><i>{% if section.settings.tracking_url != blank %}3{% else %}2{% endif %}</i> Send us your order number</h3>
+      {%- if form.posted_successfully? -%}
+        <p class="notice">Got it! We'll send your tracking link on WhatsApp or email shortly{% if section.settings.reply_time != blank %} ({{ section.settings.reply_time }}){% endif %}.</p>
+      {%- else -%}
+        <p class="muted" style="font-size:13.5px">Lost the email? Share your order number and we'll send your live tracking link.</p>
+        {%- if form.errors -%}<p class="notice notice--err">{{ form.errors | default_errors }}</p>{%- endif -%}
+        <input type="hidden" name="contact[Type]" value="Order tracking request">
+        <div class="prebook__grid">
+          <label class="form-row"><span>Order number</span><input class="input" name="contact[Order number]" required placeholder="#1001"></label>
+          <label class="form-row"><span>WhatsApp / phone</span><input class="input" type="tel" name="contact[phone]" inputmode="tel" autocomplete="tel" required placeholder="+91 98765 43210"></label>
+        </div>
+        <label class="form-row"><span>Email used for the order</span><input class="input" type="email" name="contact[email]" autocomplete="email" required></label>
+        <button class="btn btn--block" type="submit">Get my tracking link</button>
+      {%- endif -%}
+    {%- endform -%}
+
+    <div class="step step--soft">
+      <h3>{% render 'icon', name: 'user' %} Prefer to sign in?</h3>
+      <p class="muted" style="font-size:13.5px">Sign in with a one-time code to see every order in one place. It's optional.</p>
+      {%- if customer -%}
+        <a class="btn btn--outline-gold btn--block" href="{{ routes.account_url }}">View my orders</a>
+      {%- else -%}
+        <a class="btn btn--outline-gold btn--block" href="{{ routes.account_login_url }}">Sign in</a>
+      {%- endif -%}
+    </div>
+
+    <p class="muted track__foot">Questions? <a href="/pages/faq">Read the FAQ</a> or <a href="/pages/contact">contact us</a>.</p>
   </div>
 </div>
 {% schema %}
-{ "name": "Track order" }
+{
+  "name": "Track order",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Track your order" },
+    { "type": "text", "id": "eta", "label": "Delivery time text", "default": "7–8 days from order" },
+    { "type": "text", "id": "tracking_url", "label": "Courier tracking link", "info": "Optional. Your courier's tracking page with {awb} where the tracking number goes, e.g. https://shiprocket.co/tracking/{awb}. Leave empty to hide the tracking-number box." },
+    { "type": "text", "id": "reply_time", "label": "Reply time", "default": "usually within a few hours on working days" }
+  ]
+}
 {% endschema %}

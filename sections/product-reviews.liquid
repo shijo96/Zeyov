@@ -1,56 +1,141 @@
+{%- comment -%}
+  Product reviews.
+  • If a review app block is added (recommended: Judge.me — photo reviews, star ratings,
+    no login needed, review-request emails), the app's widget is shown and the theme's own
+    form is hidden. Star ratings on cards and under the title read the app's standard
+    reviews.rating / reviews.rating_count metafields, so the numbers always match.
+  • Without an app, approved reviews come from the product metafield zeyov.reviews (JSON list):
+    [{"name":"…","rating":5,"title":"…","body":"…","date":"12 Nov 2026","size":"L","verified":true,"photos":["https://…jpg"]}]
+    and anyone can send a review with the form below (no account needed).
+{%- endcomment -%}
+{%- assign app_block = false -%}
+{%- for block in section.blocks -%}{%- if block.type == '@app' -%}{%- assign app_block = true -%}{%- endif -%}{%- endfor -%}
+
 {%- assign list = product.metafields.zeyov.reviews.value -%}
-{%- assign total = 0 -%}{%- assign sum = 0 -%}
+{%- assign total = 0 -%}{%- assign sum = 0 -%}{%- assign photos = 0 -%}
 {%- assign c5 = 0 -%}{%- assign c4 = 0 -%}{%- assign c3 = 0 -%}{%- assign c2 = 0 -%}{%- assign c1 = 0 -%}
 {%- for r in list -%}
   {%- assign total = total | plus: 1 -%}{%- assign sum = sum | plus: r.rating -%}
+  {%- if r.photos.size > 0 -%}{%- assign photos = photos | plus: 1 -%}{%- endif -%}
   {%- case r.rating -%}{%- when 5 -%}{%- assign c5 = c5 | plus: 1 -%}{%- when 4 -%}{%- assign c4 = c4 | plus: 1 -%}{%- when 3 -%}{%- assign c3 = c3 | plus: 1 -%}{%- when 2 -%}{%- assign c2 = c2 | plus: 1 -%}{%- else -%}{%- assign c1 = c1 | plus: 1 -%}{%- endcase -%}
 {%- endfor -%}
-<section class="section" id="Reviews" style="border-top:1px solid var(--line)">
-  <div class="wrap reviews" data-reviews data-handle="{{ product.handle }}">
-    <div class="reviews__aside">
-      <div><span class="eyebrow">Ratings &amp; reviews</span><h2 style="font-size:clamp(26px,5vw,38px);margin-top:6px">{{ section.settings.heading }}</h2></div>
-      <div class="reviews__summary">
-        {%- if total > 0 -%}
-          {%- assign avg = sum | times: 1.0 | divided_by: total -%}
-          <div class="reviews__score"><b class="tabular">{{ avg | round: 1 }}</b><div><span class="stars"><span class="stars__row" style="--pct: {{ avg | times: 20 | round }}%"></span></span><div class="muted" style="font-size:13px">Based on {{ total }} review{% if total != 1 %}s{% endif %}</div></div></div>
-          <div class="bars">
-            {%- assign counts = c5 | append: ',' | append: c4 | append: ',' | append: c3 | append: ',' | append: c2 | append: ',' | append: c1 | split: ',' -%}
-            {%- for n in counts -%}
-              {%- assign star = 6 | minus: forloop.index -%}
-              {%- assign w = n | times: 100 | divided_by: total -%}
-              <div><span>{{ star }} ★</span><i style="--w: {{ w }}%"></i><span class="tabular muted">{{ n }}</span></div>
-            {%- endfor -%}
-          </div>
-        {%- else -%}
-          <p>No reviews yet. Reviews come only from customers who bought this product.</p>
-        {%- endif -%}
-        <a href="/pages/orders" class="btn btn--outline-gold btn--block">Review from My Orders</a>
-      </div>
-      {%- for block in section.blocks -%}{%- if block.type == '@app' -%}{% render block %}{%- endif -%}{%- endfor -%}
+
+<section class="section rv" id="Reviews">
+  <div class="wrap">
+    <div class="rv__head">
+      <div><span class="eyebrow">Ratings &amp; reviews</span><h2>{{ section.settings.heading }}</h2></div>
+      {%- unless app_block -%}<button type="button" class="btn btn--sm" data-rv-open aria-controls="RvForm-{{ section.id }}" aria-expanded="false">★ Write a review</button>{%- endunless -%}
     </div>
 
-    <div>
-      {%- for r in list limit: 20 -%}
-        <article class="review">
-          <div class="review__top"><span class="stars"><span class="stars__row" style="--pct: {{ r.rating | times: 20 }}%"></span></span><span class="muted">{{ r.date }}</span></div>
-          {%- if r.title != blank -%}<h4>{{ r.title }}</h4>{%- endif -%}
-          <p>{{ r.body }}</p>
-          <div style="display:flex;gap:10px;align-items:center;font-size:13px"><b>{{ r.name }}</b>{%- if r.verified -%}<span class="verified">✓ Verified buyer</span>{%- endif -%}{%- if r.size != blank -%}<span class="muted">Size bought: {{ r.size }}</span>{%- endif -%}</div>
-        </article>
-      {%- endfor -%}
-
-      <div class="review-cta" style="margin-top:20px">
-        <b>Only verified buyers can review</b>
-        <span class="muted">Bought this {{ product.title }}? Write your review from My Orders once it's shipped.</span>
-        <a class="btn btn--sm btn--outline-gold" style="justify-self:start" href="/pages/orders">Go to My Orders</a>
+    {%- if app_block -%}
+      <div class="rv__app">
+        {%- for block in section.blocks -%}{%- if block.type == '@app' -%}{% render block %}{%- endif -%}{%- endfor -%}
       </div>
-    </div>
+    {%- else -%}
+      <div class="rv__grid">
+        <aside class="rv__summary">
+          {%- if total > 0 -%}
+            {%- assign avg = sum | times: 1.0 | divided_by: total -%}
+            <div class="rv__score">
+              <b class="tabular">{{ avg | round: 1 }}</b>
+              <div>
+                <span class="stars"><span class="stars__row" style="--pct: {{ avg | times: 20 | round }}%"></span></span>
+                <span class="muted">{{ total }} review{% if total != 1 %}s{% endif %}{% if photos > 0 %} · {{ photos }} with photos{% endif %}</span>
+              </div>
+            </div>
+            <div class="bars">
+              {%- assign counts = c5 | append: ',' | append: c4 | append: ',' | append: c3 | append: ',' | append: c2 | append: ',' | append: c1 | split: ',' -%}
+              {%- for n in counts -%}
+                {%- assign star = 6 | minus: forloop.index -%}
+                {%- assign w = n | times: 100 | divided_by: total -%}
+                <div><span>{{ star }} ★</span><i style="--w: {{ w }}%"></i><span class="tabular muted">{{ n }}</span></div>
+              {%- endfor -%}
+            </div>
+          {%- else -%}
+            <div class="rv__empty">
+              <span class="stars"><span class="stars__row" style="--pct: 0%"></span></span>
+              <b>No reviews yet</b>
+              <p class="muted">Bought this tee? Be the first to share how it fits and feels.</p>
+            </div>
+          {%- endif -%}
+        </aside>
+
+        <div class="rv__list">
+          {%- for r in list limit: section.settings.limit -%}
+            <article class="rv__item">
+              <div class="rv__top">
+                <span class="stars"><span class="stars__row" style="--pct: {{ r.rating | times: 20 }}%"></span></span>
+                {%- if r.date != blank -%}<span class="muted">{{ r.date }}</span>{%- endif -%}
+              </div>
+              {%- if r.title != blank -%}<h3>{{ r.title }}</h3>{%- endif -%}
+              {%- if r.body != blank -%}<p>{{ r.body }}</p>{%- endif -%}
+              {%- if r.photos.size > 0 -%}
+                <div class="rv__photos">
+                  {%- for ph in r.photos limit: 4 -%}
+                    <a href="{{ ph }}" target="_blank" rel="noopener"><img src="{{ ph }}" alt="Photo from {{ r.name | escape }}" loading="lazy" width="96" height="96"></a>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+              <div class="rv__by"><b>{{ r.name }}</b>{%- if r.verified -%}<span class="verified">✓ Verified buyer</span>{%- endif -%}{%- if r.size != blank -%}<span class="muted">Size: {{ r.size }}</span>{%- endif -%}</div>
+            </article>
+          {%- endfor -%}
+
+          {%- form 'contact', id: 'ReviewForm', class: 'rv__form' -%}
+            {%- if form.posted_successfully? -%}
+              <p class="notice" data-rv-done>Thank you for your review! It will appear here once we've checked it.</p>
+            {%- else -%}
+              {%- if form.errors -%}<p class="notice notice--err">{{ form.errors | default_errors }}</p>{%- endif -%}
+              <div id="RvForm-{{ section.id }}" class="rv__fields" data-rv-fields {% unless form.errors %}hidden{% endunless %}>
+                <h3>Write a review</h3>
+                <p class="muted">No account needed. Reviews are checked before they're published.</p>
+                <input type="hidden" name="contact[Type]" value="Product review">
+                <input type="hidden" name="contact[Product]" value="{{ product.title | escape }}">
+                <input type="hidden" name="contact[Product handle]" value="{{ product.handle }}">
+                <fieldset class="form-row rv__rate">
+                  <legend>Your rating</legend>
+                  <div class="star-input" role="radiogroup" aria-label="Rating">
+                    {%- for i in (1..5) -%}{%- assign s = 6 | minus: i -%}<input type="radio" id="rv-{{ section.id }}-{{ s }}" name="contact[Rating]" value="{{ s }} stars" {% if s == 5 %}checked{% endif %}><label for="rv-{{ section.id }}-{{ s }}" title="{{ s }} stars">★</label>{%- endfor -%}
+                  </div>
+                </fieldset>
+                <div class="prebook__grid">
+                  <label class="form-row"><span>Your name</span><input class="input" name="contact[name]" required autocomplete="name" value="{% if customer %}{{ customer.first_name }} {{ customer.last_name | slice: 0 }}.{% endif %}"></label>
+                  <label class="form-row"><span>Email (not shown)</span><input class="input" type="email" name="contact[email]" required autocomplete="email" value="{% if customer %}{{ customer.email }}{% endif %}"></label>
+                </div>
+                <div class="prebook__grid">
+                  <label class="form-row"><span>Size you bought</span><input class="input" name="contact[Size bought]" placeholder="e.g. L"></label>
+                  <label class="form-row"><span>Order number (optional)</span><input class="input" name="contact[Order]" placeholder="#1001"></label>
+                </div>
+                <label class="form-row"><span>Title</span><input class="input" name="contact[Review title]" required maxlength="80" placeholder="Thick fabric, perfect fit"></label>
+                <label class="form-row"><span>Your review</span><textarea class="input" name="contact[body]" required maxlength="1200" placeholder="How was the fit, fabric, print and delivery?"></textarea></label>
+                {%- if settings.whatsapp_number != blank -%}
+                  {%- assign wa = settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' -%}
+                  <p class="rv__photo-hint">📷 Have photos? <a href="https://wa.me/{{ wa }}?text={{ 'Review photos for ' | append: product.title | url_encode }}" target="_blank" rel="noopener">Send them on WhatsApp</a> and we'll add them to your review.</p>
+                {%- endif -%}
+                <button class="btn btn--block" type="submit">Submit review</button>
+              </div>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+      </div>
+    {%- endif -%}
   </div>
 </section>
+<script>
+  (() => {
+    const s = document.getElementById('Reviews'); if (!s) return;
+    const btn = s.querySelector('[data-rv-open]'); const f = s.querySelector('[data-rv-fields]');
+    if (btn && f) btn.addEventListener('click', () => { f.hidden = false; btn.setAttribute('aria-expanded', 'true'); f.scrollIntoView({ behavior: 'smooth', block: 'start' }); const i = f.querySelector('input[name="contact[name]"]'); i && setTimeout(() => i.focus(), 400); });
+    if (s.querySelector('[data-rv-done]') || (f && !f.hidden)) s.scrollIntoView({ block: 'start' });
+  })();
+</script>
 {% schema %}
 {
   "name": "Product reviews",
-  "settings": [{ "type": "text", "id": "heading", "label": "Heading", "default": "What buyers say" }],
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What buyers say" },
+    { "type": "range", "id": "limit", "label": "Reviews shown", "min": 4, "max": 40, "step": 2, "default": 12 },
+    { "type": "paragraph", "content": "For photo reviews, star ratings and review-request emails, install the free Judge.me app and add its \"Review widget\" block here. The theme's own form hides automatically." }
+  ],
   "blocks": [{ "type": "@app" }]
 }
 {% endschema %}

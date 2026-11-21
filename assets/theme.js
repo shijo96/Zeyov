@@ -141,13 +141,14 @@
      So before Buy now we save the shopper's cart, and the next time they are back on the
      store (order placed or checkout abandoned) we put their cart back exactly as it was. */
   const SNAP = 'zeyov:cart-snapshot';
-  async function buyNowCheckout(id, qty, btn) {
+  async function buyNowCheckout(id, qty, btn, note) {
     btn && btn.classList.add('is-loading');
     try {
       const cart = await getCart();
       if (cart.item_count > 0) store.set(SNAP, { t: Date.now(), note: cart.note || '', attributes: cart.attributes || {}, items: cart.items.map((i) => ({ id: i.variant_id, quantity: i.quantity, properties: i.properties || {} })) });
     } catch (e) { /* offline: just continue */ }
-    location.href = url(`cart/${id}:${Math.max(1, parseInt(qty, 10) || 1)}`);
+    const extra = note ? `?note=${encodeURIComponent(note)}` : '';
+    location.href = url(`cart/${id}:${Math.max(1, parseInt(qty, 10) || 1)}${extra}`);
   }
   let restoring = null;
   function restoreCart() {
@@ -250,11 +251,13 @@
     if (e.target.matches('[data-line-qty]')) changeLine(e.target.closest('[data-key]').dataset.key, Math.max(0, parseInt(e.target.value, 10) || 0));
   });
 
-  async function addToCart(id, quantity, btn) {
+  async function addToCart(id, quantity, btn, properties) {
     btn && btn.classList.add('is-loading');
     await restoreCart(); // never add on top of a cart that is still being put back
     try {
-      const r = await fetch(url('cart/add.js'), { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: [{ id: Number(id), quantity: Number(quantity) || 1 }] }) });
+      const item = { id: Number(id), quantity: Number(quantity) || 1 };
+      if (properties && Object.keys(properties).length) item.properties = properties;
+      const r = await fetch(url('cart/add.js'), { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: [item] }) });
       const data = await r.json();
       if (!r.ok) { toast(data.description || data.message || 'Could not add to bag'); return false; }
       const cart = await getCart();
@@ -442,9 +445,20 @@
         if (pct) b.querySelector('[data-bundle-price]').textContent = money(Math.round(price * q * (100 - pct) / 100));
       });
       const ok = current && current.available;
-      if (atc) { atc.disabled = !ok; const t = atc.querySelector('[data-atc-text]') || atc; t.textContent = !current ? 'Unavailable' : ok ? 'Add to Cart' : 'Sold out'; }
-      if (buyNow) buyNow.disabled = !ok;
-      const sb = rootEl.querySelector('[data-sticky-btn]'); if (sb) { sb.disabled = !ok; sb.textContent = ok ? 'Add to Cart' : 'Sold out'; }
+      const pre = !!(current && current.available && current.pre);
+      const addLabel = pre ? 'Pre-book now' : 'Add to Cart';
+      if (atc) { atc.disabled = !ok; const t = atc.querySelector('[data-atc-text]') || atc; t.textContent = !current ? 'Unavailable' : ok ? addLabel : 'Out of stock'; }
+      if (buyNow) { buyNow.disabled = !ok; buyNow.textContent = pre ? 'Pre-book & pay now' : 'Buy it now'; }
+      const sb = rootEl.querySelector('[data-sticky-btn]'); if (sb) { sb.disabled = !ok; sb.textContent = ok ? addLabel : 'Out of stock'; }
+      const pb = rootEl.querySelector('[data-prebook]');
+      if (pb) {
+        const done = pb.querySelector('[data-prebook-done]');
+        pb.hidden = !(current && !current.available) && !done;
+        const label = sel.filter((s2) => s2 !== 'Default Title').join(' / ');
+        const ps = pb.querySelector('[data-prebook-size]'); if (ps) ps.textContent = label || 'this item';
+        const pv = pb.querySelector('[data-prebook-variant]'); if (pv) pv.value = label;
+      }
+      rootEl.classList.toggle('is-preorder', pre);
       const sp = rootEl.querySelector('[data-sticky-price]'); if (sp && current) sp.textContent = money(price);
       const sv = rootEl.querySelector('[data-sticky-variant]'); if (sv) sv.textContent = sel.filter((s) => s !== 'Default Title').join(' / ');
       if (current) {
@@ -471,14 +485,37 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!current) return toast('Pick a size and colour');
-      const ok = await addToCart(current.id, qtyInput.value, atc);
+      const ok = await addToCart(current.id, qtyInput.value, atc, current.pre ? { 'Pre-booking': 'Yes – ships when back in stock' } : null);
       if (ok) { openPanel($('#CartDrawer')); }
     });
     // Buy now checks out only this product (cart permalink), the rest of the cart stays untouched
     buyNow && buyNow.addEventListener('click', () => {
       if (!current) return toast('Pick a size and colour');
-      buyNowCheckout(current.id, qtyInput.value, buyNow);
+      buyNowCheckout(current.id, qtyInput.value, buyNow, current.pre ? `Pre-booking: ${p.title} (${sel.filter((s2) => s2 !== 'Default Title').join(' / ')})` : '');
     });
+    // Pre-booking for sold-out sizes: pay an advance, or send a request without payment
+    const pbox = rootEl.querySelector('[data-prebook]');
+    if (pbox) {
+      const label = () => sel.filter((s2) => s2 !== 'Default Title').join(' / ');
+      const advBtn = pbox.querySelector('[data-prebook-advance]');
+      advBtn && advBtn.addEventListener('click', () => buyNowCheckout(advBtn.dataset.prebookAdvance, 1, advBtn, `Pre-booking advance for: ${p.title} – ${label()} (qty ${qtyInput.value || 1})`));
+      const openBtn = pbox.querySelector('[data-prebook-open]');
+      const fields = pbox.querySelector('[data-prebook-fields]');
+      openBtn && fields && openBtn.addEventListener('click', () => {
+        fields.hidden = !fields.hidden; openBtn.setAttribute('aria-expanded', String(!fields.hidden));
+        if (!fields.hidden) { const f = fields.querySelector('input:not([type=hidden])'); f && f.focus(); }
+      });
+      if (pbox.querySelector('[data-prebook-done]') || (fields && !fields.hidden)) { pbox.hidden = false; pbox.scrollIntoView({ block: 'center' }); }
+    }
+    // Delivery estimate: printed in 24-48 h, delivered eta_min-eta_max days after ordering
+    const eta = rootEl.querySelector('[data-eta]');
+    if (eta) {
+      const add = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d; };
+      const f = (d, wd) => d.toLocaleDateString('en-IN', wd ? { weekday: 'short', day: 'numeric', month: 'short' } : { day: 'numeric', month: 'short' });
+      const a = add(Number(eta.dataset.min) || 7); const b = add(Number(eta.dataset.max) || 8);
+      const out = eta.querySelector('[data-eta-date]');
+      if (out) out.textContent = a.getMonth() === b.getMonth() ? `${a.getDate()}–${f(b, false)}` : `${f(a, false)} – ${f(b, false)}`;
+    }
     const sticky = rootEl.querySelector('[data-sticky-atc]');
     const buy = rootEl.querySelector('[data-buy]');
     if (sticky && buy && 'IntersectionObserver' in window) {

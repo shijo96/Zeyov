@@ -1,0 +1,102 @@
+{%- liquid
+  assign cats = ''
+  for block in section.blocks
+    unless cats contains block.settings.category
+      assign cats = cats | append: block.settings.category | append: '|'
+    endunless
+  endfor
+  assign cat_list = cats | split: '|'
+-%}
+<div class="faq" data-faq>
+  <header class="faq__hero">
+    <div class="wrap">
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h1>{{ section.settings.heading }}</h1>
+      <p class="muted">{{ section.settings.intro }}</p>
+      <label class="faq__search">
+        {% render 'icon', name: 'search' %}
+        <input type="search" class="input" placeholder="Search questions, e.g. refund, delivery, size" aria-label="Search the FAQ" data-faq-search>
+      </label>
+      <nav class="faq__chips" aria-label="FAQ topics">
+        {%- for c in cat_list -%}<a href="#faq-{{ c | handleize }}">{{ c }}</a>{%- endfor -%}
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap faq__body">
+    {%- for c in cat_list -%}
+      <section class="faq__group" id="faq-{{ c | handleize }}" data-faq-group>
+        <h2>{{ c }}</h2>
+        <div class="faq__list">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.category == c -%}
+              <details class="faq__item" data-faq-item {{ block.shopify_attributes }}>
+                <summary><span>{{ block.settings.question }}</span><i aria-hidden="true"></i></summary>
+                <div class="rte faq__answer">{{ block.settings.answer }}</div>
+              </details>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endfor -%}
+    <p class="faq__none muted" data-faq-none hidden>No matching questions. Try another word, or contact us below.</p>
+
+    <aside class="faq__help">
+      <div>
+        <h2>{{ section.settings.help_heading }}</h2>
+        <p class="muted">{{ section.settings.help_text }}</p>
+      </div>
+      <div class="faq__help-actions">
+        <a class="btn" href="/pages/contact">Contact us</a>
+        <a class="btn btn--outline-gold" href="/pages/track-order">Track my order</a>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for block in section.blocks -%}
+      { "@type": "Question", "name": {{ block.settings.question | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ block.settings.answer | strip_html | json }} } }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+<script>
+  (() => {
+    const root = document.querySelector('[data-faq]'); if (!root) return;
+    const q = root.querySelector('[data-faq-search]'); const none = root.querySelector('[data-faq-none]');
+    const items = [...root.querySelectorAll('[data-faq-item]')]; const groups = [...root.querySelectorAll('[data-faq-group]')];
+    q && q.addEventListener('input', () => {
+      const t = q.value.trim().toLowerCase(); let shown = 0;
+      items.forEach((d) => { const hit = !t || d.textContent.toLowerCase().includes(t); d.hidden = !hit; if (hit) shown++; if (t && hit) d.open = true; if (!t) d.open = false; });
+      groups.forEach((g) => { g.hidden = !g.querySelector('[data-faq-item]:not([hidden])'); });
+      none.hidden = shown > 0;
+    });
+    if (location.hash.startsWith('#faq-')) { const g = document.querySelector(location.hash); const d = g && g.querySelector('details'); if (d) d.open = true; }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small title", "default": "Help centre" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently asked questions" },
+    { "type": "textarea", "id": "intro", "label": "Intro", "default": "Everything about orders, printing, delivery, returns and sizing — in one place." },
+    { "type": "text", "id": "help_heading", "label": "Help box heading", "default": "Still need help?" },
+    { "type": "text", "id": "help_text", "label": "Help box text", "default": "Our team replies within 24 hours, Monday to Saturday, 10 AM – 6 PM IST." }
+  ],
+  "blocks": [
+    { "type": "question", "name": "Question", "settings": [
+      { "type": "text", "id": "category", "label": "Topic", "default": "Orders & payment", "info": "Questions with the same topic are grouped together." },
+      { "type": "text", "id": "question", "label": "Question", "default": "Your question" },
+      { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Your answer.</p>" }
+    ] }
+  ],
+  "presets": [{ "name": "FAQ" }]
+}
+{% endschema %}

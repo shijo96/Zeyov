@@ -1,0 +1,195 @@
+{
+ "sections": {
+  "main": {
+   "type": "main-faq",
+   "blocks": {
+    "q01": {
+     "type": "question",
+     "settings": {
+      "category": "Orders & payment",
+      "question": "How do I place an order?",
+      "answer": "<p>All orders are placed on <b>zeyov.com</b>. Add your tee to the cart and check out — it takes under a minute. We don't take orders over WhatsApp or social media; WhatsApp is for support only.</p>"
+     }
+    },
+    "q02": {
+     "type": "question",
+     "settings": {
+      "category": "Orders & payment",
+      "question": "Which payment methods do you accept?",
+      "answer": "<p>UPI, debit and credit cards, net banking and wallets through Razorpay, plus Cash on Delivery. Delivery is <b>free on every online payment</b>; Cash on Delivery has a ₹80 handling charge.</p>"
+     }
+    },
+    "q03": {
+     "type": "question",
+     "settings": {
+      "category": "Orders & payment",
+      "question": "Do I need an account to order?",
+      "answer": "<p>No. You can check out as a guest, track your order and write a review without an account. Signing in is optional and simply keeps all your orders in one place.</p>"
+     }
+    },
+    "q04": {
+     "type": "question",
+     "settings": {
+      "category": "Orders & payment",
+      "question": "Can I cancel my order?",
+      "answer": "<p>Yes, until your order goes into printing. Contact us as soon as possible with your order number. Once printing has started, the order can't be cancelled, but our <a href=\"/pages/replacement-policy\">returns policy</a> applies after delivery.</p>"
+     }
+    },
+    "q05": {
+     "type": "question",
+     "settings": {
+      "category": "Printing & delivery",
+      "question": "Why does delivery take a few days?",
+      "answer": "<p>Every Zeyov tee is <b>printed to order</b> for you. Printing takes 24–48 hours, we dispatch from day 2, and your order reaches you in about <b>7–8 days</b> from the day you order.</p>"
+     }
+    },
+    "q06": {
+     "type": "question",
+     "settings": {
+      "category": "Printing & delivery",
+      "question": "Do you deliver across India?",
+      "answer": "<p>Yes, we deliver to almost every pin code in India. Remote areas can take a day or two longer.</p>"
+     }
+    },
+    "q07": {
+     "type": "question",
+     "settings": {
+      "category": "Printing & delivery",
+      "question": "How do I track my order?",
+      "answer": "<p>Open your order email and tap <b>View your order</b>, or visit <a href=\"/pages/track-order\">Track Order</a> and share your order number. No login needed.</p>"
+     }
+    },
+    "q08": {
+     "type": "question",
+     "settings": {
+      "category": "Returns & refunds",
+      "question": "What is your return policy?",
+      "answer": "<p>You can return or exchange within <b>7 days of delivery</b>. The tee must be unworn, unwashed and in its original packaging, with the <b>Zeyov tag still attached and its seal unbroken</b>.</p>"
+     }
+    },
+    "q09": {
+     "type": "question",
+     "settings": {
+      "category": "Returns & refunds",
+      "question": "Why does the tag matter?",
+      "answer": "<p>The Zeyov tag is our proof that a tee hasn't been worn or washed. Please try your tee on <b>with the tag still on</b>. If the tag has been removed, cut or its seal broken, we can't accept a return or issue a refund.</p>"
+     }
+    },
+    "q10": {
+     "type": "question",
+     "settings": {
+      "category": "Returns & refunds",
+      "question": "When will I get my refund?",
+      "answer": "<p>Once your return reaches us, we inspect it. If it passes the check, the refund is issued within <b>7 working days</b> to your original payment method (bank account or UPI for Cash on Delivery orders). The ₹80 COD charge is non-refundable.</p>"
+     }
+    },
+    "q11": {
+     "type": "question",
+     "settings": {
+      "category": "Returns & refunds",
+      "question": "Can I exchange for a different size?",
+      "answer": "<p>Yes. Request an exchange within 7 days of delivery and we'll send your new size, subject to availability. The same tag and condition rules apply.</p>"
+     }
+    },
+    "q12": {
+     "type": "question",
+     "settings": {
+      "category": "Returns & refunds",
+      "question": "My tee arrived damaged or wrong. What now?",
+      "answer": "<p>We're sorry! Message us within 7 days of delivery with your order number and clear photos or an unboxing video. We'll replace it at no cost to you.</p>"
+     }
+    },
+    "q13": {
+     "type": "question",
+     "settings": {
+      "category": "Sizing & care",
+      "question": "How do the oversized tees fit?",
+      "answer": "<p>Oversized tees have a drop shoulder and a relaxed, boxy body. Take your usual size for the oversized look, or one size down for a closer fit. Every product page has a size chart.</p>"
+     }
+    },
+    "q14": {
+     "type": "question",
+     "settings": {
+      "category": "Sizing & care",
+      "question": "What does GSM mean?",
+      "answer": "<p>GSM is fabric weight. <b>190 GSM</b> is light and breathable for everyday wear, <b>230 GSM</b> is a premium mid-weight, and <b>250 GSM</b> French Terry and Acid Wash are heavyweight with a structured drape.</p>"
+     }
+    },
+    "q15": {
+     "type": "question",
+     "settings": {
+      "category": "Sizing & care",
+      "question": "How should I wash my tee?",
+      "answer": "<p>Wash cold and inside out, dry in the shade and never iron directly on the print. This keeps the colour and print looking new for longer.</p>"
+     }
+    },
+    "q16": {
+     "type": "question",
+     "settings": {
+      "category": "Pre-booking",
+      "question": "My size is out of stock. Can I still get it?",
+      "answer": "<p>Yes — tap <b>Pre-book</b> on the product page. Depending on the product you can pay in full, pay a small advance, or send a request without paying. We confirm the dispatch date on WhatsApp within 24 hours.</p>"
+     }
+    },
+    "q17": {
+     "type": "question",
+     "settings": {
+      "category": "Pre-booking",
+      "question": "What happens to my advance?",
+      "answer": "<p>Your advance is adjusted in the final bill. If we're unable to fulfil your pre-booking, the advance is refunded in full.</p>"
+     }
+    },
+    "q18": {
+     "type": "question",
+     "settings": {
+      "category": "Zeyov Studio",
+      "question": "Can I print my own design?",
+      "answer": "<p>Yes. In <a href=\"/pages/studio\">Zeyov Studio</a> you can upload artwork or add text, place it on the front or back, and see the price instantly — DTF prints from logo size to A2, plus embroidery.</p>"
+     }
+    },
+    "q19": {
+     "type": "question",
+     "settings": {
+      "category": "Zeyov Studio",
+      "question": "Can I return a custom Studio tee?",
+      "answer": "<p>Because Studio tees are made only for you, they can't be returned for change of mind. If one arrives damaged or misprinted, we'll replace it free of charge.</p>"
+     }
+    },
+    "q20": {
+     "type": "question",
+     "settings": {
+      "category": "Reviews",
+      "question": "How do I write a review?",
+      "answer": "<p>Open the product page and tap <b>Write a review</b>. No account is needed. Reviews are checked before they're published so every review on Zeyov is from a real customer.</p>"
+     }
+    }
+   },
+   "block_order": [
+    "q01",
+    "q02",
+    "q03",
+    "q04",
+    "q05",
+    "q06",
+    "q07",
+    "q08",
+    "q09",
+    "q10",
+    "q11",
+    "q12",
+    "q13",
+    "q14",
+    "q15",
+    "q16",
+    "q17",
+    "q18",
+    "q19",
+    "q20"
+   ],
+   "settings": {}
+  }
+ },
+ "order": [
+  "main"
+ ]
+}

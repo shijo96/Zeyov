@@ -116,7 +116,9 @@
   },
   "studio": {
    "type": "studio-promo",
-   "settings": {}
+   "settings": {
+    "heading": "Design your own tee"
+   }
   },
   "gsm": {
    "type": "gsm-guide",
@@ -151,49 +153,25 @@
     "g2",
     "g3"
    ],
-   "settings": {}
+   "settings": {
+    "heading": "Pick your weight",
+    "text": "GSM is grams per square metre. Higher GSM means a thicker, more structured tee that holds the oversized drop."
+   }
   },
   "quotes": {
    "type": "testimonials",
-   "blocks": {
-    "q1": {
-     "type": "quote",
-     "settings": {
-      "quote": "The 250 GSM black is thick, the drop shoulder sits right, and the collar is still tight after ten washes.",
-      "name": "Arjun M., Kochi",
-      "product": "Oversized 250 GSM",
-      "rating": 5
-     }
-    },
-    "q2": {
-     "type": "quote",
-     "settings": {
-      "quote": "Bought three colours to get the bundle price. True to the photos.",
-      "name": "Fathima R., Calicut",
-      "product": "Oversized 250 GSM",
-      "rating": 5
-     }
-    },
-    "q3": {
-     "type": "quote",
-     "settings": {
-      "quote": "Designed my team tees in Zeyov Studio. Puff print came out perfect.",
-      "name": "Nikhil S., Bengaluru",
-      "product": "Zeyov Studio",
-      "rating": 5
-     }
-    }
-   },
-   "block_order": [
-    "q1",
-    "q2",
-    "q3"
-   ],
-   "settings": {}
+   "settings": {
+    "eyebrow": "Customer love",
+    "heading": "Worn and reviewed",
+    "link_label": "See all reviews"
+   }
   },
   "news": {
    "type": "newsletter",
-   "settings": {}
+   "settings": {
+    "heading": "First look at every drop",
+    "text": "New colours, restocks and members-only offers. No spam."
+   }
   },
   "arrivals": {
    "type": "new-arrivals",
@@ -414,7 +392,8 @@
     "add_label": "Add to cart",
     "buy_label": "Buy now",
     "strip_text": ""
-   }
+   },
+   "disabled": true
   },
   "xmas": {
    "type": "hero-christmas",
@@ -477,12 +456,46 @@
     "autoplay": 5,
     "countdown": true,
     "snow": true,
-    "lights": true
+    "lights": true,
+    "offer": ""
+   },
+   "disabled": true
+  },
+  "hero_rack_christmas_8ijjd4": {
+   "type": "hero-rack-christmas",
+   "settings": {
+    "palette": "pine",
+    "lights": true,
+    "snow": true,
+    "garland": true,
+    "baubles": true,
+    "gifts": true,
+    "source": "collection",
+    "collection": "new-arrivals",
+    "limit": 12,
+    "top_up": false,
+    "min_items": 10,
+    "heading": "Zeyov Christmas collection — premium oversized tees",
+    "eyebrow": "The Zeyov Christmas Rack",
+    "greeting": "Merry Christmas",
+    "hint": "Pick a gift off the rack",
+    "cta_view": "Take a closer look",
+    "cta": "View details",
+    "add_label": "Add to cart",
+    "buy_label": "Buy now",
+    "front_label": "Front",
+    "back_label": "Back",
+    "height": 88,
+    "bg_top": "#124A33",
+    "bg_bottom": "#03150D",
+    "text": "#FBF3E2",
+    "accent": "#E9C46A"
    }
   }
  },
  "order": [
   "rack",
+  "hero_rack_christmas_8ijjd4",
   "xmas",
   "hero",
   "arrivals",

@@ -6,10 +6,14 @@
   <div class="wrap">
     <div class="about__stats">
       <div><b>190–250</b><span>GSM cotton</span></div>
-      <div><b>8+</b><span>Colours</span></div>
-      <div><b>7-day</b><span>Replace</span></div>
+      <div><b>7–8 days</b><span>Delivery</span></div>
+      <div><b>7-day</b><span>Returns</span></div>
       <div><b>COD</b><span>All India</span></div>
     </div>
+    <nav class="policy-links" aria-label="Help pages">
+      {%- assign pl = 'replacement-policy|Returns & Refunds,shipping-policy|Shipping & Delivery,terms-and-conditions|Terms & Conditions,privacy-policy|Privacy Policy,faq|FAQ' | split: ',' -%}
+      {%- for x in pl -%}{%- assign xp = x | split: '|' -%}<a href="/pages/{{ xp[0] }}" {% if page.handle == xp[0] %}aria-current="page"{% endif %}>{{ xp[1] }}</a>{%- endfor -%}
+    </nav>
     <div class="rte page-body">{{ page.content }}</div>
     <div class="about__cta"><a class="btn" href="{{ routes.all_products_collection_url }}">Shop the collection</a><a class="btn btn--outline-gold" href="/pages/contact">Contact us</a></div>
   </div>

@@ -1,0 +1,452 @@
+{%- comment -%}
+  ZEYOV · Clothing-rack hero — Christmas edition (single-file section).
+  Same rack behaviour as "Clothing rack hero" (uses hero-rack.css, hero-rack.js
+  and snippets/rack-item.liquid that are already in the theme) with a festive
+  layer: night-sky backdrop, twinkling string lights, falling snow, a pine
+  garland on a brass rail, hanging baubles, gift boxes, gold hangers and a
+  glow behind the chosen garment. All festive CSS lives in this file.
+{%- endcomment -%}
+{{ 'hero-rack.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  case section.settings.palette
+    when 'berry'
+      assign c_a = '#7A1520'
+      assign c_b = '#2A0609'
+      assign c_text = '#FBF1E3'
+      assign c_acc = '#E9C46A'
+      assign c_glow = 'rgba(255,196,120,.30)'
+      assign c_floor = '#3B0A0F'
+    when 'night'
+      assign c_a = '#1C3254'
+      assign c_b = '#060B16'
+      assign c_text = '#F2F6FB'
+      assign c_acc = '#D7E3F2'
+      assign c_glow = 'rgba(190,215,255,.28)'
+      assign c_floor = '#0B1424'
+    when 'custom'
+      assign c_a = section.settings.bg_top
+      assign c_b = section.settings.bg_bottom
+      assign c_text = section.settings.text
+      assign c_acc = section.settings.accent
+      assign c_glow = 'rgba(255,214,140,.28)'
+      assign c_floor = section.settings.bg_bottom
+    else
+      assign c_a = '#124A33'
+      assign c_b = '#03150D'
+      assign c_text = '#FBF3E2'
+      assign c_acc = '#E9C46A'
+      assign c_glow = 'rgba(246,214,140,.30)'
+      assign c_floor = '#062216'
+  endcase
+-%}
+{%- assign hanger = '<svg viewBox="0 0 64 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 14V10a5.5 5.5 0 1 0-5.5-5.5"/><path d="M32 14 3.5 32.5h57Z"/></svg>' -%}
+
+<style>
+  /* ---------- palette & base ---------- */
+  .rack.xr { --xr-glow: {{ c_glow }}; --xr-floor: {{ c_floor }}; --xr-gold: #E9C46A; --xr-gold-2: #F7E2A6; color-scheme: dark; }
+  .rack.xr::before { opacity: .35; }
+  .rack.xr::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(38% 30% at 50% 46%, var(--xr-glow), transparent 70%),
+      radial-gradient(60% 40% at 50% 112%, color-mix(in srgb, var(--xr-floor) 80%, #fff 6%), transparent 70%),
+      radial-gradient(2px 2px at 12% 22%, rgba(255,255,255,.55), transparent 60%),
+      radial-gradient(1.5px 1.5px at 78% 14%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(1.5px 1.5px at 64% 30%, rgba(255,255,255,.4), transparent 60%),
+      radial-gradient(2px 2px at 30% 12%, rgba(255,255,255,.45), transparent 60%),
+      radial-gradient(1.5px 1.5px at 90% 34%, rgba(255,255,255,.35), transparent 60%); }
+
+  /* ---------- festive layer ---------- */
+  .xr__fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .xr__bokeh i { position: absolute; border-radius: 50%; filter: blur(18px); opacity: .45; animation: xr-drift 14s ease-in-out infinite alternate; }
+  .xr__bokeh i:nth-child(1) { width: 180px; height: 180px; left: 4%; top: 28%; background: #D4343E; opacity: .22; }
+  .xr__bokeh i:nth-child(2) { width: 140px; height: 140px; right: 6%; top: 18%; background: var(--xr-gold); opacity: .2; animation-delay: -5s; }
+  .xr__bokeh i:nth-child(3) { width: 220px; height: 220px; right: 18%; bottom: 8%; background: #2E8B57; opacity: .18; animation-delay: -9s; }
+  .xr__bokeh i:nth-child(4) { width: 120px; height: 120px; left: 22%; bottom: 14%; background: var(--xr-gold); opacity: .16; animation-delay: -3s; }
+  @keyframes xr-drift { to { transform: translate3d(24px, -18px, 0) scale(1.08); } }
+
+  .xr__lights { position: absolute; top: 0; left: 0; right: 0; height: 64px; }
+  .xr__lights svg { position: absolute; inset: 0; width: 100%; height: 100%; color: color-mix(in srgb, var(--rack-text) 30%, transparent); }
+  .xr__lights i { position: absolute; width: 10px; height: 15px; border-radius: 50% 50% 45% 45%; transform: translateX(-50%) rotate(var(--r, 0deg)); background: #FFD36E; box-shadow: 0 0 12px 4px rgba(255,211,110,.55); animation: xr-twinkle 2.6s ease-in-out infinite; }
+  .xr__lights i::before { content: ""; position: absolute; top: -4px; left: 2.5px; width: 5px; height: 5px; border-radius: 1px; background: #3a3a3a; }
+  .xr__lights i:nth-child(4n+2) { background: #FF5A5F; box-shadow: 0 0 12px 4px rgba(255,90,95,.5); animation-delay: .65s; }
+  .xr__lights i:nth-child(4n+3) { background: #5BE39B; box-shadow: 0 0 12px 4px rgba(91,227,155,.45); animation-delay: 1.3s; }
+  .xr__lights i:nth-child(4n+4) { background: #7CC4FF; box-shadow: 0 0 12px 4px rgba(124,196,255,.5); animation-delay: 1.95s; }
+  {%- for k in (1..18) -%}
+    {%- assign x = k | times: 100 | divided_by: 19 -%}
+    {%- assign m = k | modulo: 3 -%}
+    .xr__lights i:nth-child({{ k }}) { left: {{ x }}%; top: {% if m == 0 %}10{% elsif m == 1 %}26{% else %}18{% endif %}px; --r: {% if m == 1 %}-8deg{% elsif m == 2 %}6deg{% else %}0deg{% endif %}; }
+  {%- endfor -%}
+  @keyframes xr-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+  .xr__snow, .xr__snow::before, .xr__snow::after { position: absolute; left: 0; right: 0; top: -100%; height: 200%; pointer-events: none;
+    background-image: radial-gradient(2px 2px at 20px 30px, #fff 50%, transparent 52%), radial-gradient(1.5px 1.5px at 110px 140px, #fff 50%, transparent 52%), radial-gradient(2.6px 2.6px at 190px 70px, rgba(255,255,255,.9) 50%, transparent 52%), radial-gradient(1.5px 1.5px at 260px 200px, #fff 50%, transparent 52%), radial-gradient(2px 2px at 330px 110px, rgba(255,255,255,.85) 50%, transparent 52%);
+    background-size: 360px 240px; opacity: .55; animation: xr-snow 22s linear infinite; }
+  .xr__snow::before, .xr__snow::after { content: ""; }
+  .xr__snow::before { background-size: 240px 180px; opacity: .8; animation-duration: 14s; filter: blur(.5px); }
+  .xr__snow::after { background-size: 520px 360px; opacity: .9; animation-duration: 9s; filter: blur(1.2px); transform-origin: center; }
+  @keyframes xr-snow { to { transform: translate3d(-30px, 50%, 0); } }
+
+  .xr__baubles span { position: absolute; top: 0; width: 1px; background: color-mix(in srgb, var(--rack-text) 35%, transparent); transform-origin: top center; animation: xr-swing 4.2s ease-in-out infinite; }
+  .xr__baubles span::after { content: ""; position: absolute; left: 50%; bottom: -24px; width: 26px; height: 26px; margin-left: -13px; border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, #fff 0 7%, var(--b, var(--xr-gold)) 32%, color-mix(in srgb, var(--b, var(--xr-gold)) 45%, #000) 100%); box-shadow: 0 6px 14px rgba(0,0,0,.35); }
+  .xr__baubles span::before { content: ""; position: absolute; left: 50%; bottom: -3px; width: 8px; height: 5px; margin-left: -4px; border-radius: 2px 2px 0 0; background: linear-gradient(90deg, #8d7a4a, #e6d29a, #8d7a4a); z-index: 1; }
+  .xr__baubles span:nth-child(1) { left: 6%; height: 92px; --b: #C9252F; }
+  .xr__baubles span:nth-child(2) { left: 11%; height: 58px; --b: var(--xr-gold); animation-delay: -1.4s; }
+  .xr__baubles span:nth-child(3) { right: 7%; height: 104px; --b: var(--xr-gold); animation-delay: -2.2s; }
+  .xr__baubles span:nth-child(4) { right: 12.5%; height: 64px; --b: #1F7A4D; animation-delay: -.7s; }
+  .xr__baubles span:nth-child(2)::after, .xr__baubles span:nth-child(4)::after { width: 20px; height: 20px; margin-left: -10px; bottom: -19px; }
+  @keyframes xr-swing { 0%, 100% { transform: rotate(5deg); } 50% { transform: rotate(-5deg); } }
+
+  .xr__gifts { position: absolute; bottom: 0; left: 0; right: 0; height: 120px; }
+  .xr__gift { position: absolute; bottom: 0; width: var(--w); height: var(--h); border-radius: 4px 4px 2px 2px; background: var(--g);
+    box-shadow: inset 0 -10px 18px rgba(0,0,0,.25), 0 10px 20px rgba(0,0,0,.35); }
+  .xr__gift::before { content: ""; position: absolute; inset: 0 calc(50% - 6px); background: var(--rb, var(--xr-gold)); }
+  .xr__gift::after { content: ""; position: absolute; left: -4px; right: -4px; top: -10px; height: 14px; border-radius: 3px; background: var(--g); filter: brightness(1.12);
+    box-shadow: 0 3px 6px rgba(0,0,0,.25); border-top: 0; background-image: linear-gradient(90deg, transparent calc(50% - 6px), var(--rb, var(--xr-gold)) calc(50% - 6px), var(--rb, var(--xr-gold)) calc(50% + 6px), transparent calc(50% + 6px)); }
+  .xr__gift b { position: absolute; left: 50%; top: -26px; width: 30px; height: 18px; margin-left: -15px; }
+  .xr__gift b::before, .xr__gift b::after { content: ""; position: absolute; top: 0; width: 15px; height: 15px; border: 4px solid var(--rb, var(--xr-gold)); border-radius: 50% 50% 0 50%; }
+  .xr__gift b::before { left: 0; transform: rotate(10deg); } .xr__gift b::after { right: 0; transform: scaleX(-1) rotate(10deg); }
+  .xr__gift--1 { left: 3%; --w: 74px; --h: 62px; --g: linear-gradient(180deg, #B3222C, #7E141B); }
+  .xr__gift--2 { left: calc(3% + 66px); --w: 52px; --h: 44px; --g: linear-gradient(180deg, #1F6E46, #11462B); --rb: #F7E2A6; }
+  .xr__gift--3 { right: 4%; --w: 66px; --h: 76px; --g: linear-gradient(180deg, #F3E7CF, #D8C6A2); --rb: #B3222C; }
+  .xr__gift--4 { right: calc(4% + 58px); --w: 46px; --h: 40px; --g: linear-gradient(180deg, #1D3557, #0F1F36); }
+
+  /* ---------- rack in festive dress ---------- */
+  .rack.xr .rack__stage { z-index: 1; }
+  .rack.xr .rack__eyebrow { color: var(--rack-accent); display: inline-flex; align-items: center; gap: 10px; }
+  .rack.xr .rack__top .rack__eyebrow::before { content: ""; width: 16px; height: 16px; flex: none;
+    background: radial-gradient(circle, var(--xr-gold-2) 0 18%, transparent 20%), conic-gradient(from 0deg, var(--xr-gold) 0 10%, transparent 10% 20%, var(--xr-gold) 20% 30%, transparent 30% 40%, var(--xr-gold) 40% 50%, transparent 50% 60%, var(--xr-gold) 60% 70%, transparent 70% 80%, var(--xr-gold) 80% 90%, transparent 90%);
+    -webkit-mask: radial-gradient(circle, #000 64%, transparent 66%); mask: radial-gradient(circle, #000 64%, transparent 66%); animation: xr-spin 8s linear infinite; }
+  @keyframes xr-spin { to { transform: rotate(360deg); } }
+  .rack.xr .rack__greeting { display: block; margin-top: 4px; font: italic 600 clamp(22px, 2.6vw, 34px)/1.05 var(--font-display, Georgia, serif); letter-spacing: -.01em;
+    background: linear-gradient(180deg, var(--xr-gold-2), var(--xr-gold)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-transform: none; }
+  .rack.xr .rack__top { align-items: flex-end; }
+
+  .rack.xr .rack__bar { height: 10px; background: linear-gradient(180deg, #FFF3C8 0%, #E3BE6A 34%, #9C7326 54%, #C99D45 72%, #F2DA9A 100%);
+    box-shadow: 0 8px 14px -6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.75); }
+  .rack.xr .rack__bracket { background: linear-gradient(90deg, #7c5d22, #E6C677 45%, #7c5d22); box-shadow: 0 4px 10px rgba(0,0,0,.45); }
+  {%- if section.settings.garland -%}
+  .rack.xr .rack__rail::before { content: ""; position: absolute; left: 22px; right: 22px; top: -9px; height: 28px; z-index: 1; pointer-events: none; border-radius: 14px;
+    background:
+      radial-gradient(4px 4px at 10% 50%, #F7E2A6 60%, transparent 62%),
+      radial-gradient(4px 4px at 37% 40%, #FF6B6B 60%, transparent 62%),
+      radial-gradient(4px 4px at 63% 60%, #F7E2A6 60%, transparent 62%),
+      radial-gradient(4px 4px at 88% 45%, #FF6B6B 60%, transparent 62%),
+      repeating-radial-gradient(circle at 8px 14px, #1E6B43 0 5px, #134D30 5px 8px, transparent 8px 9px),
+      repeating-linear-gradient(-28deg, #0F3E27 0 3px, #2A7A50 3px 6px, #17573A 6px 9px);
+    background-size: 120px 28px, 150px 28px, 110px 28px, 170px 28px, 16px 28px, 100% 100%;
+    -webkit-mask: linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%); mask: linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%);
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,.4)); animation: xr-garland 3s ease-in-out infinite; }
+  @keyframes xr-garland { 0%, 100% { filter: drop-shadow(0 4px 6px rgba(0,0,0,.4)) brightness(1); } 50% { filter: drop-shadow(0 4px 6px rgba(0,0,0,.4)) brightness(1.12); } }
+  {%- endif -%}
+
+  .rack.xr .rack__item { color: var(--xr-gold); }
+  .rack.xr .rack__slot.is-active .rack__item::before { content: ""; position: absolute; left: 50%; top: 46%; width: 118%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle, var(--xr-glow) 0%, color-mix(in srgb, var(--xr-glow) 40%, transparent) 40%, transparent 70%); animation: xr-pulse 3.2s ease-in-out infinite; }
+  @keyframes xr-pulse { 0%, 100% { opacity: .75; transform: translate(-50%, -50%) scale(.96); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); } }
+  .rack.xr .rack__slot.is-active .rack__item::after { content: ""; position: absolute; inset: 8% 4% 18%; pointer-events: none; z-index: 2;
+    background: radial-gradient(3px 3px at 12% 20%, #fff 50%, transparent 55%), radial-gradient(2px 2px at 88% 30%, #fff 50%, transparent 55%), radial-gradient(2.5px 2.5px at 80% 78%, #FFF3C8 50%, transparent 55%), radial-gradient(2px 2px at 18% 70%, #FFF3C8 50%, transparent 55%);
+    animation: xr-sparkle 2.4s ease-in-out infinite; }
+  @keyframes xr-sparkle { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+  /* photos whose background could not be removed: framed like a gift card */
+  .rack.xr .rack__slot.is-photo .rack__img, .rack__detail.xr-d .rack__big img.is-photo { border-radius: 14px; box-shadow: 0 0 0 1px rgba(233,196,106,.55), 0 0 0 5px color-mix(in srgb, var(--rack-a) 60%, transparent), 0 0 0 6px rgba(233,196,106,.35), 0 18px 34px -12px rgba(0,0,0,.6); }
+  .rack.xr .rack__floor { background: radial-gradient(closest-side, rgba(255,255,255,.12), transparent); filter: blur(10px); }
+
+  .rack.xr .rack__arrow { background: color-mix(in srgb, var(--rack-text) 10%, transparent); border-color: color-mix(in srgb, var(--rack-text) 22%, transparent); color: var(--rack-text); }
+  .rack.xr .rack__arrow:hover { background: color-mix(in srgb, var(--rack-text) 18%, transparent); }
+  .rack.xr .rack__name { color: var(--rack-text); }
+  .rack.xr .rack__btn, .rack__detail.xr-d .rack__btn { border-color: var(--xr-gold); background: linear-gradient(180deg, var(--xr-gold-2), var(--xr-gold)); color: #2A1A06; box-shadow: 0 12px 26px -12px rgba(233,196,106,.7), inset 0 1px 0 rgba(255,255,255,.6); }
+  .rack.xr .rack__btn:hover, .rack__detail.xr-d .rack__btn:hover { background: linear-gradient(180deg, #fff3c8, var(--xr-gold-2)); }
+  .rack.xr .rack__btn--ghost, .rack__detail.xr-d .rack__btn--ghost { background: transparent; color: var(--rack-text); border-color: color-mix(in srgb, var(--rack-text) 45%, transparent); box-shadow: none; }
+  .rack.xr .rack__btn--ghost:hover, .rack__detail.xr-d .rack__btn--ghost:hover { background: color-mix(in srgb, var(--rack-text) 12%, transparent); color: var(--rack-text); }
+
+  /* detail view (also when moved to <body> on phones) */
+  .rack__detail.xr-d { color: var(--rack-text); }
+  .rack__detail.xr-d .rack__close { background: color-mix(in srgb, var(--rack-text) 12%, transparent); border-color: color-mix(in srgb, var(--rack-text) 25%, transparent); color: var(--rack-text); }
+  .rack__detail.xr-d .rack__title { color: var(--rack-text); }
+  .rack__detail.xr-d .rack__price { color: var(--rack-accent); font-weight: 600; }
+  .rack__detail.xr-d .rack__big { color: var(--xr-gold, #E9C46A); }
+  .rack__detail.xr-d .rack__big::before { content: ""; position: absolute; left: 50%; top: 48%; width: 115%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; z-index: -1;
+    background: radial-gradient(circle, var(--xr-glow, rgba(246,214,140,.3)), transparent 68%); }
+  .rack__detail.xr-d .rack__spot { background: radial-gradient(closest-side, rgba(0,0,0,.45), transparent); }
+  .rack__detail.xr-d .rack__toggle { background: color-mix(in srgb, var(--rack-text) 8%, transparent); border-color: color-mix(in srgb, var(--rack-text) 18%, transparent); }
+  .rack__detail.xr-d .rack__toggle button.is-on { background: linear-gradient(180deg, #F7E2A6, #E9C46A); color: #2A1A06; }
+  .rack__detail.xr-d .rack__size { background: color-mix(in srgb, var(--rack-text) 6%, transparent); color: var(--rack-text); border-color: color-mix(in srgb, var(--rack-text) 25%, transparent); }
+  .rack__detail.xr-d .rack__size.is-on { background: var(--rack-text); color: var(--rack-a); border-color: var(--rack-text); }
+  .rack__detail.xr-d .rack__chip.is-on, .rack__detail.xr-d .rack__tag.is-on { box-shadow: 0 0 0 2px var(--rack-a), 0 0 0 3.5px #E9C46A; }
+  .rack__detail.xr-d .rack__tag::after { background: #E9C46A; }
+  .rack__detail.xr-d .rack__heart { color: var(--rack-text); border-color: color-mix(in srgb, var(--rack-text) 30%, transparent); background: transparent; }
+  .rack__detail.xr-d .rack__link { color: var(--rack-accent); }
+  .rack__detail--portal.xr-d { --xr-gold: #E9C46A; --xr-gold-2: #F7E2A6; background: radial-gradient(120% 80% at 50% 30%, color-mix(in srgb, var(--rack-a) 92%, transparent), color-mix(in srgb, var(--rack-b) 96%, transparent)) !important; }
+
+  .rack.xr .rack__strip { background: linear-gradient(90deg, #7A1219, #A3202A 50%, #7A1219); color: #F7E2A6; }
+
+  @media (max-width: 899px) {
+    .xr__lights { height: 48px; }
+    .xr__lights i { width: 8px; height: 12px; }
+    .xr__lights i:nth-child(even) { display: none; }
+    .xr__baubles span:nth-child(2), .xr__baubles span:nth-child(4) { display: none; }
+    .xr__baubles span:nth-child(1) { height: 60px; left: 4%; } .xr__baubles span:nth-child(3) { height: 70px; right: 4%; }
+    .xr__baubles span::after { width: 18px; height: 18px; margin-left: -9px; bottom: -17px; }
+    .xr__gifts { transform: scale(.6); transform-origin: bottom center; left: -20%; right: -20%; }
+    .xr__bokeh i { filter: blur(24px); }
+    .rack.xr .rack__top { padding-top: 30px; align-items: flex-start; gap: 12px; }
+    .rack.xr .rack__top .rack__eyebrow { flex: 1; min-width: 0; flex-wrap: wrap; gap: 4px 8px; font-size: 10px; letter-spacing: .24em; }
+    .rack.xr .rack__greeting { flex-basis: 100%; margin-top: 2px; font-size: 26px; white-space: nowrap; }
+    .rack.xr .rack__count { margin-top: 2px; }
+  }
+  @media (max-width: 599px) {
+    .xr__baubles, .xr__gifts { display: none; }
+    .xr__bokeh i:nth-child(3), .xr__bokeh i:nth-child(4) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .xr__snow, .xr__snow::before, .xr__snow::after, .xr__lights i, .xr__baubles span, .xr__bokeh i,
+    .rack.xr .rack__rail::before, .rack.xr .rack__slot.is-active .rack__item::before, .rack.xr .rack__slot.is-active .rack__item::after,
+    .rack.xr .rack__top .rack__eyebrow::before { animation: none; }
+  }
+</style>
+
+<section class="rack xr" data-rack id="rack-{{ section.id }}"
+  style="--rack-a: {{ c_a }}; --rack-b: {{ c_b }}; --rack-text: {{ c_text }}; --rack-accent: {{ c_acc }}; --strip-bg: #7A1219; --strip-fg: #F7E2A6; --rack-h: {{ section.settings.height }}vh; --xr-glow: {{ c_glow }}; --xr-gold: #E9C46A; --xr-gold-2: #F7E2A6;">
+  <h2 class="rack__sr">{{ section.settings.heading | default: shop.name }}</h2>
+
+  <div class="xr__fx" aria-hidden="true">
+    <div class="xr__bokeh"><i></i><i></i><i></i><i></i></div>
+    {%- if section.settings.snow -%}<div class="xr__snow"></div>{%- endif -%}
+    {%- if section.settings.lights -%}
+      <div class="xr__lights">
+        <svg viewBox="0 0 1200 64" preserveAspectRatio="none"><path d="M0,6 Q100,46 200,16 T400,16 T600,16 T800,16 T1000,16 T1200,6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        {%- for k in (1..18) -%}<i></i>{%- endfor -%}
+      </div>
+    {%- endif -%}
+    {%- if section.settings.baubles -%}<div class="xr__baubles"><span></span><span></span><span></span><span></span></div>{%- endif -%}
+    {%- if section.settings.gifts -%}
+      <div class="xr__gifts">
+        <span class="xr__gift xr__gift--1"><b></b></span><span class="xr__gift xr__gift--2"><b></b></span>
+        <span class="xr__gift xr__gift--3"><b></b></span><span class="xr__gift xr__gift--4"><b></b></span>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="rack__stage" data-stage>
+    <div class="rack__top">
+      <span class="rack__eyebrow">
+        {{- section.settings.eyebrow -}}
+        {%- if section.settings.greeting != blank -%}<span class="rack__greeting">{{ section.settings.greeting }}</span>{%- endif -%}
+      </span>
+      <span class="rack__count" aria-hidden="true"><b data-count>01</b> / <span data-total>00</span></span>
+    </div>
+
+    <div class="rack__rail" aria-hidden="true"><i class="rack__bracket"></i><i class="rack__bar"></i><i class="rack__bracket"></i></div>
+
+    <div class="rack__viewport">
+      <button type="button" class="rack__arrow rack__arrow--prev" data-prev aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="rack__items" data-items role="list">
+        {%- liquid
+          assign n = 0
+          assign coll = section.settings.collection
+          assign use_coll = false
+          if section.settings.source != 'blocks' and coll != blank and coll.products_count > 0
+            assign use_coll = true
+          endif
+          assign max = section.settings.limit
+        -%}
+        {%- if use_coll -%}
+          {%- for p in coll.products limit: max -%}
+            {%- liquid
+              assign price = p.price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹'
+              if p.price_varies
+                assign price = price | prepend: 'from '
+              endif
+              assign back = blank
+              if p.images.size > 1
+                assign back = p.images[1]
+              endif
+              assign sub = p.type
+              assign variants = ''
+              for opt in p.options_with_values
+                assign on = opt.name | downcase
+                if on == 'color' or on == 'colour'
+                  assign sub = opt.values.size | append: ' colours'
+                  if opt.values.size == 1
+                    assign sub = opt.values.first
+                  endif
+                  capture variants
+                    echo '['
+                    for v in opt.values
+                      assign vimg = v.variant.featured_image | default: p.featured_image
+                      assign nj = v.name | json
+                      assign ij = vimg | image_url: width: 1000 | json
+                      echo '{"n":' | append: nj | append: ',"i":' | append: ij | append: '}'
+                      unless forloop.last
+                        echo ','
+                      endunless
+                    endfor
+                    echo ']'
+                  endcapture
+                endif
+              endfor
+            -%}
+            {%- render 'rack-item', product: p, idx: n, title: p.title, sub: sub, price: price, url: p.url, group: '', tag: '', front: p.featured_image, back: back, hanger: hanger, attrs: '', variants: variants -%}
+            {%- assign n = n | plus: 1 -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- if use_coll == false or section.settings.top_up and n < section.settings.min_items -%}
+          {%- for block in section.blocks -%}
+            {%- if use_coll and n >= section.settings.min_items -%}{%- break -%}{%- endif -%}
+            {%- liquid
+              assign p = block.settings.product
+              assign title = block.settings.title
+              if title == blank and p != blank
+                assign title = p.title
+              endif
+              assign url = block.settings.link
+              if url == blank and p != blank
+                assign url = p.url
+              endif
+              if url == blank
+                assign url = routes.all_products_collection_url
+              endif
+              assign price = block.settings.price
+              if price == blank and p != blank
+                assign price = p.price | money_without_trailing_zeros | replace: 'Rs. ', '₹' | replace: 'Rs.', '₹' | prepend: 'from '
+              endif
+              assign front = block.settings.front
+              if front == blank and p != blank
+                assign front = p.featured_image
+              endif
+              assign back = block.settings.back
+              if back == blank and p != blank and p.images.size > 1
+                assign back = p.images[1]
+              endif
+            -%}
+            {%- render 'rack-item', product: block.settings.product, idx: n, title: title, sub: block.settings.subtitle, price: price, url: url, group: block.settings.group, tag: block.settings.tag_color, front: front, back: back, hanger: hanger, attrs: block.shopify_attributes, variants: '' -%}
+            {%- assign n = n | plus: 1 -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+      <button type="button" class="rack__arrow rack__arrow--next" data-next aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="rack__floor" aria-hidden="true"></div>
+
+    <div class="rack__info" data-info>
+      <p class="rack__name" data-name-out>{{ section.settings.hint }}</p>
+      <p class="rack__meta" data-meta>&nbsp;</p>
+      <div class="rack__actions">
+        <button type="button" class="rack__btn" data-view-open>{{ section.settings.cta_view }}</button>
+        <a class="rack__btn rack__btn--ghost" href="{{ section.settings.collection.url | default: routes.all_products_collection_url }}" data-pill>{{ section.settings.cta }}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="rack__detail xr-d" data-detail hidden role="dialog" aria-modal="true" aria-labelledby="rack-title-{{ section.id }}">
+    <button type="button" class="rack__close" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="rack__show">
+      <figure class="rack__big">
+        <span class="rack__hanger rack__hanger--big" aria-hidden="true">{{ hanger }}</span>
+        <img data-big alt="" draggable="false">
+        <span class="rack__spot" aria-hidden="true"></span>
+      </figure>
+      <div class="rack__tags" data-tags></div>
+    </div>
+    <div class="rack__panel">
+      <span class="rack__eyebrow" data-d-sub></span>
+      <h3 class="rack__title" id="rack-title-{{ section.id }}" data-title></h3>
+      <p class="rack__price" data-d-price></p>
+      <div class="rack__chips" data-chips></div>
+      <div class="rack__toggle" role="tablist" aria-label="View">
+        <button type="button" role="tab" class="is-on" aria-selected="true" data-view="front">{{ section.settings.front_label }}</button>
+        <button type="button" role="tab" aria-selected="false" data-view="back">{{ section.settings.back_label }}</button>
+      </div>
+      <div class="rack__sizes" data-sizes hidden>
+        <span class="rack__label">Size</span>
+        <div class="rack__size-row" data-size-row></div>
+      </div>
+      <div class="rack__buy" data-buy hidden>
+        <button type="button" class="rack__btn rack__btn--ghost rack__cart" data-add>{{ section.settings.add_label }}</button>
+        <button type="button" class="rack__btn rack__now" data-now>{{ section.settings.buy_label }}</button>
+        <button type="button" class="rack__heart" data-wish="" aria-label="Save to wishlist" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.4-7.5-10.1A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.6C19.5 15.6 12 20 12 20z"/></svg></button>
+      </div>
+      <p class="rack__msg" data-msg aria-live="polite"></p>
+      <a class="rack__link" href="#" data-link>{{ section.settings.cta }} <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+
+  {%- if section.settings.strip_text != blank -%}
+    {%- assign words = section.settings.strip_text | split: ',' -%}
+    <div class="rack__strip" aria-hidden="true">
+      <div class="rack__track">
+        {%- for n in (1..2) -%}
+          <span>{%- for k in (1..3) -%}{%- for w in words -%}<b>{{ w | strip }}</b><i>❄</i>{%- endfor -%}{%- endfor -%}</span>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+<script src="{{ 'hero-rack.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Clothing rack – Christmas",
+  "tag": "div",
+  "class": "rack-section",
+  "max_blocks": 16,
+  "settings": [
+    { "type": "paragraph", "content": "Festive version of the clothing rack. Same products and behaviour, with Christmas lights, snow, garland and gifts. Hide the normal rack while this one is on." },
+    { "type": "header", "content": "Festive look" },
+    { "type": "select", "id": "palette", "label": "Colour theme", "default": "pine", "options": [
+      { "value": "pine", "label": "Pine green & gold" },
+      { "value": "berry", "label": "Berry red & gold" },
+      { "value": "night", "label": "Midnight blue & silver" },
+      { "value": "custom", "label": "Custom (use colours below)" }
+    ] },
+    { "type": "checkbox", "id": "lights", "label": "Twinkling lights", "default": true },
+    { "type": "checkbox", "id": "snow", "label": "Falling snow", "default": true },
+    { "type": "checkbox", "id": "garland", "label": "Pine garland on the rail", "default": true },
+    { "type": "checkbox", "id": "baubles", "label": "Hanging baubles", "default": true },
+    { "type": "checkbox", "id": "gifts", "label": "Gift boxes on the floor", "default": true },
+    { "type": "header", "content": "What hangs on the rack" },
+    { "type": "select", "id": "source", "label": "Show", "default": "collection", "options": [
+      { "value": "collection", "label": "Products from a collection" },
+      { "value": "blocks", "label": "Only the garments added below" }
+    ] },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "e.g. New Arrivals. Product photos with a plain white background look best." },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 2, "max": 16, "step": 1, "default": 12 },
+    { "type": "checkbox", "id": "top_up", "label": "Fill the rack with the garments below when the collection is small", "default": false },
+    { "type": "range", "id": "min_items", "label": "Fill up to", "min": 4, "max": 16, "step": 1, "default": 10 },
+    { "type": "header", "content": "Text" },
+    { "type": "text", "id": "heading", "label": "Hidden heading (for SEO)", "default": "Zeyov Christmas collection — premium oversized tees" },
+    { "type": "text", "id": "eyebrow", "label": "Small title", "default": "The Zeyov Christmas Rack" },
+    { "type": "text", "id": "greeting", "label": "Gold greeting", "default": "Merry Christmas" },
+    { "type": "text", "id": "hint", "label": "Text before a garment is chosen", "default": "Pick a gift off the rack" },
+    { "type": "text", "id": "cta_view", "label": "View button", "default": "Take a closer look" },
+    { "type": "text", "id": "cta", "label": "Link button", "default": "View details" },
+    { "type": "text", "id": "add_label", "label": "Add to cart button", "default": "Add to cart" },
+    { "type": "text", "id": "buy_label", "label": "Buy now button", "default": "Buy now" },
+    { "type": "text", "id": "front_label", "label": "Front label", "default": "Front" },
+    { "type": "text", "id": "back_label", "label": "Back label", "default": "Back" },
+    { "type": "range", "id": "height", "label": "Height (desktop)", "min": 60, "max": 100, "step": 2, "unit": "vh", "default": 88 },
+    { "type": "header", "content": "Custom colours", "info": "Used only when Colour theme is Custom." },
+    { "type": "color", "id": "bg_top", "label": "Background (centre)", "default": "#124A33" },
+    { "type": "color", "id": "bg_bottom", "label": "Background (edges)", "default": "#03150D" },
+    { "type": "color", "id": "text", "label": "Text", "default": "#FBF3E2" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#E9C46A" },
+    { "type": "header", "content": "Bottom strip" },
+    { "type": "text", "id": "strip_text", "label": "Strip words", "info": "Comma separated, e.g. Merry Christmas, Gift a Tee, Free delivery on prepaid. Leave empty to hide." }
+  ],
+  "blocks": [
+    { "type": "garment", "name": "Garment", "settings": [
+      { "type": "text", "id": "title", "label": "Name", "info": "Leave empty to use the product name" },
+      { "type": "text", "id": "subtitle", "label": "Colour", "default": "Black" },
+      { "type": "text", "id": "price", "label": "Price text", "info": "e.g. from ₹849. Leave empty to use the product price" },
+      { "type": "image_picker", "id": "front", "label": "Front photo", "info": "Plain white background, portrait" },
+      { "type": "image_picker", "id": "back", "label": "Back photo" },
+      { "type": "product", "id": "product", "label": "Product (optional)" },
+      { "type": "url", "id": "link", "label": "Link" },
+      { "type": "text", "id": "group", "label": "Colour group", "info": "Garments with the same group become colour options of each other (e.g. os250)" },
+      { "type": "color", "id": "tag_color", "label": "Colour swatch", "default": "#1B1510" }
+    ] }
+  ],
+  "presets": [{ "name": "Clothing rack – Christmas" }]
+}
+{% endschema %}

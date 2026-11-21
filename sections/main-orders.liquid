@@ -67,7 +67,7 @@
           <div class="noorders__art">{% render 'icon', name: 'bag' %}<i></i><i></i></div>
           <h2>No orders yet</h2>
           <p class="muted">Looks like you haven't placed an order. Your orders, live tracking and reviews will appear here.</p>
-          <div class="noorders__perks"><span>{% render 'icon', name: 'truck' %}Free delivery on online pay</span><span>{% render 'icon', name: 'return' %}7-day replace</span></div>
+          <div class="noorders__perks"><span>{% render 'icon', name: 'truck' %}Free delivery on online pay</span><span>{% render 'icon', name: 'return' %}7-day returns</span></div>
           <a class="btn" href="{{ routes.all_products_collection_url }}?sort_by=created-descending">Shop New Arrivals {% render 'icon', name: 'arrow' %}</a>
           <a class="remove" href="{{ routes.collections_url }}">Browse all collections</a>
         </div>
@@ -79,11 +79,12 @@
         <div class="noorders__art">{% render 'icon', name: 'orders' %}<i></i><i></i></div>
       </div>
       <div class="step">
-        <h3>{% render 'icon', name: 'user' %} Sign in to see your orders</h3>
+        <h3>{% render 'icon', name: 'user' %} Sign in to see all your orders</h3>
         <p class="muted" style="font-size:13.5px">Use the email you ordered with. You'll get a one-time code, then see every order, its tracking and review options.</p>
         <a class="btn btn--block" href="{{ routes.account_login_url }}?return_url=/pages/orders">Sign in</a>
       </div>
-      <div class="step"><h3>{% render 'icon', name: 'box' %} Have your order email?</h3><p class="muted" style="font-size:13.5px">Open the confirmation email from Zeyov and tap <b>View your order</b> to see live status without signing in.</p></div>
+      <div class="step"><h3>{% render 'icon', name: 'box' %} Track without signing in</h3><p class="muted" style="font-size:13.5px">Open the confirmation email from Zeyov and tap <b>View your order</b>, or track with your order number.</p><a class="btn btn--outline-gold btn--block" href="/pages/track-order">Track my order</a></div>
+      <div class="step"><h3>★ Want to review a product?</h3><p class="muted" style="font-size:13.5px">No account needed: open the product page and tap <b>Write a review</b>.</p></div>
     {%- endif -%}
   </div>
 
