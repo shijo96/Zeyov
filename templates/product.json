@@ -1,8 +1,26 @@
 {
-  "sections": {
-    "main": { "type": "main-product", "settings": {} },
-    "reviews": { "type": "product-reviews", "settings": {} },
-    "related": { "type": "related-products", "settings": {} }
+ "sections": {
+  "main": {
+   "type": "main-product",
+   "settings": {
+    "eta_min": 7,
+    "eta_max": 8,
+    "prebook": true,
+    "advance_product": "pre-booking-advance"
+   }
   },
-  "order": ["main", "reviews", "related"]
+  "reviews": {
+   "type": "product-reviews",
+   "settings": {}
+  },
+  "related": {
+   "type": "related-products",
+   "settings": {}
+  }
+ },
+ "order": [
+  "main",
+  "reviews",
+  "related"
+ ]
 }
