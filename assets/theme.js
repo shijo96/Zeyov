@@ -785,5 +785,22 @@
   }, { passive: true });
   // returning with the back button: clear spinners left on Buy now / Add buttons
   addEventListener('pageshow', (e) => { if (!e.persisted) return; document.querySelectorAll('.is-loading').forEach((b) => b.classList.remove('is-loading')); restoring = null; restoreCart().then((back) => back && refreshCart()); });
+  // Autofill: remember name / email / phone on this device and fill the review, pre-booking,
+  // tracking and contact forms next time (signed-in customers are filled by the theme already).
+  (() => {
+    const KEY = 'zeyov:me';
+    const sel = 'form#ReviewForm, form#PrebookForm, form#TrackHelp, form#ContactForm, form.contact-form';
+    const fields = { name: '[name="contact[name]"]', email: '[name="contact[email]"]', phone: '[name="contact[phone]"], [name="contact[Phone]"]' };
+    let me = {}; try { me = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { me = {}; }
+    document.querySelectorAll(sel).forEach((form) => {
+      Object.entries(fields).forEach(([k, q]) => { const el = form.querySelector(q); if (el && !el.value && me[k]) el.value = me[k]; });
+      form.addEventListener('submit', () => {
+        const next = { ...me };
+        Object.entries(fields).forEach(([k, q]) => { const el = form.querySelector(q); if (el && el.value.trim()) next[k] = el.value.trim(); });
+        try { localStorage.setItem(KEY, JSON.stringify(next)); } catch (e) { /* storage blocked */ }
+      }, true);
+    });
+  })();
+
   window.ZeyovTheme = { money, calcOffers, refreshCart, openQuickAdd, buyNow: buyNowCheckout, restoreCart };
 })();

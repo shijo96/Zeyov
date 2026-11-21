@@ -6,7 +6,7 @@
     reviews.rating / reviews.rating_count metafields, so the numbers always match.
   • Without an app, approved reviews come from the product metafield zeyov.reviews (JSON list):
     [{"name":"…","rating":5,"title":"…","body":"…","date":"12 Nov 2026","size":"L","verified":true,"photos":["https://…jpg"]}]
-    and anyone can send a review with the form below (no account needed).
+    and anyone can send a review with photos using the form below (no account needed).
 {%- endcomment -%}
 {%- assign app_block = false -%}
 {%- for block in section.blocks -%}{%- if block.type == '@app' -%}{%- assign app_block = true -%}{%- endif -%}{%- endfor -%}
@@ -107,11 +107,22 @@
                 </div>
                 <label class="form-row"><span>Title</span><input class="input" name="contact[Review title]" required maxlength="80" placeholder="Thick fabric, perfect fit"></label>
                 <label class="form-row"><span>Your review</span><textarea class="input" name="contact[body]" required maxlength="1200" placeholder="How was the fit, fabric, print and delivery?"></textarea></label>
-                {%- if settings.whatsapp_number != blank -%}
-                  {%- assign wa = settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' -%}
-                  <p class="rv__photo-hint">📷 Have photos? <a href="https://wa.me/{{ wa }}?text={{ 'Review photos for ' | append: product.title | url_encode }}" target="_blank" rel="noopener">Send them on WhatsApp</a> and we'll add them to your review.</p>
+                {%- assign up = all_products['review-photo-upload'].selected_or_first_available_variant -%}
+                {%- if up -%}
+                  <div class="form-row rv__upload" data-rv-upload="{{ up.id }}">
+                    <span>Add photos <small class="muted">(optional · up to 4)</small></span>
+                    <label class="rv__drop">
+                      <input type="file" accept="image/*" multiple data-rv-files>
+                      <b>📷 Upload photos of your tee</b>
+                      <small class="muted">JPG or PNG · tap to choose from your gallery</small>
+                    </label>
+                    <div class="rv__thumbs" data-rv-thumbs></div>
+                  </div>
                 {%- endif -%}
-                <button class="btn btn--block" type="submit">Submit review</button>
+                <input type="hidden" name="contact[Photos]" data-rv-photos>
+                <input type="hidden" name="contact[Review JSON]" data-rv-json>
+                <p class="rv__status" data-rv-status aria-live="polite"></p>
+                <button class="btn btn--block" type="submit" data-rv-submit>Submit review</button>
               </div>
             {%- endif -%}
           {%- endform -%}
@@ -126,6 +137,65 @@
     const btn = s.querySelector('[data-rv-open]'); const f = s.querySelector('[data-rv-fields]');
     if (btn && f) btn.addEventListener('click', () => { f.hidden = false; btn.setAttribute('aria-expanded', 'true'); f.scrollIntoView({ behavior: 'smooth', block: 'start' }); const i = f.querySelector('input[name="contact[name]"]'); i && setTimeout(() => i.focus(), 400); });
     if (s.querySelector('[data-rv-done]') || (f && !f.hidden)) s.scrollIntoView({ block: 'start' });
+
+    const form = s.querySelector('form#ReviewForm'); if (!form) return;
+    const box = form.querySelector('[data-rv-upload]'); const input = form.querySelector('[data-rv-files]');
+    const thumbs = form.querySelector('[data-rv-thumbs]'); const status = form.querySelector('[data-rv-status]');
+    const submit = form.querySelector('[data-rv-submit]'); let files = [];
+    const MAX = 4;
+    const draw = () => {
+      thumbs.innerHTML = '';
+      files.forEach((file, i) => {
+        const fig = document.createElement('figure'); const img = document.createElement('img');
+        img.src = URL.createObjectURL(file); img.alt = ''; fig.appendChild(img);
+        const x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Remove photo'); x.textContent = '×';
+        x.addEventListener('click', () => { files.splice(i, 1); draw(); }); fig.appendChild(x); thumbs.appendChild(fig);
+      });
+    };
+    input && input.addEventListener('change', () => {
+      files = files.concat([...input.files].filter((x) => x.type.startsWith('image/'))).slice(0, MAX); input.value = ''; draw();
+      if (files.length >= MAX) status.textContent = `Up to ${MAX} photos per review.`;
+    });
+    // shrink big phone photos before uploading (max 1600px, JPEG)
+    const shrink = (file) => new Promise((ok) => {
+      const img = new Image(); img.onload = () => {
+        const k = Math.min(1, 1600 / Math.max(img.width, img.height));
+        if (k === 1 && file.size < 1.5e6) return ok(file);
+        const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob((b) => ok(b ? new File([b], (file.name || 'photo').replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }) : file), 'image/jpeg', 0.85);
+      }; img.onerror = () => ok(file); img.src = URL.createObjectURL(file);
+    });
+    // Shopify stores files attached to a cart line; we add a hidden ₹0 line, read the photo links, then remove it.
+    const upload = async () => {
+      const fd = new FormData(); fd.append('id', box.dataset.rvUpload); fd.append('quantity', '1');
+      const ready = await Promise.all(files.map(shrink));
+      ready.forEach((file, i) => fd.append(`properties[Photo ${i + 1}]`, file));
+      const r = await fetch('/cart/add.js', { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+      if (!r.ok) throw new Error('upload');
+      const item = await r.json(); const line = item.items ? item.items[0] : item;
+      const urls = Object.values(line.properties || {}).filter((v) => typeof v === 'string' && /\/\/|https?:/.test(v)).map((u) => (u.startsWith('//') ? 'https:' + u : u));
+      await fetch('/cart/change.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ id: line.key, quantity: 0 }) });
+      return urls;
+    };
+    let sending = false;
+    form.addEventListener('submit', async (e) => {
+      if (sending) return; e.preventDefault();
+      if (!form.reportValidity()) return;
+      sending = true; submit.disabled = true; let urls = [];
+      try {
+        if (files.length && box) { status.textContent = `Uploading ${files.length} photo${files.length > 1 ? 's' : ''}…`; urls = await upload(); }
+      } catch (err) { status.textContent = 'Photos could not be uploaded. Your review will be sent without them.'; }
+      const v = (n) => (form.querySelector(`[name="contact[${n}]"]`) || {}).value || '';
+      const rating = parseInt((form.querySelector('[name="contact[Rating]"]:checked') || {}).value, 10) || 5;
+      const name = v('name').trim(); const parts = name.split(/\s+/);
+      const shown = parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0]}.` : name;
+      const json = { name: shown, rating, title: v('Review title').trim(), body: v('body').trim(), date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }), size: v('Size bought').trim(), verified: false, photos: urls };
+      form.querySelector('[data-rv-photos]').value = urls.join('\n');
+      form.querySelector('[data-rv-json]').value = JSON.stringify(json);
+      status.textContent = 'Sending your review…';
+      HTMLFormElement.prototype.submit.call(form);
+    });
   })();
 </script>
 {% schema %}
@@ -134,7 +204,7 @@
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "What buyers say" },
     { "type": "range", "id": "limit", "label": "Reviews shown", "min": 4, "max": 40, "step": 2, "default": 12 },
-    { "type": "paragraph", "content": "For photo reviews, star ratings and review-request emails, install the free Judge.me app and add its \"Review widget\" block here. The theme's own form hides automatically." }
+    { "type": "paragraph", "content": "Reviews (with photos) arrive in your email. To publish one, open the product in Shopify admin → Metafields → Approved reviews, and paste the 'Review JSON' line from the email into the [ ] list." }
   ],
   "blocks": [{ "type": "@app" }]
 }

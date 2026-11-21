@@ -42,15 +42,15 @@
     {%- endif -%}
 
     {%- form 'contact', id: 'TrackHelp', class: 'step' -%}
-      <h3><i>{% if section.settings.tracking_url != blank %}3{% else %}2{% endif %}</i> Send us your order number</h3>
+      <h3><i>{% if section.settings.tracking_url != blank %}3{% else %}2{% endif %}</i> Get your tracking link</h3>
       {%- if form.posted_successfully? -%}
         <p class="notice">Got it! We'll send your tracking link on WhatsApp or email shortly{% if section.settings.reply_time != blank %} ({{ section.settings.reply_time }}){% endif %}.</p>
       {%- else -%}
-        <p class="muted" style="font-size:13.5px">Lost the email? Share your order number and we'll send your live tracking link.</p>
+        <p class="muted" style="font-size:13.5px">Lost the email? Share the phone or email you ordered with (order number if you have it) and we'll send your live tracking link.</p>
         {%- if form.errors -%}<p class="notice notice--err">{{ form.errors | default_errors }}</p>{%- endif -%}
         <input type="hidden" name="contact[Type]" value="Order tracking request">
         <div class="prebook__grid">
-          <label class="form-row"><span>Order number</span><input class="input" name="contact[Order number]" required placeholder="#1001"></label>
+          <label class="form-row"><span>Order number <small class="muted">(optional)</small></span><input class="input" name="contact[Order number]" placeholder="#1001"></label>
           <label class="form-row"><span>WhatsApp / phone</span><input class="input" type="tel" name="contact[phone]" inputmode="tel" autocomplete="tel" required placeholder="+91 98765 43210"></label>
         </div>
         <label class="form-row"><span>Email used for the order</span><input class="input" type="email" name="contact[email]" autocomplete="email" required></label>

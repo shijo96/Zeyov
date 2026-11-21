@@ -385,7 +385,7 @@
   function renderTees() {
     $('[data-tees]').innerHTML = CFG.bases.map((b) => `<button type="button" class="zs-tee ${b.key === st.base ? 'is-on' : ''}" data-base="${b.key}" aria-pressed="${b.key === st.base}">
       <span class="zs-tee__img"><img src="${teePhoto(b.handle, tileColor(b), 'front')}" alt="${esc(b.name)}" loading="lazy"></span>
-      <b>${esc(b.name)}</b><small>${esc(b.spec)}</small><strong>${SO ? `${money(priceOf(b))} <em>+ print</em>` : 'Price on request'}</strong></button>`).join('');
+      <b>${esc(b.name)}</b><small>${esc(b.spec)}</small><strong>${priceOf(b) ? `${money(priceOf(b))} <em>+ print</em>` : 'Price on request'}</strong></button>`).join('');
     $('[data-colors]').innerHTML = base().colors.map((c) => `<button type="button" class="zs-color ${c === st.color ? 'is-on' : ''}" data-color="${esc(c)}"><i style="background:${SWATCH[c] || '#ccc'}"></i>${esc(c)}</button>`).join('');
     $('[data-color-name]').textContent = st.color;
   }
@@ -394,7 +394,7 @@
   const SO = (CFG.studio && CFG.studio.vmap) || null;
   const PP = CFG.print_prices || {};
   const printKey = (sum) => (sum > 0 ? `Print ₹${sum}` : 'No print');
-  function priceOf(b) { const v = SO && SO[`${b.style}|No print`]; return v ? v[1] : 0; }
+  function priceOf(b) { const v = SO && SO[`${b.style}|No print`]; return v ? v[1] : (b.price || 0); }
   function printPrice(side, name) { return (PP[name] || 0) * 100; } // rupees → paise, same unit as variant prices
   function optName(side) { const pc = printClass(side); return pc ? pc.name : 'None'; }
   async function resolveVariant() {
@@ -466,7 +466,7 @@
     }).join('') || '<p class="muted zs-empty">Add a design to choose DTF print or embroidery.</p>';
     const ok = !!SO && q > 0 && st.layers.length > 0 && !['front', 'back'].some((s) => (printClass(s) || {}).over);
     $('[data-add]').disabled = !ok;
-    $('[data-add-hint]').textContent = !SO ? 'Studio pricing is being updated — please try again shortly or contact us.' : !st.layers.length ? 'Add an image or text to your tee first.' : !q ? 'Choose at least 1 piece.' : '';
+    $('[data-add-hint]').textContent = !SO ? 'Online ordering for Studio is paused for a moment. Please try again shortly or contact us on WhatsApp.' : !st.layers.length ? 'Add an image or text to your tee first.' : !q ? 'Choose at least 1 piece.' : '';
     $$('[data-qty-size]').forEach((i) => { if (document.activeElement !== i) i.value = st.qty[i.dataset.qtySize]; i.closest('.zs-size').classList.toggle('is-on', st.qty[i.dataset.qtySize] > 0); });
   }
 
